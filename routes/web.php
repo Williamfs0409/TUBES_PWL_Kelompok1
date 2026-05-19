@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -9,7 +9,7 @@ Route::get('/', function () {
 
 Route::get('/login', function (Request $request) {
     if ($request->session()->has('cityzen_user')) {
-        return redirect('/');
+        return redirect('/dashboard');
     }
 
     return view('auth.cityzen', ['mode' => 'login']);
@@ -28,12 +28,12 @@ Route::post('/login', function (Request $request) {
 
     $request->session()->regenerate();
 
-    return redirect('/');
+    return redirect('/dashboard');
 });
 
 Route::get('/register', function (Request $request) {
     if ($request->session()->has('cityzen_user')) {
-        return redirect('/');
+        return redirect('/dashboard');
     }
 
     return view('auth.cityzen', ['mode' => 'register']);
@@ -53,7 +53,15 @@ Route::post('/register', function (Request $request) {
 
     $request->session()->regenerate();
 
-    return redirect('/');
+    return redirect('/dashboard');
+});
+
+Route::get('/dashboard', function (Request $request) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login to open the CityZen dashboard.');
+    }
+
+    return view('dashboard');
 });
 
 Route::post('/logout', function (Request $request) {
