@@ -84,6 +84,12 @@
             color: var(--primary);
         }
 
+        .auth-actions {
+            align-items: center;
+            display: flex;
+            gap: 10px;
+        }
+
         .button {
             align-items: center;
             border: 1.5px solid var(--line);
@@ -518,6 +524,15 @@
                 display: none;
             }
 
+            .auth-actions {
+                gap: 8px;
+            }
+
+            .auth-actions .button {
+                min-height: 38px;
+                padding: 8px 12px;
+            }
+
             .hero {
                 min-height: auto;
                 padding-top: 54px;
@@ -571,6 +586,10 @@
             <a href="#spaces">Spaces</a>
             <a href="#team">Team</a>
         </nav>
+        <div class="auth-actions" aria-label="Authentication actions">
+            <a class="button button--secondary" href="{{ url('/login') }}">Login</a>
+            <a class="button button--primary" href="{{ url('/register') }}">Register</a>
+        </div>
     </header>
 
     <main>
@@ -580,8 +599,8 @@
                 <h1>Co-creating <span>sustainable</span> cities.</h1>
                 <p>Empowering citizens to map, report, and improve urban spaces through community action and transparent civic data.</p>
                 <div class="hero-actions">
-                    <a class="button button--primary" href="#features">Explore the Platform</a>
-                    <a class="button button--secondary" href="#mission">See the Mission</a>
+                    <a class="button button--primary" href="{{ url('/register') }}">Join the Movement</a>
+                    <a class="button button--secondary" href="{{ url('/login') }}">Login</a>
                 </div>
             </div>
             <div class="hero-stage" aria-label="CityZen community preview">
