@@ -26,6 +26,8 @@
     grid-template-columns: 260px minmax(0, 1fr);
     margin: 0;
     min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 .cz-dashboard-page * {
@@ -43,7 +45,9 @@
     border-right: 1px solid var(--cz-line);
     display: grid;
     gap: 32px;
+    height: 100vh;
     min-height: 100vh;
+    min-width: 0;
     padding: 28px;
     position: sticky;
     top: 0;
@@ -87,6 +91,7 @@
 .cz-dash-main {
     display: grid;
     gap: 28px;
+    min-width: 0;
     padding: 32px clamp(20px, 4vw, 54px) 54px;
 }
 
@@ -95,6 +100,7 @@
     display: flex;
     gap: 24px;
     justify-content: space-between;
+    min-width: 0;
 }
 
 .cz-dash-header p,
@@ -144,6 +150,7 @@
     border: 1.5px solid var(--cz-ink);
     border-radius: 8px;
     box-shadow: 8px 8px 0 rgba(23, 32, 26, 0.08);
+    min-width: 0;
 }
 
 .cz-dash-stats article {
@@ -172,6 +179,7 @@
     display: flex;
     gap: 20px;
     justify-content: space-between;
+    min-width: 0;
 }
 
 .cz-dash-toolbar h2,
@@ -207,6 +215,7 @@
     display: grid;
     gap: 20px;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    min-width: 0;
 }
 
 .cz-dash-place-card {
@@ -252,12 +261,16 @@
 .cz-dash-card-actions {
     display: grid;
     gap: 8px;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    min-width: 0;
 }
 
 .cz-dash-card-actions button {
     background: #f8fbf7;
     min-height: 40px;
+    overflow-wrap: anywhere;
+    padding: 8px 6px;
+    text-align: center;
 }
 
 .cz-dash-card-actions button.is-active {
@@ -268,6 +281,7 @@
     display: grid;
     gap: 20px;
     grid-template-columns: minmax(0, 1fr) minmax(280px, 0.65fr);
+    min-width: 0;
 }
 
 .cz-dash-panel,
