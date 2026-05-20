@@ -6,6 +6,7 @@ if (dashboardAwal) {
     const searchInput = dashboardAwal.querySelector('[data-dashboard-search]');
     const cards = [...dashboardAwal.querySelectorAll('[data-place-card]')];
     const toast = dashboardAwal.querySelector('[data-dashboard-toast]');
+    const reportUrl = dashboardAwal.dataset.reportUrl || '/places/create';
     let toastTimer;
 
     const showToast = (message) => {
@@ -23,6 +24,10 @@ if (dashboardAwal) {
         });
     });
 
+    if (dashboardAwal.dataset.dashboardFlash) {
+        showToast(dashboardAwal.dataset.dashboardFlash);
+    }
+
     dashboardAwal.querySelectorAll('[data-like-place]').forEach((button) => {
         button.addEventListener('click', () => {
             button.classList.toggle('is-active');
@@ -38,7 +43,12 @@ if (dashboardAwal) {
     });
 
     dashboardAwal.querySelectorAll('[data-report-place]').forEach((button) => {
-        button.addEventListener('click', () => showToast('Report draft opened.'));
+        button.addEventListener('click', () => {
+            showToast('Opening report form.');
+            window.setTimeout(() => {
+                window.location.href = reportUrl;
+            }, 350);
+        });
     });
 
     dashboardAwal.querySelectorAll('[data-report-action]').forEach((button) => {

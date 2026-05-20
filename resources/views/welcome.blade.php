@@ -1,3 +1,7 @@
+@php
+    $cityzenUser = session('cityzen_user');
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -88,6 +92,10 @@
             align-items: center;
             display: flex;
             gap: 10px;
+        }
+
+        .auth-actions form {
+            margin: 0;
         }
 
         .button {
@@ -579,7 +587,7 @@
 </head>
 <body>
     <header class="topbar">
-        <a class="brand" href="#">CityZen</a>
+        <a class="brand" href="{{ url('/') }}">CityZen</a>
         <nav class="nav" aria-label="Landing navigation">
             <a href="#mission">Mission</a>
             <a href="#features">Tools</a>
@@ -587,8 +595,16 @@
             <a href="#team">Team</a>
         </nav>
         <div class="auth-actions" aria-label="Authentication actions">
-            <a class="button button--secondary" href="{{ url('/login') }}">Login</a>
-            <a class="button button--primary" href="{{ url('/register') }}">Register</a>
+            @if ($cityzenUser)
+                <a class="button button--secondary" href="{{ url('/dashboard') }}">Dashboard</a>
+                <form method="POST" action="{{ url('/logout') }}">
+                    @csrf
+                    <button class="button button--primary" type="submit">Logout</button>
+                </form>
+            @else
+                <a class="button button--secondary" href="{{ url('/login') }}">Login</a>
+                <a class="button button--primary" href="{{ url('/register') }}">Register</a>
+            @endif
         </div>
     </header>
 
@@ -599,15 +615,19 @@
                 <h1>Co-creating <span>sustainable</span> cities.</h1>
                 <p>Empowering citizens to map, report, and improve urban spaces through community action and transparent civic data.</p>
                 <div class="hero-actions">
-                    <a class="button button--primary" href="{{ url('/register') }}">Join the Movement</a>
-                    <a class="button button--secondary" href="{{ url('/login') }}">Login</a>
+                    <a class="button button--primary" href="{{ $cityzenUser ? url('/dashboard') : url('/register') }}">
+                        {{ $cityzenUser ? 'Open Dashboard' : 'Join the Movement' }}
+                    </a>
+                    <a class="button button--secondary" href="{{ $cityzenUser ? url('/places/create') : url('/login') }}">
+                        {{ $cityzenUser ? 'Start a Report' : 'Login' }}
+                    </a>
                 </div>
             </div>
             <div class="hero-stage" aria-label="CityZen community preview">
                 <article class="floating-card">
                     <span>Fasilkom-TI</span>
                     <strong>4.2</strong>
-                    <small>67 reviews · Sustainability score high</small>
+                    <small>67 reviews &middot; Sustainability score high</small>
                     <div class="meter"><i></i></div>
                 </article>
                 <article class="floating-card">

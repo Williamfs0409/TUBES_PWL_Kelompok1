@@ -281,6 +281,17 @@
     gap: 12px;
 }
 
+.cz-dash-report-note {
+    background: var(--cz-mint);
+    border: 1.5px solid var(--cz-ink);
+    border-radius: 8px;
+    color: var(--cz-green);
+    font-weight: 800;
+    line-height: 1.5;
+    margin: 0 0 14px;
+    padding: 12px 14px;
+}
+
 .cz-dash-report-list button,
 .cz-dash-trending button {
     background: var(--cz-blue);
