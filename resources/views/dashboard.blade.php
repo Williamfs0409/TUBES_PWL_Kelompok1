@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -8,7 +8,12 @@
     <link href="https://fonts.bunny.net/css?family=hanken-grotesk:700,800|inter:400,500,600,700,800,900" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="cz-dashboard-page" data-dashboard-awal>
+<body
+    class="cz-dashboard-page"
+    data-dashboard-awal
+    data-dashboard-flash="{{ session('status') }}"
+    data-report-url="{{ url('/places/create') }}"
+>
     @php
         $user = session('cityzen_user', ['name' => 'CityZen User', 'email' => 'member@cityzen.local']);
         $places = [
@@ -28,6 +33,7 @@
             <a href="#places">Places</a>
             <a href="#reports">Reports</a>
             <a href="#trending">Trending</a>
+            <a href="{{ url('/profile') }}">Profile</a>
         </nav>
         <form method="POST" action="{{ url('/logout') }}">
             @csrf
@@ -41,7 +47,7 @@
                 <p>Welcome back, {{ $user['name'] }}</p>
                 <h1>Your sustainable city dashboard.</h1>
             </div>
-            <a class="cz-dash-new-report" href="#reports">New Report</a>
+            <a class="cz-dash-new-report" href="{{ url('/places/create') }}">New Report</a>
         </header>
 
         <section class="cz-dash-stats" aria-label="CityZen stats">
@@ -88,6 +94,12 @@
         <section class="cz-dash-bottom" id="reports">
             <article class="cz-dash-panel">
                 <h2>Recent report actions</h2>
+                @if (session('cityzen_last_report'))
+                    <p class="cz-dash-report-note">
+                        Last draft: {{ session('cityzen_last_report.place_name') }} &middot;
+                        {{ session('cityzen_last_report.issue') }}
+                    </p>
+                @endif
                 <div class="cz-dash-report-list">
                     <button type="button" data-report-action="air quality">Air quality check</button>
                     <button type="button" data-report-action="broken lighting">Broken lighting</button>

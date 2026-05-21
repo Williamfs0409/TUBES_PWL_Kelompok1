@@ -64,8 +64,42 @@ Route::get('/dashboard', function (Request $request) {
     return view('dashboard');
 });
 
+Route::get('/places/create', function (Request $request) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login before starting a report.');
+    }
+
+    return view('places.create');
+});
+
+Route::post('/places', function (Request $request) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login before starting a report.');
+    }
+
+    $data = $request->validate([
+        'place_name' => ['required', 'string', 'max:100'],
+        'category' => ['required', 'string', 'max:60'],
+        'issue' => ['required', 'string', 'max:120'],
+        'description' => ['required', 'string', 'max:500'],
+    ]);
+
+    $request->session()->put('cityzen_last_report', $data);
+
+    return redirect('/dashboard')->with('status', 'Report draft saved for '.$data['place_name'].'.');
+});
+
+Route::get('/profile', function (Request $request) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login to open your CityZen profile.');
+    }
+
+    return view('profile');
+});
+
 Route::post('/logout', function (Request $request) {
     $request->session()->forget('cityzen_user');
+    $request->session()->forget('cityzen_last_report');
     $request->session()->regenerateToken();
 
     return redirect('/');

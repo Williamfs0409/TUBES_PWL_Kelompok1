@@ -190,6 +190,18 @@
             padding: 14px 16px;
         }
 
+        .notice {
+            background: #ecfdf3;
+            border: 1.5px solid var(--primary-2);
+            border-radius: 8px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.5;
+            margin: 0 0 20px;
+            padding: 14px 16px;
+        }
+
         .button {
             align-items: center;
             border: 1.5px solid var(--line);
@@ -232,6 +244,16 @@
             text-underline-offset: 4px;
         }
 
+        .home-link {
+            color: var(--muted);
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 800;
+            margin-top: 18px;
+            text-align: center;
+            width: 100%;
+        }
+
         @media (max-width: 900px) {
             .page {
                 grid-template-columns: 1fr;
@@ -263,16 +285,16 @@
             </div>
             <div class="signal-grid" aria-label="Community signals">
                 <div class="signal">
-                    <strong>SDG 11</strong>
-                    <small>Sustainable cities focus</small>
+                    <strong>Map</strong>
+                    <small>Discover public space context</small>
                 </div>
                 <div class="signal">
-                    <strong>4.2</strong>
-                    <small>Community space score</small>
+                    <strong>Report</strong>
+                    <small>Turn concerns into civic data</small>
                 </div>
                 <div class="signal">
-                    <strong>20+</strong>
-                    <small>Spaces verified monthly</small>
+                    <strong>Improve</strong>
+                    <small>Track what communities need</small>
                 </div>
             </div>
         </section>
@@ -281,6 +303,10 @@
             <div class="panel">
                 <h2>{{ $isRegister ? 'Create account' : 'Login' }}</h2>
                 <p>{{ $isRegister ? 'Start your CityZen profile with a name, email, and password.' : 'Use your email and password to enter CityZen.' }}</p>
+
+                @if (session('notice'))
+                    <div class="notice">{{ session('notice') }}</div>
+                @endif
 
                 @if ($errors->any())
                     <div class="error-list">
@@ -328,6 +354,7 @@
                         {{ $isRegister ? 'Login' : 'Register' }}
                     </a>
                 </p>
+                <a class="home-link" href="{{ url('/') }}">Back to landing page</a>
             </div>
         </section>
     </main>
