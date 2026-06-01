@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class CityZenSeeder extends Seeder
 {
     /**
-     * Seed dummy CityZen data for local development and UI prototyping.
+     * Seed six dummy rows for every main CityZen table.
      */
     public function run(): void
     {
@@ -62,6 +62,24 @@ class CityZenSeeder extends Seeder
                 'bio' => 'Mendokumentasikan ruang komunitas dan area publik inklusif.',
                 'current_badge' => 'Contributor',
                 'contribution_count' => 21,
+            ],
+            [
+                'name' => 'Mira Transit Scout',
+                'email' => 'mira@cityzen.test',
+                'username' => 'mira_transit',
+                'city' => 'Surabaya',
+                'bio' => 'Memantau akses transportasi publik dan jalur pedestrian.',
+                'current_badge' => 'Explorer',
+                'contribution_count' => 11,
+            ],
+            [
+                'name' => 'Dimas Green Reviewer',
+                'email' => 'dimas@cityzen.test',
+                'username' => 'dimas_green',
+                'city' => 'Medan',
+                'bio' => 'Menulis review ruang hijau dan fasilitas olahraga publik.',
+                'current_badge' => 'Contributor',
+                'contribution_count' => 18,
             ],
             [
                 'name' => 'CityZen Admin',
@@ -119,9 +137,6 @@ class CityZenSeeder extends Seeder
             ['name' => 'Fasilitas Umum', 'description' => 'Fasilitas kota yang digunakan masyarakat luas.', 'icon' => 'building-2'],
             ['name' => 'Tempat Olahraga', 'description' => 'Lapangan dan area olahraga publik.', 'icon' => 'dumbbell'],
             ['name' => 'Ruang Komunitas', 'description' => 'Ruang berkumpul, edukasi, dan aktivitas komunitas.', 'icon' => 'users'],
-            ['name' => 'Edukasi', 'description' => 'Tempat publik yang mendukung kegiatan belajar.', 'icon' => 'book-open'],
-            ['name' => 'Transportasi Publik', 'description' => 'Simpul transit dan fasilitas mobilitas publik.', 'icon' => 'bus'],
-            ['name' => 'Lainnya', 'description' => 'Kategori tambahan untuk ruang publik lain.', 'icon' => 'circle-ellipsis'],
         ];
 
         $categoryIds = [];
@@ -198,16 +213,42 @@ class CityZenSeeder extends Seeder
             ],
             [
                 'name' => 'Solar Loop Plaza',
-                'category' => 'transportasi-publik',
-                'user' => 'naufal@cityzen.test',
-                'short_description' => 'Plaza transit dengan panel surya dan akses pejalan kaki.',
-                'description' => 'Simpul transit publik yang menghubungkan halte, area duduk, dan kios UMKM.',
+                'category' => 'fasilitas-umum',
+                'user' => 'mira@cityzen.test',
+                'short_description' => 'Plaza publik dengan panel surya dan akses pejalan kaki.',
+                'description' => 'Simpul aktivitas publik yang menghubungkan halte, area duduk, dan kios UMKM.',
                 'address' => 'Jl. Sudirman Kav. 44',
                 'city' => 'Jakarta',
                 'province' => 'DKI Jakarta',
                 'latitude' => -6.2146000,
                 'longitude' => 106.8218000,
                 'google_maps_url' => 'https://maps.google.com/?q=Sudirman+Jakarta',
+            ],
+            [
+                'name' => 'Lapangan Merdeka Active Park',
+                'category' => 'tempat-olahraga',
+                'user' => 'dimas@cityzen.test',
+                'short_description' => 'Lapangan publik untuk olahraga pagi dan kegiatan komunitas.',
+                'description' => 'Area olahraga terbuka dengan jogging track, lapangan serbaguna, dan ruang acara warga.',
+                'address' => 'Jl. Balai Kota No. 1',
+                'city' => 'Medan',
+                'province' => 'Sumatera Utara',
+                'latitude' => 3.5909000,
+                'longitude' => 98.6778000,
+                'google_maps_url' => 'https://maps.google.com/?q=Lapangan+Merdeka+Medan',
+            ],
+            [
+                'name' => 'Kota Lama Food Court',
+                'category' => 'kuliner',
+                'user' => 'mira@cityzen.test',
+                'short_description' => 'Sentra kuliner publik di kawasan kota lama.',
+                'description' => 'Ruang kuliner terbuka yang mendukung UMKM lokal dan aktivitas wisata kota.',
+                'address' => 'Jl. Letjen Suprapto No. 9',
+                'city' => 'Semarang',
+                'province' => 'Jawa Tengah',
+                'latitude' => -6.9680000,
+                'longitude' => 110.4278000,
+                'google_maps_url' => 'https://maps.google.com/?q=Kota+Lama+Semarang',
             ],
         ];
 
@@ -253,7 +294,9 @@ class CityZenSeeder extends Seeder
             ['place' => 'central-park-commons', 'user' => 'naufal@cityzen.test', 'image_path' => 'cityzen-dashboard/central-park.jpg', 'caption' => 'Area hijau utama Central Park Commons.'],
             ['place' => 'eco-zen-garden', 'user' => 'alya@cityzen.test', 'image_path' => 'cityzen-dashboard/eco-zen.jpg', 'caption' => 'Kebun komunitas Eco Zen Garden.'],
             ['place' => 'riverfront-walk', 'user' => 'raka@cityzen.test', 'image_path' => 'cityzen-dashboard/riverfront.jpg', 'caption' => 'Jalur pedestrian Riverfront Walk.'],
-            ['place' => 'solar-loop-plaza', 'user' => 'naufal@cityzen.test', 'image_path' => 'cityzen-dashboard/solar-loop.jpg', 'caption' => 'Area transit Solar Loop Plaza.'],
+            ['place' => 'solar-loop-plaza', 'user' => 'mira@cityzen.test', 'image_path' => 'cityzen-dashboard/solar-loop.jpg', 'caption' => 'Area transit Solar Loop Plaza.'],
+            ['place' => 'lapangan-merdeka-active-park', 'user' => 'dimas@cityzen.test', 'image_path' => 'cityzen-dashboard/skyline-greens.jpg', 'caption' => 'Lapangan olahraga publik Lapangan Merdeka.'],
+            ['place' => 'kota-lama-food-court', 'user' => 'mira@cityzen.test', 'image_path' => 'cityzen-dashboard/urban-canopy.jpg', 'caption' => 'Koridor kuliner Kota Lama Food Court.'],
         ];
 
         foreach ($photos as $index => $photo) {
@@ -283,10 +326,11 @@ class CityZenSeeder extends Seeder
         $now = now();
         $reviews = [
             ['place' => 'central-park-commons', 'user' => 'alya@cityzen.test', 'rating' => 5, 'review' => 'Teduh dan nyaman untuk jalan sore, fasilitas duduknya cukup banyak.'],
-            ['place' => 'central-park-commons', 'user' => 'raka@cityzen.test', 'rating' => 4, 'review' => 'Akses pejalan kaki bagus, tapi tempat sampah perlu ditambah.'],
             ['place' => 'eco-zen-garden', 'user' => 'naufal@cityzen.test', 'rating' => 5, 'review' => 'Program komunitasnya aktif dan cocok untuk edukasi lingkungan.'],
-            ['place' => 'riverfront-walk', 'user' => 'alya@cityzen.test', 'rating' => 4, 'review' => 'Spot mural menarik, perlu penerangan tambahan malam hari.'],
+            ['place' => 'riverfront-walk', 'user' => 'dimas@cityzen.test', 'rating' => 4, 'review' => 'Spot mural menarik, perlu penerangan tambahan malam hari.'],
             ['place' => 'solar-loop-plaza', 'user' => 'raka@cityzen.test', 'rating' => 4, 'review' => 'Transitnya nyaman dan dekat area UMKM.'],
+            ['place' => 'lapangan-merdeka-active-park', 'user' => 'mira@cityzen.test', 'rating' => 5, 'review' => 'Area olahraga luas, cocok untuk aktivitas komunitas pagi.'],
+            ['place' => 'kota-lama-food-court', 'user' => 'alya@cityzen.test', 'rating' => 4, 'review' => 'Pilihan kuliner lokal bagus, perlu penambahan tempat sampah.'],
         ];
 
         foreach ($reviews as $review) {
@@ -314,11 +358,11 @@ class CityZenSeeder extends Seeder
         $now = now();
         $likes = [
             ['place' => 'central-park-commons', 'user' => 'alya@cityzen.test'],
-            ['place' => 'central-park-commons', 'user' => 'raka@cityzen.test'],
             ['place' => 'eco-zen-garden', 'user' => 'naufal@cityzen.test'],
-            ['place' => 'eco-zen-garden', 'user' => 'raka@cityzen.test'],
-            ['place' => 'riverfront-walk', 'user' => 'naufal@cityzen.test'],
-            ['place' => 'solar-loop-plaza', 'user' => 'alya@cityzen.test'],
+            ['place' => 'riverfront-walk', 'user' => 'dimas@cityzen.test'],
+            ['place' => 'solar-loop-plaza', 'user' => 'raka@cityzen.test'],
+            ['place' => 'lapangan-merdeka-active-park', 'user' => 'mira@cityzen.test'],
+            ['place' => 'kota-lama-food-court', 'user' => 'admin@cityzen.test'],
         ];
 
         foreach ($likes as $like) {
@@ -346,7 +390,9 @@ class CityZenSeeder extends Seeder
             ['place' => 'central-park-commons', 'user' => 'naufal@cityzen.test'],
             ['place' => 'eco-zen-garden', 'user' => 'raka@cityzen.test'],
             ['place' => 'riverfront-walk', 'user' => 'alya@cityzen.test'],
-            ['place' => 'solar-loop-plaza', 'user' => 'naufal@cityzen.test'],
+            ['place' => 'solar-loop-plaza', 'user' => 'dimas@cityzen.test'],
+            ['place' => 'lapangan-merdeka-active-park', 'user' => 'mira@cityzen.test'],
+            ['place' => 'kota-lama-food-court', 'user' => 'admin@cityzen.test'],
         ];
 
         foreach ($bookmarks as $bookmark) {
@@ -397,6 +443,33 @@ class CityZenSeeder extends Seeder
                 'status' => 'resolved',
                 'admin_note' => 'Area sudah dibersihkan oleh petugas.',
                 'photo' => 'cityzen-reports/solar-loop-ramp.jpg',
+            ],
+            [
+                'place' => 'eco-zen-garden',
+                'user' => 'dimas@cityzen.test',
+                'category' => 'Kerusakan fasilitas',
+                'description' => 'Papan edukasi kompos mulai lapuk dan beberapa teks sulit dibaca.',
+                'status' => 'pending',
+                'admin_note' => null,
+                'photo' => 'cityzen-reports/eco-zen-board.jpg',
+            ],
+            [
+                'place' => 'lapangan-merdeka-active-park',
+                'user' => 'mira@cityzen.test',
+                'category' => 'Vandalisme',
+                'description' => 'Coretan ditemukan di dinding dekat jogging track sisi barat.',
+                'status' => 'rejected',
+                'admin_note' => 'Foto tidak cukup jelas, perlu laporan ulang dengan lokasi detail.',
+                'photo' => 'cityzen-reports/merdeka-wall.jpg',
+            ],
+            [
+                'place' => 'kota-lama-food-court',
+                'user' => 'alya@cityzen.test',
+                'category' => 'Lainnya',
+                'description' => 'Area antrean terlalu sempit saat jam ramai dan perlu pengaturan alur.',
+                'status' => 'verified',
+                'admin_note' => 'Diteruskan sebagai rekomendasi penataan area kuliner.',
+                'photo' => 'cityzen-reports/kota-lama-queue.jpg',
             ],
         ];
 
