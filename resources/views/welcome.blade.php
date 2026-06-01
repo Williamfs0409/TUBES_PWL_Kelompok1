@@ -1560,7 +1560,9 @@
                         data-member-personality="Suka membuat jadwal terstruktur untuk menyeimbangkan tugas kuliah, eksplorasi kode, dan latihan fisik mingguan.|Lebih menyukai pendekatan visual seperti animasi 2D yang simpel namun informatif dibandingkan desain realistis yang rumit.|Fleksibel dalam merencanakan pertemuan."
                         data-member-facts="Style: Simpel & Terstruktur|Mode: Terjadwal|Habit: Olahraga|Goal: Ahli Database"
                         aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog">
-                    <span class="avatar">CRAH</span>
+
+                        <img src="{{ asset('photo/chyntia.jpg') }}" alt="Chyntia Rachel Anandita Hutabarat" class="avatar" style="object-fit: cover;">
+
                     <h3>Chyntia Rachel Anandita Hutabarat</h3>
                     <p>Backend Developer</p>
                 </article>
