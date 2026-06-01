@@ -1537,15 +1537,25 @@
                     <p>Project Manager</p>
                 </article>
                 <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
-                    data-member-card="ainuha-suraiya" data-member-avatar="AS" data-member-name="Ainuha Suraiya"
+                    data-member-card="ainuha-suraiya"
+                    data-member-photo="{{ asset('photo/Ainuha.jpeg') }}" //*data-member-avatar="AS" 
+                    data-member-name="Ainuha Suraiya"
                     data-member-role="Frontend Developer"
                     data-member-summary="Mahasiswa dengan minat pada tampilan web yang bersih, responsif, dan nyaman dipakai."
+                    data-member-about="Tipe orang yang senang mengubah ide menjadi tampilan yang bisa dilihat dan digunakan langsung. Punya ketertarikan pada desain, interaksi pengguna, dan bagaimana sebuah website dapat terasa nyaman saat digunakan. 
+                        Di tim, bertugas membangun tampilan CityZen agar responsif, intuitif, dan mudah dipahami. Percaya bahwa pengalaman pengguna yang baik dapat membuat sebuah sistem menjadi lebih bermanfaat."
+                    data-member-interests="HTML|CSS|JavaScript|UI/UX Design|Graphic Design|Canva"
+                    data-member-personality="Suka mempelajari hal baru, terutama di bidang IT, bisnis, dan pengembangan digital.| Senang menggabungkan logika, kreativitas, dan pemecahan masalah dalam sebuah proyek.|
+                        Berorientasi pada pembelajaran dan pengembangan diri secara berkelanjutan.| Mudah beradaptasi dengan tantangan dan teknologi baru."
+                    data-member-facts="Domain: IT, Business & Digital Innovation.| Specialty: Frontend Development. | Goal: One step closer to mastery every day.| Status: Building, learning, and growing..."
                     aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
                     aria-label="Buka detail Ainuha Suraiya, Frontend Developer">
-                    <span class="avatar">AS</span>
+
+                    <img src="{{ asset('photo/Ainuha.jpeg') }}" alt="Ainuha Suraiya" class="avatar" style="object-fit: cover;">
                     <h3>Ainuha Suraiya</h3>
                     <p>Frontend Developer</p>
                 </article>
+
                 <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
                     data-member-card="chyntia-rachel" data-member-avatar="CR"
                     data-member-name="Chyntia Rachel Anandita Hutabarat" data-member-role="Backend Developer"
