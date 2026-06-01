@@ -1546,13 +1546,12 @@
                     <h3>Ainuha Suraiya</h3>
                     <p>Frontend Developer</p>
                 </article>
-                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
-                    data-member-card="chyntia-rachel" data-member-avatar="CR"
-                    data-member-name="Chyntia Rachel Anandita Hutabarat" data-member-role="Backend Developer"
-                    data-member-summary="Mahasiswa yang tertarik dengan logika sistem, struktur data, dan alur kerja backend."
-                    aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
-                    aria-label="Buka detail Chyntia Rachel Anandita Hutabarat, Backend Developer">
-                    <span class="avatar">CR</span>
+                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card data-member-card="Chyntia Hutabarat" data-member-avatar="CH" data-member-name="Chyntia Rachel Anandita Hutabarat" data-member-role="BackendDeveloper" data-member-summary="Mahasiswa semester 2 yang tertarik mengeksplorasi kode web." data-member-about="Mahasiswa semester 2 yang tertarik dengan perpaduan antara logika pemrograman dan estetika visual. Sangat menikmati proses menerjemahkan ide menjadi struktur kode yang simpel dan mudah dimengerti, serta merancang visual mockup agar presentasi proyek terlihat lebih menarik."
+                        data-member-interests="SQL|Graphic Design|Time Management"                            
+                        data-member-personality="Suka membuat jadwal terstruktur untuk menyeimbangkan tugas kuliah, eksplorasi kode, dan latihan fisik mingguan.|Lebih menyukai pendekatan visual seperti animasi 2D yang simpel namun informatif dibandingkan desain realistis yang rumit.|Fleksibel dalam merencanakan pertemuan."
+                        data-member-facts="Style: Simpel & Terstruktur|Mode: Terjadwal|Habit: Olahraga|Goal: Ahli Database"
+                        aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog">
+                    <span class="avatar">CRAH</span>
                     <h3>Chyntia Rachel Anandita Hutabarat</h3>
                     <p>Backend Developer</p>
                 </article>
