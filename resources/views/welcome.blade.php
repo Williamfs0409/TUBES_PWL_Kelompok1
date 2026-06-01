@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CityZen | Co-creating Sustainable Cities</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=hanken-grotesk:700,800|inter:400,500,600,700,800,900" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=hanken-grotesk:700,800|inter:400,500,600,700,800,900"
+        rel="stylesheet" />
     <style>
         :root {
             --topbar-height: 64px;
@@ -210,19 +212,19 @@
             z-index: 1;
         }
 
-        .hero-copy > * {
+        .hero-copy>* {
             animation: hero-rise 760ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
         }
 
-        .hero-copy > .eyebrow {
+        .hero-copy>.eyebrow {
             animation-delay: 80ms;
         }
 
-        .hero-copy > h1 {
+        .hero-copy>h1 {
             animation-delay: 170ms;
         }
 
-        .hero-copy > p:not(.eyebrow) {
+        .hero-copy>p:not(.eyebrow) {
             animation-delay: 270ms;
         }
 
@@ -379,7 +381,7 @@
             max-width: none;
         }
 
-        .split > * {
+        .split>* {
             margin-left: auto;
             margin-right: auto;
             max-width: 620px;
@@ -1117,6 +1119,7 @@
         }
 
         @keyframes float-card {
+
             0%,
             100% {
                 transform: translateY(0) rotate(var(--tilt));
@@ -1138,6 +1141,7 @@
         }
 
         @keyframes highlight-roll {
+
             0%,
             100% {
                 background-position: 0% 50%;
@@ -1169,6 +1173,7 @@
         }
 
         @keyframes panel-scan {
+
             0%,
             42% {
                 transform: translateX(0);
@@ -1181,6 +1186,7 @@
         }
 
         @keyframes art-pulse {
+
             0%,
             100% {
                 background-position: 0% 50%;
@@ -1192,6 +1198,7 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
+
             *,
             *::before,
             *::after {
@@ -1220,6 +1227,7 @@
         }
 
         @supports not (height: 100svh) {
+
             .split,
             .section,
             .launch {
@@ -1253,6 +1261,7 @@
         }
 
         @media (max-width: 980px) {
+
             .hero,
             .split,
             .launch {
@@ -1329,7 +1338,7 @@
                 grid-row: 1 / 3;
             }
 
-            .member-detail__hero > div {
+            .member-detail__hero>div {
                 grid-column: 1 / -1;
             }
 
@@ -1351,6 +1360,7 @@
         }
     </style>
 </head>
+
 <body>
     <header class="topbar">
         <a class="brand" href="#">CityZen</a>
@@ -1371,7 +1381,8 @@
             <div class="hero-copy">
                 <p class="eyebrow">Crowdsourced public space platform</p>
                 <h1>Co-creating <span>sustainable</span> cities.</h1>
-                <p>Empowering citizens to map, report, and improve urban spaces through community action and transparent civic data.</p>
+                <p>Empowering citizens to map, report, and improve urban spaces through community action and transparent
+                    civic data.</p>
                 <div class="hero-actions">
                     <a class="button button--primary" href="{{ url('/register') }}">Join the Movement</a>
                     <a class="button button--secondary" href="{{ url('/login') }}">Login</a>
@@ -1396,7 +1407,8 @@
             <div class="reveal" data-reveal>
                 <p class="eyebrow">Our mission</p>
                 <h2>Aligned with SDG 11: Sustainable Cities & Communities</h2>
-                <p>CityZen bridges urban data and lived experience so communities can make public spaces more inclusive, safe, resilient, and sustainable.</p>
+                <p>CityZen bridges urban data and lived experience so communities can make public spaces more inclusive,
+                    safe, resilient, and sustainable.</p>
                 <ul class="check-list">
                     <li>Inclusive public space accessibility</li>
                     <li>Real-time environmental and safety reporting</li>
@@ -1438,17 +1450,20 @@
                 <article class="card reveal" data-reveal>
                     <span class="icon">D</span>
                     <h3>Discover</h3>
-                    <p>Explore parks, campuses, community spaces, accessibility routes, and public facilities near you.</p>
+                    <p>Explore parks, campuses, community spaces, accessibility routes, and public facilities near you.
+                    </p>
                 </article>
                 <article class="card reveal" data-reveal>
                     <span class="icon icon--warm">!</span>
                     <h3>Report</h3>
-                    <p>Submit condition reports for damaged facilities, safety concerns, accessibility, or cleanliness issues.</p>
+                    <p>Submit condition reports for damaged facilities, safety concerns, accessibility, or cleanliness
+                        issues.</p>
                 </article>
                 <article class="card reveal" data-reveal>
                     <span class="icon icon--sage">C</span>
                     <h3>Connect</h3>
-                    <p>Join local communities, review spaces, and coordinate improvements with other city contributors.</p>
+                    <p>Join local communities, review spaces, and coordinate improvements with other city contributors.
+                    </p>
                 </article>
             </div>
         </section>
@@ -1457,7 +1472,8 @@
             <div class="reveal" data-reveal>
                 <p class="eyebrow">Now building</p>
                 <h2>The first report can change how a city listens.</h2>
-                <p>CityZen is starting from zero on purpose: every map pin, review, and report should come from real citizens who care about public spaces.</p>
+                <p>CityZen is starting from zero on purpose: every map pin, review, and report should come from real
+                    citizens who care about public spaces.</p>
             </div>
             <div class="launch-grid">
                 <article class="launch-card reveal" data-reveal>
@@ -1510,28 +1526,61 @@
                 <p>"Designing the cities we want to live in, one community at a time."</p>
             </div>
             <div class="team-grid">
-                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card data-member-card="project-manager" data-member-avatar="WFS" data-member-name="William Fransisco Sihotang" data-member-role="Project Manager" data-member-summary="Mahasiswa yang suka mengubah ide acak menjadi rencana yang rapi, senang berdiskusi, dan punya ketertarikan besar pada presentasi, visual, serta koordinasi tim." aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog" aria-label="Buka detail William Fransisco Sihotang, Project Manager">
+                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
+                    data-member-card="project-manager" data-member-avatar="WFS"
+                    data-member-name="William Fransisco Sihotang" data-member-role="Project Manager"
+                    data-member-summary="Mahasiswa yang suka mengubah ide acak menjadi rencana yang rapi, senang berdiskusi, dan punya ketertarikan besar pada presentasi, visual, serta koordinasi tim."
+                    aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
+                    aria-label="Buka detail William Fransisco Sihotang, Project Manager">
                     <span class="avatar">WFS</span>
                     <h3>William Fransisco Sihotang</h3>
                     <p>Project Manager</p>
                 </article>
-                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card data-member-card="ainuha-suraiya" data-member-avatar="AS" data-member-name="Ainuha Suraiya" data-member-role="Frontend Developer" data-member-summary="Mahasiswa dengan minat pada tampilan web yang bersih, responsif, dan nyaman dipakai." aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog" aria-label="Buka detail Ainuha Suraiya, Frontend Developer">
+                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
+                    data-member-card="ainuha-suraiya" data-member-avatar="AS" data-member-name="Ainuha Suraiya"
+                    data-member-role="Frontend Developer"
+                    data-member-summary="Mahasiswa dengan minat pada tampilan web yang bersih, responsif, dan nyaman dipakai."
+                    aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
+                    aria-label="Buka detail Ainuha Suraiya, Frontend Developer">
                     <span class="avatar">AS</span>
                     <h3>Ainuha Suraiya</h3>
                     <p>Frontend Developer</p>
                 </article>
-                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card data-member-card="chyntia-rachel" data-member-avatar="CR" data-member-name="Chyntia Rachel Anandita Hutabarat" data-member-role="Backend Developer" data-member-summary="Mahasiswa yang tertarik dengan logika sistem, struktur data, dan alur kerja backend." aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog" aria-label="Buka detail Chyntia Rachel Anandita Hutabarat, Backend Developer">
+                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
+                    data-member-card="chyntia-rachel" data-member-avatar="CR"
+                    data-member-name="Chyntia Rachel Anandita Hutabarat" data-member-role="Backend Developer"
+                    data-member-summary="Mahasiswa yang tertarik dengan logika sistem, struktur data, dan alur kerja backend."
+                    aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
+                    aria-label="Buka detail Chyntia Rachel Anandita Hutabarat, Backend Developer">
                     <span class="avatar">CR</span>
                     <h3>Chyntia Rachel Anandita Hutabarat</h3>
                     <p>Backend Developer</p>
                 </article>
-                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card data-member-card="felix-desselo" data-member-avatar="FD" data-member-name="Felix Desselo Tambunan" data-member-role="UI/UX Designer" data-member-summary="Mahasiswa yang suka mengeksplorasi layout, visual hierarchy, dan pengalaman pengguna." aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog" aria-label="Buka detail Felix Desselo Tambunan, UI/UX Designer">
+                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
+                    data-member-card="felix-desselo" data-member-avatar="FD"
+                    data-member-name="Felix Desselo Tambunan" data-member-role="UI/UX Designer"
+                    data-member-summary="Mahasiswa yang suka mengeksplorasi layout, visual hierarchy, dan pengalaman pengguna."
+                    aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
+                    aria-label="Buka detail Felix Desselo Tambunan, UI/UX Designer">
                     <span class="avatar">FD</span>
                     <h3>Felix Desselo Tambunan</h3>
                     <p>UI/UX Designer</p>
                 </article>
-                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card data-member-card="hadziq-naufal" data-member-avatar="HN" data-member-name="Hadziq Naufal Sinaga" data-member-role="System & DB Engineer" data-member-summary="Mahasiswa yang fokus pada struktur database, koneksi sistem, dan kerapian data." aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog" aria-label="Buka detail Hadziq Naufal Sinaga, System and Database Engineer">
-                    <span class="avatar">HN</span>
+
+                <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
+                    data-member-card="Hadziq-Naufal" data-member-photo="{{ asset('photo/Naufal.jpeg') }}"
+                    data-member-name="Hadziq Naufal Sinaga" data-member-role="System &amp; DB Engineer"
+                    data-member-summary="Mahasiswa yang fokus pada struktur database, koneksi sistem, dan kerapian data."
+                    data-member-about="Tipe orang yang punya rasa ingin tahu yang tinggi sama cara kerja sistem di balik layar. Di tim, perannya mastiin pondasi data tetap rapi dan logikanya jalan. Percaya kalau kode yang error selalu bisa diperbaiki, apalagi kalau udah refreshing sebentar."
+                    data-member-interests="Database Design|Laravel|SQL|C++|PHP|Canva"
+                    data-member-personality="Teliti dalam merancang ERD dan relasi tabel.|Suka ngoding sambil dengerin lagu santai.|Senang diskusi bareng teman kampus buat nyari solusi pas lagi stuck ngoding."
+                    data-member-facts="Domain: Backend & System|Specialty: Database Normalization|Daily Driver: Axioo Hype 5|Status: Debugging code..."
+                    aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
+                    aria-label="Buka detail Hadziq Naufal Sinaga, System &amp; DB Engineer">
+
+                    <img src="{{ asset('photo/Naufal.jpeg') }}" alt="Hadziq Naufal Sinaga" class="avatar"
+                        style="object-fit: cover;">
+
                     <h3>Hadziq Naufal Sinaga</h3>
                     <p>System & DB Engineer</p>
                 </article>
@@ -1539,21 +1588,26 @@
         </section>
     </main>
 
-    <div class="member-detail" id="member-detail-profile" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="member-detail-title" data-member-detail inert>
+    <div class="member-detail" id="member-detail-profile" role="dialog" aria-modal="true" aria-hidden="true"
+        aria-labelledby="member-detail-title" data-member-detail inert>
         <article class="member-detail__card" role="document">
             <header class="member-detail__hero">
                 <span class="member-detail__avatar" aria-hidden="true" data-member-detail-avatar>WFS</span>
                 <div>
                     <p class="eyebrow" data-member-detail-role>Project Manager</p>
                     <h2 id="member-detail-title" data-member-detail-name>William Fransisco Sihotang</h2>
-                    <p data-member-detail-summary>Mahasiswa yang suka mengubah ide acak menjadi rencana yang rapi, senang berdiskusi, dan punya ketertarikan besar pada presentasi, visual, serta koordinasi tim.</p>
+                    <p data-member-detail-summary>Mahasiswa yang suka mengubah ide acak menjadi rencana yang rapi,
+                        senang berdiskusi, dan punya ketertarikan besar pada presentasi, visual, serta koordinasi tim.
+                    </p>
                 </div>
-                <button class="member-detail__close" type="button" aria-label="Tutup detail anggota" data-close-member-detail>&times;</button>
+                <button class="member-detail__close" type="button" aria-label="Tutup detail anggota"
+                    data-close-member-detail>&times;</button>
             </header>
             <div class="member-detail__body" data-member-detail-body>
                 <section class="member-detail__panel">
                     <h3>Tentang William</h3>
-                    <p>Tipe orang yang nyaman memimpin diskusi, membagi tugas, dan membuat suasana kerja tetap jelas. Lebih suka komunikasi yang langsung, terstruktur, dan tetap santai.</p>
+                    <p>Tipe orang yang nyaman memimpin diskusi, membagi tugas, dan membuat suasana kerja tetap jelas.
+                        Lebih suka komunikasi yang langsung, terstruktur, dan tetap santai.</p>
                 </section>
                 <section class="member-detail__panel">
                     <h3>Minat & Tools</h3>
@@ -1602,7 +1656,8 @@
     <footer class="footer">
         <div>
             <h2>CityZen</h2>
-            <p>Building the infrastructure for civic participation and sustainable urban development, one neighborhood at a time.</p>
+            <p>Building the infrastructure for civic participation and sustainable urban development, one neighborhood
+                at a time.</p>
             <small>&copy; 2026 CityZen Civic Tech</small>
         </div>
         <nav>
@@ -1689,13 +1744,14 @@
             '>': '&gt;',
             '"': '&quot;',
             "'": '&#39;',
-        }[char]));
+        } [char]));
         const splitDetailItems = (value = '', limit = 0) => String(value)
             .split('|')
             .map((item) => item.trim())
             .filter(Boolean)
             .slice(0, limit);
-        const padDetailItems = (items, length) => [...items, ...Array(Math.max(length - items.length, 0)).fill('')].slice(0, length);
+        const padDetailItems = (items, length) => [...items, ...Array(Math.max(length - items.length, 0)).fill('')].slice(0,
+            length);
         const buildEmptyMemberDetailBody = (card) => {
             const about = card.dataset.memberAbout || '';
             const interests = padDetailItems(splitDetailItems(card.dataset.memberInterests, 6), 6);
@@ -1725,9 +1781,9 @@
                         ${facts.map((item) => {
                             const [label = '', ...valueParts] = item.split(':');
                             return `<div class="member-detail__stat">
-                            <strong>${escapeDetailText(label.trim())}</strong>
-                            <span>${escapeDetailText(valueParts.join(':').trim())}</span>
-                        </div>`;
+                                        <strong>${escapeDetailText(label.trim())}</strong>
+                                        <span>${escapeDetailText(valueParts.join(':').trim())}</span>
+                                    </div>`;
                         }).join('')}
                     </div>
                 </section>`;
@@ -1742,12 +1798,23 @@
             const hasFullDetail = card.dataset.memberCard === 'project-manager';
 
             activeMemberCard = card;
-            if (memberDetailAvatar) memberDetailAvatar.textContent = card.dataset.memberAvatar || '';
+            if (memberDetailAvatar) {
+                if (card.dataset.memberPhoto) {
+                    memberDetailAvatar.style.overflow = 'hidden';
+                    memberDetailAvatar.innerHTML =
+                        `<img src="${card.dataset.memberPhoto}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+                } else {
+                    memberDetailAvatar.style.overflow = 'visible';
+                    memberDetailAvatar.innerHTML = '';
+                    memberDetailAvatar.textContent = card.dataset.memberAvatar || '';
+                }
+            }
             if (memberDetailRole) memberDetailRole.textContent = card.dataset.memberRole || 'Personal Profile';
             if (memberDetailName) memberDetailName.textContent = card.dataset.memberName || '';
             if (memberDetailSummary) memberDetailSummary.textContent = card.dataset.memberSummary || '';
             if (memberDetailBody) {
-                memberDetailBody.innerHTML = hasFullDetail ? projectManagerDetailBody : buildEmptyMemberDetailBody(card);
+                memberDetailBody.innerHTML = hasFullDetail ? projectManagerDetailBody : buildEmptyMemberDetailBody(
+                    card);
                 memberDetailBody.classList.remove('is-empty');
             }
             memberDetailCard?.classList.remove('is-head-only');
@@ -1808,4 +1875,5 @@
         });
     </script>
 </body>
+
 </html>
