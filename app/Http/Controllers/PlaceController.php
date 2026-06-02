@@ -68,4 +68,11 @@ class PlaceController extends Controller
 
     return redirect('/places')->with('status', 'Place berhasil diperbarui.');
     }
+
+    public function destroy(Place $place)
+    {
+    $place->delete();
+
+    return redirect('/places')->with('status', 'Place berhasil dihapus.');
+    }
 }
