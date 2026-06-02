@@ -1569,12 +1569,17 @@
                 </article>
                 
                 <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
-                    data-member-card="felix-desselo" data-member-avatar="FD"
+                    data-member-card="felix-desselo" data-member-photo="{{ asset('photo/Felix.jpeg') }}"
                     data-member-name="Felix Desselo Tambunan" data-member-role="UI/UX Designer"
-                    data-member-summary="Mahasiswa yang suka mengeksplorasi layout, visual hierarchy, dan pengalaman pengguna."
+                    data-member-summary="Mahasiswa yang fokus merancang tampilan, alur pengguna, dan pengalaman visual agar CityZen terasa jelas, nyaman, dan mudah digunakan."
+                    data-member-about="Berperan dalam merancang pengalaman pengguna CityZen mulai dari struktur halaman, alur interaksi, hingga detail visual. Fokus pada tampilan yang rapi, mudah dipahami, dan mendukung kebutuhan pengguna saat melaporkan masalah ruang publik. Senang mengubah ide awal menjadi desain yang lebih terarah dan siap dikembangkan."
+                    data-member-interests="UI Design|UX Flow|Wireframe|Visual Hierarchy|Canva|Figma"
+                    data-member-personality="Suka memperhatikan detail tampilan dan kerapian layout.|Senang mengeksplorasi warna, komposisi, dan visual hierarchy.|Berusaha membuat desain yang sederhana namun tetap informatif.|Terbuka dengan masukan agar desain lebih nyaman digunakan."
+                    data-member-facts="Role: UI/UX Designer|Focus: User Flow &amp; Visual Design|Strength: Layout &amp; Presentation|Goal: Make CityZen easy to use"
                     aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
                     aria-label="Buka detail Felix Desselo Tambunan, UI/UX Designer">
-                    <span class="avatar">FD</span>
+                    <img src="{{ asset('photo/Felix.jpeg') }}" alt="Felix Desselo Tambunan" class="avatar" style="object-fit: cover;">
+                    
                     <h3>Felix Desselo Tambunan</h3>
                     <p>UI/UX Designer</p>
                 </article>
