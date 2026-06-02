@@ -43,4 +43,29 @@ class PlaceController extends Controller
 
         return redirect('/places')->with('status', 'Place berhasil ditambahkan.');
     }
+
+    public function edit(Place $place)
+    {
+    $categories = Category::orderBy('name')->get();
+
+    return view('places.edit', compact('place', 'categories'));
+    }
+
+    public function update(Request $request, Place $place)
+    {
+    $data = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'category_id' => ['required', 'exists:categories,id'],
+        'short_description' => ['nullable', 'string', 'max:255'],
+        'description' => ['required', 'string'],
+        'address' => ['required', 'string', 'max:255'],
+        'city' => ['required', 'string', 'max:100'],
+        'province' => ['nullable', 'string', 'max:100'],
+        'google_maps_url' => ['nullable', 'url', 'max:255'],
+    ]);
+
+    $place->update($data);
+
+    return redirect('/places')->with('status', 'Place berhasil diperbarui.');
+    }
 }
