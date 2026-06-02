@@ -1,3 +1,4 @@
+
 @php
     $user = session('cityzen_user', ['name' => 'CityZen User', 'email' => 'member@cityzen.local']);
 @endphp
@@ -321,60 +322,91 @@
         </aside>
 
         <section class="side-stack">
-            <article class="form-card">
-                <p class="eyebrow">New report</p>
-                <h2>Report details</h2>
-                <p>Keep the information practical and specific so the next contributor understands the context.</p>
+        <article class="form-card">
+            <p class="eyebrow">New place</p>
+            <h2>Place details</h2>
+            <p>Isi data tempat publik yang ingin ditambahkan ke CityZen.</p>
 
-                <form method="POST" action="{{ url('/places') }}">
-                    @csrf
-                    <div class="field">
-                        <label for="place_name">Place name</label>
-                        <input id="place_name" name="place_name" type="text" value="{{ old('place_name') }}" placeholder="Example: Lapangan Merdeka" required>
-                        @error('place_name')
-                            <span class="error">{{ $message }}</span>
-                        @enderror
-                    </div>
+            <form method="POST" action="{{ url('/places') }}">
+            @csrf
 
-                    <div class="field">
-                        <label for="category">Category</label>
-                        <select id="category" name="category" required>
-                            @foreach (['Park', 'Square', 'Transit', 'Campus', 'Street', 'Garden'] as $category)
-                                <option value="{{ $category }}" @selected(old('category') === $category)>{{ $category }}</option>
-                            @endforeach
-                        </select>
-                        @error('category')
-                            <span class="error">{{ $message }}</span>
-                        @enderror
-                    </div>
+            <div class="field">
+            <label for="name">Nama Place</label>
+            <input id="name" name="name" type="text" value="{{ old('name') }}" placeholder="Example: Lapangan Merdeka" required>
+            @error('name')
+                <span class="error">{{ $message }}</span>
+            @enderror
+            </div>
 
-                    <div class="field">
-                        <label for="issue">Issue type</label>
-                        <input id="issue" name="issue" type="text" value="{{ old('issue') }}" placeholder="Broken lighting, accessibility, cleanliness" required>
-                        @error('issue')
-                            <span class="error">{{ $message }}</span>
-                        @enderror
-                    </div>
+            <div class="field">
+            <label for="category_id">Kategori</label>
+            <select id="category_id" name="category_id" required>
+            <option value="">Pilih kategori</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
+                {{ $category->name }}
+                </option>
+            @endforeach
+            </select>
+            @error('category_id')
+                <span class="error">{{ $message }}</span>
+            @enderror
+            </div>
 
-                    <div class="field">
-                        <label for="description">Description</label>
-                        <textarea id="description" name="description" placeholder="Describe the condition, location detail, and why it matters." required>{{ old('description') }}</textarea>
-                        @error('description')
-                            <span class="error">{{ $message }}</span>
-                        @enderror
-                    </div>
+            <div class="field">
+                <label for="short_description">Deskripsi Singkat</label>
+                <input id="short_description" name="short_description" type="text" value="{{ old('short_description') }}" placeholder="Contoh: Taman kota dengan area duduk dan jalur pejalan kaki">
+                @error('short_description')
+                    <span class="error">{{ $message }}</span>
+                @enderror
+            </div>
 
-                    <div class="upload">
-                        <strong>Photo upload placeholder</strong>
-                        <p>Image attachment can be connected to database storage after the reporting flow is approved.</p>
-                    </div>
+            <div class="field">
+                <label for="description">Deskripsi</label>
+                <textarea id="description" name="description" placeholder="Jelaskan kondisi tempat, fasilitas, dan alasan tempat ini penting." required>{{ old('description') }}</textarea>
+                @error('description')
+                    <span class="error">{{ $message }}</span>
+                @enderror
+            </div>
 
-                    <div class="actions">
-                        <a class="button button--secondary" href="{{ url('/dashboard') }}">Cancel</a>
-                        <button class="button button--primary" type="submit">Save Report Draft</button>
-                    </div>
-                </form>
-            </article>
+            <div class="field">
+            <label for="address">Alamat</label>
+            <input id="address" name="address" type="text" value="{{ old('address') }}" placeholder="Contoh: Jl. Merdeka No. 10" required>
+            @error('address')
+                <span class="error">{{ $message }}</span>
+            @enderror
+            </div>
+
+            <div class="field">
+            <label for="city">Kota</label>
+            <input id="city" name="city" type="text" value="{{ old('city') }}" placeholder="Contoh: Medan" required>
+            @error('city')
+                <span class="error">{{ $message }}</span>
+            @enderror
+            </div>
+
+            <div class="field">
+            <label for="province">Provinsi</label>
+            <input id="province" name="province" type="text" value="{{ old('province') }}" placeholder="Contoh: Sumatera Utara">
+            @error('province')
+                <span class="error">{{ $message }}</span>
+            @enderror
+            </div>
+
+            <div class="field">
+            <label for="google_maps_url">Google Maps URL</label>
+            <input id="google_maps_url" name="google_maps_url" type="text" value="{{ old('google_maps_url') }}" placeholder="https://maps.google.com/...">
+            @error('google_maps_url')
+                <span class="error">{{ $message }}</span>
+            @enderror
+            </div>
+
+            <div class="actions">
+            <a class="button button--secondary" href="{{ url('/places') }}">Cancel</a>
+            <button class="button button--primary" type="submit">Simpan Place</button>
+            </div>
+            </form>
+        </article>
 
             <article class="map-card" aria-label="Location preview">
                 <p class="eyebrow">Location preview</p>
