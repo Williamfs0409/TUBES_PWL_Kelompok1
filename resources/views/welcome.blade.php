@@ -1538,7 +1538,7 @@
                 </article>
                 <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
                     data-member-card="ainuha-suraiya"
-                    data-member-photo="{{ asset('photo/Ainuha.jpeg') }}" //*data-member-avatar="AS" 
+                    data-member-photo="{{ asset('photo/Ainuha.jpeg') }}" 
                     data-member-name="Ainuha Suraiya"
                     data-member-role="Frontend Developer"
                     data-member-summary="Mahasiswa dengan minat pada tampilan web yang bersih, responsif, dan nyaman dipakai."
