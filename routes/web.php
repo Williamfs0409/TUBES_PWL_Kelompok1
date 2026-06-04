@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +19,39 @@ Route::get('/login', function (Request $request) {
 
     return view('auth.cityzen', ['mode' => 'login']);
 })->name('login');
+
+Route::post('/places/{place}/report', function (
+    \Illuminate\Http\Request $request,
+    \App\Models\Place $place
+) {
+    if (! session('cityzen_user')) {
+        return redirect('/login');
+    }
+
+    $validated = $request->validate([
+        'report_category_id' => ['required', 'exists:report_categories,id'],
+        'description' => ['required', 'string', 'max:800'],
+    ]);
+
+    $pendingStatus = \App\Models\ReportStatus::firstOrCreate(
+        ['slug' => 'pending'],
+        [
+            'name' => 'Pending',
+            'description' => 'Menunggu verifikasi admin',
+        ]
+    );
+
+    \App\Models\Report::create([
+        'user_id' => session('cityzen_user.id'),
+        'place_id' => $place->id,
+        'report_category_id' => $validated['report_category_id'],
+        'report_status_id' => $pendingStatus->id,
+        'description' => $validated['description'],
+    ]);
+
+    return redirect('/dashboard')
+        ->with('success', 'Laporan berhasil dikirim.');
+})->name('reports.store');
 
 Route::post('/login', function (Request $request) {
     $credentials = $request->validate([
@@ -182,6 +215,17 @@ Route::get('/dashboard', function (Request $request) {
         'trends' => $trends,
     ]);
 });
+Route::get('/places/{place}/report', function (\App\Models\Place $place) {
+    if (! session('cityzen_user')) {
+        return redirect('/login');
+    }
+
+    $categories = \App\Models\Category::where('is_active', true)
+    ->orderBy('sort_order')
+    ->get();
+
+    return view('places.create', compact('categories'));
+})->name('reports.create');
 
 Route::get('/explore', function (Request $request) {
     if (! $request->session()->has('cityzen_user')) {
@@ -265,6 +309,26 @@ Route::get('/explore', function (Request $request) {
     ]);
 });
 
+Route::get('/admin/reports', function () {
+    if (! session('cityzen_user')) {
+        return redirect('/login');
+    }
+
+    $reports = \App\Models\Report::with(['place', 'category', 'status'])
+        ->latest()
+        ->get();
+
+    $statuses = \App\Models\ReportStatus::orderBy('name')->get();
+
+    return view('admin.reports.index', compact('reports', 'statuses'));
+})->name('admin.reports');
+
+Route::post('/admin/reports/{report}/status', function (\Illuminate\Http\Request $request, \App\Models\Report $report) {
+    if (! session('cityzen_user')) {
+=======
+Route::post('/places/{place}/like', function (\App\Models\Place $place) {
+    $userId = session('cityzen_user.id');
+=======
 Route::post('/places/{place}/like', function (Request $request, int $place) {
     $userId = $request->session()->get('cityzen_user.id');
 
@@ -343,10 +407,31 @@ Route::post('/places/{place}/review', function (Request $request, int $place) {
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
+      
+        return redirect('/login');
+    }
+
+    $validated = $request->validate([
+        'report_status_id' => ['required', 'exists:report_statuses,id'],
+        'admin_note' => ['nullable', 'string', 'max:500'],
+    ]);
+
+    $report->update([
+        'report_status_id' => $validated['report_status_id'],
+        'admin_note' => $validated['admin_note'] ?? null,
+        'verified_by' => session('cityzen_user.id'),
+        'verified_at' => now(),
+    ]);
+
+    return back()->with('success', 'Status laporan berhasil diperbarui.');
+})->name('admin.reports.status');
+=======
+=======
         return redirect('/login')->with('notice', 'Please login to review a place.');
     }
 
     $data = $request->validate([
+
         'rating' => ['required', 'integer', 'min:1', 'max:5'],
         'review' => ['nullable', 'string', 'max:500'],
     ]);
