@@ -82,10 +82,13 @@
                             <div><dt>Reports</dt><dd>{{ $place['reports'] }}</dd></div>
                         </dl>
                         <div class="cz-dash-card-actions">
-                            <button type="button" data-like-place>Like</button>
-                            <button type="button" data-bookmark-place>Bookmark</button>
-                            <button type="button" data-report-place>Report</button>
-                        </div>
+                        <button type="button" data-like-place>Like</button>
+                        <button type="button" data-bookmark-place>Bookmark</button>
+
+                        <a href="{{ route('reports.create', 1) }}" class="cz-dash-report-btn">
+                            Report
+                        </a>
+                    </div>
                     </div>
                 </article>
             @endforeach
