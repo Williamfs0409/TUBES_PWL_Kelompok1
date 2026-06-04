@@ -54,6 +54,10 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c1.6-4 14.4-4 16 0" /></svg>
                     <span>Profile</span>
                 </a>
+                <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
+                    <span>Admin</span>
+                </a>
             </nav>
 
             <div class="cz-dash-sidebar-bottom">
