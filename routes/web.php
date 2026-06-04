@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlaceController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,7 +14,6 @@ Route::get('/login', function (Request $request) {
     if ($request->session()->has('cityzen_user')) {
         return redirect('/dashboard');
     }
-
     return view('auth.cityzen', ['mode' => 'login']);
 })->name('login');
 
@@ -22,9 +23,20 @@ Route::post('/login', function (Request $request) {
         'password' => ['required', 'min:4'],
     ]);
 
+    $user = User::where('email', $credentials['email'])->first();
+
+    if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+        return back()
+            ->withErrors([
+                'email' => 'Email atau password salah.',
+            ])
+            ->onlyInput('email');
+    }
+
     $request->session()->put('cityzen_user', [
-        'name' => str($credentials['email'])->before('@')->headline()->toString(),
-        'email' => $credentials['email'],
+        'id' => $user->id,
+        'name' => $user->name,
+        'email' => $user->email,
     ]);
 
     $request->session()->regenerate();
@@ -43,13 +55,20 @@ Route::get('/register', function (Request $request) {
 Route::post('/register', function (Request $request) {
     $data = $request->validate([
         'name' => ['required', 'string', 'max:80'],
-        'email' => ['required', 'email'],
+        'email' => ['required', 'email', 'unique:users,email'],
         'password' => ['required', 'min:4'],
     ]);
 
-    $request->session()->put('cityzen_user', [
+    $user = User::create([
         'name' => $data['name'],
         'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+    ]);
+
+    $request->session()->put('cityzen_user', [
+        'id' => $user->id,
+        'name' => $user->name,
+        'email' => $user->email,
     ]);
 
     $request->session()->regenerate();
