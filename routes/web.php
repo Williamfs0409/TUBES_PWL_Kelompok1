@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -114,7 +114,13 @@ Route::get('/dashboard', function (Request $request) {
         return redirect('/login')->with('notice', 'Please login to open the CityZen dashboard.');
     }
 
-    return view('dashboard');
+    $places = \App\Models\Place::with(['category', 'user'])
+    ->withCount(['likes', 'bookmarks', 'reviews'])
+    ->withAvg('reviews', 'rating')
+    ->latest()
+    ->get();
+
+    return view('dashboard', compact('places')  );
 });
 
 Route::resource('places', PlaceController::class);
@@ -162,6 +168,58 @@ Route::get('/admin/reports', function () {
 
 Route::post('/admin/reports/{report}/status', function (\Illuminate\Http\Request $request, \App\Models\Report $report) {
     if (! session('cityzen_user')) {
+=======
+Route::post('/places/{place}/like', function (\App\Models\Place $place) {
+    $userId = session('cityzen_user.id');
+
+    if (! $userId) {
+        return redirect('/login');
+    }
+
+    $existingLike = \App\Models\Like::where('user_id', $userId)
+        ->where('place_id', $place->id)
+        ->first();
+
+    if ($existingLike) {
+        $existingLike->delete();
+    } else {
+        \App\Models\Like::create([
+            'user_id' => $userId,
+            'place_id' => $place->id,
+        ]);
+    }
+
+    return back();
+})->name('places.like');
+
+Route::post('/places/{place}/bookmark', function (\App\Models\Place $place) {
+    $userId = session('cityzen_user.id');
+
+    if (! $userId) {
+        return redirect('/login');
+    }
+
+    $existingBookmark = \App\Models\Bookmark::where('user_id', $userId)
+        ->where('place_id', $place->id)
+        ->first();
+
+    if ($existingBookmark) {
+        $existingBookmark->delete();
+    } else {
+        \App\Models\Bookmark::create([
+            'user_id' => $userId,
+            'place_id' => $place->id,
+        ]);
+    }
+
+    return back();
+})->name('places.bookmark');
+
+Route::post('/places/{place}/review', function (\Illuminate\Http\Request $request, \App\Models\Place $place) {
+    $userId = session('cityzen_user.id');
+
+    if (! $userId) {
+
         return redirect('/login');
     }
 
@@ -179,3 +237,19 @@ Route::post('/admin/reports/{report}/status', function (\Illuminate\Http\Request
 
     return back()->with('success', 'Status laporan berhasil diperbarui.');
 })->name('admin.reports.status');
+=======
+        'rating' => ['required', 'integer', 'min:1', 'max:5'],
+        'review' => ['nullable', 'string', 'max:500'],
+    ]);
+
+    \App\Models\Review::updateOrCreate(
+        [
+            'user_id' => $userId,
+            'place_id' => $place->id,
+        ],
+        $validated
+    );
+
+    return back();
+})->name('places.review');
+
