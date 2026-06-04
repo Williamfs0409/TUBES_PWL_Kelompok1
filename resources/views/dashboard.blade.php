@@ -17,112 +17,6 @@
 >
     @php
         $user = session('cityzen_user', ['name' => 'CityZen User', 'email' => 'member@cityzen.local']);
-        $places = [
-            ['title' => 'Central Park Commons', 'location' => 'Menteng, Jakarta', 'image' => 'central-park.jpg', 'status' => 'Open space', 'score' => '94', 'reports' => '128', 'tag' => 'Low emission'],
-            ['title' => 'Eco Zen Garden', 'location' => 'Ciumbuleuit, Bandung', 'image' => 'eco-zen.jpg', 'status' => 'Community garden', 'score' => '91', 'reports' => '86', 'tag' => 'Urban farming'],
-            ['title' => 'Riverfront Walk', 'location' => 'Kali Code, Yogyakarta', 'image' => 'riverfront.jpg', 'status' => 'Waterfront', 'score' => '88', 'reports' => '74', 'tag' => 'Clean river'],
-            ['title' => 'Skyline Greens', 'location' => 'BSD City, Tangerang', 'image' => 'skyline-greens.jpg', 'status' => 'Green corridor', 'score' => '90', 'reports' => '103', 'tag' => 'Walkable'],
-            ['title' => 'Solar Loop Plaza', 'location' => 'Sudirman, Jakarta', 'image' => 'solar-loop.jpg', 'status' => 'Transit plaza', 'score' => '86', 'reports' => '64', 'tag' => 'Solar powered'],
-            ['title' => 'Urban Canopy Hub', 'location' => 'Tunjungan, Surabaya', 'image' => 'urban-canopy.jpg', 'status' => 'Shade network', 'score' => '89', 'reports' => '97', 'tag' => 'Heat relief'],
-        ];
-    @endphp
-
-    <aside class="cz-dash-sidebar" aria-label="Dashboard navigation">
-        <a class="cz-dash-brand" href="{{ url('/') }}">CityZen</a>
-        <nav>
-            <a class="is-active" href="#overview">Overview</a>
-            <a href="#places">Places</a>
-            <a href="#reports">Reports</a>
-            <a href="#trending">Trending</a>
-            <a href="{{ url('/profile') }}">Profile</a>
-        </nav>
-        <form method="POST" action="{{ url('/logout') }}">
-            @csrf
-            <button class="cz-dash-logout" type="submit">Logout</button>
-        </form>
-    </aside>
-
-    <main class="cz-dash-main">
-        <header class="cz-dash-header" id="overview">
-            <div>
-                <p>Welcome back, {{ $user['name'] }}</p>
-                <h1>Your sustainable city dashboard.</h1>
-            </div>
-            <a class="cz-dash-new-report" href="{{ url('/places/create') }}">New Report</a>
-        </header>
-
-        <section class="cz-dash-stats" aria-label="CityZen stats">
-            <article><span>Places watched</span><strong>24</strong></article>
-            <article><span>Reports sent</span><strong>12</strong></article>
-            <article><span>Impact score</span><strong>91%</strong></article>
-        </section>
-
-        <section class="cz-dash-toolbar" id="places">
-            <div>
-                <h2>Explore public spaces</h2>
-                <p>Track parks, plazas, and corridors shaped by citizen reports.</p>
-            </div>
-            <label class="cz-dash-search">
-                <span>Search</span>
-                <input type="search" placeholder="Search place or city" data-dashboard-search>
-            </label>
-        </section>
-
-        <section class="cz-dash-grid" aria-live="polite">
-            @foreach ($places as $place)
-                <article class="cz-dash-place-card" data-place-card data-title="{{ strtolower($place['title'].' '.$place['location'].' '.$place['tag']) }}">
-                    <img src="{{ asset('cityzen-dashboard/'.$place['image']) }}" alt="{{ $place['title'] }}">
-                    <div class="cz-dash-place-body">
-                        <div>
-                            <span>{{ $place['status'] }}</span>
-                            <h3>{{ $place['title'] }}</h3>
-                            <p>{{ $place['location'] }}</p>
-                        </div>
-                        <dl>
-                            <div><dt>Score</dt><dd>{{ $place['score'] }}</dd></div>
-                            <div><dt>Reports</dt><dd>{{ $place['reports'] }}</dd></div>
-                        </dl>
-                        <div class="cz-dash-card-actions">
-                        <button type="button" data-like-place>Like</button>
-                        <button type="button" data-bookmark-place>Bookmark</button>
-
-                        <a href="{{ route('reports.create', 1) }}" class="cz-dash-report-btn">
-                            Report
-                        </a>
-                    </div>
-
-    <!DOCTYPE html>
-    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>CityZen Dashboard</title>
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=hanken-grotesk:700,800|inter:400,500,600,700,800,900" rel="stylesheet" />
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body
-        class="cz-dashboard-page"
-        data-dashboard-awal
-        data-dashboard-flash="{{ session('status') }}"
-        data-report-url="{{ url('/places/create') }}"
-    >
-        @php
-            $user = session('cityzen_user', [
-                'name' => 'CityZen User',
-                'email' => 'member@cityzen.local'
-            ]);
-        @endphp
-
-        <aside class="cz-dash-sidebar" aria-label="Dashboard navigation">
-            <a class="cz-dash-brand" href="{{ url('/') }}">CityZen</a>
-            <nav>
-                <a class="is-active" href="#overview">Overview</a>
-                <a href="#places">Places</a>
-                <a href="#reports">Reports</a>
-                <a href="#trending">Trending</a>
-                <a href="{{ url('/profile') }}">Profile</a>
-
         $nameParts = collect(explode(' ', trim($user['name'] ?? 'CityZen User')))->filter()->values();
         $initials = $nameParts->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode('') ?: 'CZ';
         $handle = '@'.str(str($user['email'] ?? 'member@cityzen.local')->before('@'))->replace(['.', '_', '-'], ' ')->slug('_');
@@ -154,11 +48,11 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 8.5-2.1 5.9-5.9 2.1 2.1-5.9 5.9-2.1Z" /><circle cx="12" cy="12" r="9" /></svg>
                     <span>Explore</span>
                 </a>
-                <a class="cz-dash-nav-link" href="#notifications">
+                <a class="cz-dash-nav-link" href="{{ url('/notifications') }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" /><path d="M10 20a2 2 0 0 0 4 0" /></svg>
                     <span>Notifications</span>
                 </a>
-                <a class="cz-dash-nav-link" href="#bookmarks">
+                <a class="cz-dash-nav-link" href="{{ url('/bookmarks') }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" /></svg>
                     <span>Bookmarks</span>
                 </a>
@@ -166,19 +60,15 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c1.6-4 14.4-4 16 0" /></svg>
                     <span>Profile</span>
                 </a>
-                <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
-                    <span>Admin</span>
-                </a>
-
+                @if ($isAdmin ?? false)
+                    <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
+                        <span>Admin</span>
+                    </a>
+                @endif
             </nav>
 
             <div class="cz-dash-sidebar-bottom">
-                <a class="cz-dash-report-button" href="{{ url('/places/create') }}">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v3a2 2 0 0 0 2 2h2l4 4v-4h3l7 3V6l-7 3H5a2 2 0 0 0-2 2Z" /><path d="M14 9v7" /></svg>
-                    <span>Report</span>
-                </a>
-
                 <div class="cz-dash-user-card">
                     <span class="cz-dash-avatar">{{ $initials }}</span>
                     <span class="cz-dash-user-copy">
@@ -228,59 +118,6 @@
                     </div>
                 </div>
             </section>
-
-            <section class="cz-dash-grid" aria-live="polite">
-                @foreach ($places as $place)
-                    <article class="cz-dash-place-card" data-place-card data-title="{{ strtolower($place->name.' '.$place->city.' '.optional($place->category)->name) }}">
-                        @if($place->image)
-                            <img
-                                src="{{ $place->image ? asset('cityzen-dashboard/'.$place->image) : asset('cityzen-dashboard/default.jpg') }}"
-                                alt="{{ $place->name }}"
-                            >
-                        @else
-                            <img src="{{ asset('cityzen-dashboard/default.jpg') }}" alt="Default Image">
-                        @endif
-                        <div class="cz-dash-place-body">
-                            <div>
-                                <span>{{ $place->status }}</span>
-
-                                <h3>
-                                    {{ $place->name }}
-                                    <span class="place-rating">
-                                          {{ number_format($place->average_rating ?? 0, 1) }}
-                                    </span>
-                                </h3>
-
-                                <p>{{ $place->city }}, {{ $place->province }}</p>
-                            </div>
-                            <dl>
-                                <div>
-                                    <dt>Likes</dt>
-                                    <dd>{{ $place->likes_count }}</dd>
-                                </div>
-
-                                <div>
-                                    <dt>Bookmarks</dt>
-                                    <dd>{{ $place->bookmarks_count }}</dd>
-                                </div>
-
-                                <div>
-                                    <dt>Reviews</dt>
-                                    <dd>{{ $place->reviews_count }}</dd>
-                                </div>
-
-                                <div>
-                                    <dt>Rating</dt>
-                                    <dd>{{ number_format($place->average_rating, 1) }}</dd>
-                                </div>
-
-                                <div>
-                                    <dt>Reports</dt>
-                                    <dd>{{ $place->reports_count }}</dd>
-                                </div>
-                            </dl>
-                            <div class="cz-dash-card-actions">
-                                <form method="POST" action="{{ route('places.like', $place) }}">
 
             <section class="cz-dash-post-list" id="explore" aria-label="CityZen feed">
                 @forelse ($feedPosts as $post)
@@ -353,35 +190,12 @@
                 @empty
                     <article class="cz-dash-empty" data-feed-post data-title="">
                         <h2>Belum ada ruang publik di database.</h2>
-                        <p>Data feed akan muncul otomatis setelah tabel places terisi. Mulai dari tombol Report untuk menambahkan kontribusi pertama.</p>
+                        <p>Data feed akan muncul otomatis setelah tabel places terisi. Mulai dari tombol Post untuk menambahkan kontribusi pertama.</p>
                         <a href="{{ url('/places/create') }}">Tambah data pertama</a>
                     </article>
                 @endforelse
             </section>
         </main>
-
-            <section class="cz-dash-bottom" id="reports">
-                <article class="cz-dash-panel">
-                    <h2>Recent report actions</h2>
-                    @if (session('cityzen_last_report'))
-                        <p class="cz-dash-report-note">
-                            Last draft: {{ session('cityzen_last_report.place_name') }} &middot;
-                            {{ session('cityzen_last_report.issue') }}
-                        </p>
-                    @endif
-                    <div class="cz-dash-report-list">
-                        <button type="button" data-report-action="air quality">Air quality check</button>
-                        <button type="button" data-report-action="broken lighting">Broken lighting</button>
-                        <button type="button" data-report-action="tree canopy">Tree canopy request</button>
-
-                    </div>
-                </article>
-                <article class="cz-dash-trending" id="trending">
-                    <h2>Trending now</h2>
-                    <button type="button" data-trending-place="Riverfront Walk">Riverfront Walk cleanup</button>
-                    <button type="button" data-trending-place="Solar Loop Plaza">Solar Loop weekend market</button>
-                    <button type="button" data-trending-place="Urban Canopy Hub">Urban Canopy cooling route</button>
-                </article>
 
         <aside class="cz-dash-right-rail" id="notifications" aria-label="Dashboard side panel">
             <label class="cz-dash-search">

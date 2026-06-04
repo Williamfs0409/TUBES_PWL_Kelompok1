@@ -733,7 +733,9 @@
 .cz-form-grid button,
 .cz-form-grid button *,
 .cz-admin-report-card button,
-.cz-admin-report-card button * {
+.cz-admin-report-card button *,
+.cz-profile-button--primary,
+.cz-profile-button--primary * {
     color: #ffffff;
 }
 
@@ -1417,6 +1419,185 @@
     grid-template-columns: 150px minmax(0, 1fr) auto;
 }
 
+.cz-list-page .cz-dash-shell {
+    grid-template-columns: 275px minmax(0, 920px);
+    max-width: 1195px;
+}
+
+.cz-list-main {
+    min-height: 100vh;
+    padding: 28px 34px 56px;
+}
+
+.cz-list-header {
+    align-items: end;
+    display: flex;
+    gap: 18px;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.cz-list-header h1 {
+    font-size: clamp(34px, 5vw, 60px);
+    line-height: 0.95;
+    margin: 0;
+}
+
+.cz-list-header p {
+    color: var(--cz-muted);
+    font-size: 18px;
+    line-height: 1.55;
+    margin: 8px 0 0;
+    max-width: 620px;
+}
+
+.cz-list-stack {
+    display: grid;
+    gap: 14px;
+}
+
+.cz-list-card {
+    align-items: center;
+    background: color-mix(in srgb, var(--cz-surface) 88%, var(--cz-raised));
+    border: 1px solid var(--cz-line);
+    border-radius: 20px;
+    box-shadow: var(--cz-card-shadow);
+    color: var(--cz-ink);
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 54px minmax(0, 1fr) auto;
+    padding: 18px;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.cz-list-card:hover {
+    border-color: var(--cz-accent);
+    box-shadow: var(--cz-button-glow);
+    transform: translateY(-2px);
+}
+
+.cz-list-card.is-unread {
+    background: color-mix(in srgb, var(--cz-accent-soft) 62%, var(--cz-surface));
+}
+
+.cz-list-icon {
+    align-items: center;
+    background: var(--cz-accent);
+    border: 1px solid var(--cz-ink);
+    border-radius: 18px;
+    color: #ffffff;
+    display: inline-flex;
+    height: 54px;
+    justify-content: center;
+    width: 54px;
+}
+
+.cz-list-icon svg,
+.cz-list-icon * {
+    color: #ffffff;
+    stroke: currentColor;
+}
+
+.cz-list-icon svg {
+    fill: none;
+    height: 24px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    width: 24px;
+}
+
+.cz-list-copy {
+    min-width: 0;
+}
+
+.cz-list-eyebrow {
+    color: var(--cz-accent);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.cz-list-title {
+    font-size: 22px;
+    font-weight: 900;
+    margin: 0;
+}
+
+.cz-list-meta {
+    color: var(--cz-muted);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 6px 0 0;
+}
+
+.cz-list-action {
+    align-items: center;
+    background: var(--cz-accent);
+    border: 1px solid var(--cz-ink);
+    border-radius: 999px;
+    color: #ffffff;
+    display: inline-flex;
+    font-weight: 900;
+    gap: 8px;
+    min-height: 42px;
+    padding: 0 18px;
+    text-decoration: none;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+    white-space: nowrap;
+}
+
+.cz-list-action:hover {
+    box-shadow: var(--cz-button-glow);
+    transform: translateY(-2px);
+}
+
+.cz-list-action,
+.cz-list-action * {
+    color: #ffffff;
+}
+
+.cz-list-empty {
+    background: color-mix(in srgb, var(--cz-accent-soft) 54%, var(--cz-surface));
+    border: 1px solid var(--cz-line);
+    border-radius: 24px;
+    box-shadow: var(--cz-card-shadow);
+    padding: 34px;
+}
+
+.cz-list-empty h2 {
+    font-size: clamp(28px, 4vw, 46px);
+    line-height: 1;
+    margin: 0 0 12px;
+}
+
+.cz-list-empty p {
+    color: var(--cz-muted);
+    font-size: 18px;
+    line-height: 1.55;
+    margin: 0 0 18px;
+    max-width: 680px;
+}
+
+.cz-list-empty a {
+    background: var(--cz-accent);
+    border: 1px solid var(--cz-ink);
+    border-radius: 999px;
+    color: #ffffff;
+    display: inline-flex;
+    font-weight: 900;
+    min-height: 44px;
+    padding: 0 18px;
+    text-decoration: none;
+}
+
+.cz-list-empty a,
+.cz-list-empty a * {
+    color: #ffffff;
+}
+
 .sr-only {
     clip: rect(0, 0, 0, 0);
     border: 0;
@@ -1500,9 +1681,23 @@
     }
 
     .cz-profile-page .cz-dash-shell,
+    .cz-list-page .cz-dash-shell,
     .cz-profile-grid,
     .cz-profile-hero {
         grid-template-columns: 1fr;
+    }
+
+    .cz-list-main {
+        padding: 22px 18px 40px;
+    }
+
+    .cz-list-card {
+        grid-template-columns: 46px minmax(0, 1fr);
+    }
+
+    .cz-list-action {
+        grid-column: 2;
+        justify-content: center;
     }
 }
 
@@ -1552,6 +1747,19 @@
 
     .cz-explore-searchbar {
         grid-template-columns: 1fr;
+    }
+
+    .cz-list-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .cz-list-card {
+        grid-template-columns: 1fr;
+    }
+
+    .cz-list-action {
+        grid-column: auto;
     }
 
 }
