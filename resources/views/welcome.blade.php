@@ -432,11 +432,20 @@
 
         .mockup {
             aspect-ratio: 16 / 10;
-            display: grid;
-            gap: 14px;
-            overflow: hidden;
-            padding: 20px;
+            display: block;
+            background-color: #ffffff;
+            padding: 16px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
             position: relative;
+        }
+
+        .mockup img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px;
         }
 
         .mockup::after {
@@ -664,6 +673,14 @@
             border-radius: 18px;
             height: 140px;
             margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .gallery-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .team-grid {
@@ -1416,27 +1433,7 @@
                 </ul>
             </div>
             <div class="mockup reveal" data-reveal aria-label="CityZen civic activity preview">
-                <div class="mockup-row">
-                    <div class="mockup-thumb"></div>
-                    <div>
-                        <div class="mockup-line" style="width: 74%"></div>
-                        <div class="mockup-line" style="width: 48%"></div>
-                    </div>
-                </div>
-                <div class="mockup-row">
-                    <div class="mockup-thumb"></div>
-                    <div>
-                        <div class="mockup-line" style="width: 62%"></div>
-                        <div class="mockup-line" style="width: 82%"></div>
-                    </div>
-                </div>
-                <div class="mockup-row">
-                    <div class="mockup-thumb"></div>
-                    <div>
-                        <div class="mockup-line" style="width: 84%"></div>
-                        <div class="mockup-line" style="width: 36%"></div>
-                    </div>
-                </div>
+                <img src="/photo/foto(1).png">
             </div>
         </section>
 
@@ -1502,17 +1499,23 @@
             </div>
             <div class="gallery">
                 <article class="gallery-card reveal" data-reveal>
-                    <div class="gallery-art"></div>
-                    <h3>Lapangan Merdeka</h3>
-                    <span>Medan, Indonesia</span>
+                    <div class="gallery-art">
+                        <img src="https://awsimages.detik.net.id/community/media/visual/2025/02/20/wajah-baru-lapangan-merdeka-medan-1740021678016_169.jpeg?w=700&q=90" alt="Lapangan Merdeka Medan">
+                    </div>
+                        <h3>Lapangan Merdeka</h3>
+                        <span>Medan, Indonesia</span>
                 </article>
                 <article class="gallery-card reveal" data-reveal>
-                    <div class="gallery-art"></div>
+                    <div class="gallery-art">
+                        <img src="https://1.bp.blogspot.com/-ZkHd5hWDpVM/XQ-Dk8Fn-II/AAAAAAAAAKs/qtuaGvylc0UlpZ3T_aR2g_hZHueQIfr5QCLcBGAs/s1600/IMG-20190308-WA0010.jpg" alt="">
+                    </div>
                     <h3>USU Roadwalk</h3>
                     <span>Medan, Indonesia</span>
                 </article>
                 <article class="gallery-card reveal" data-reveal>
-                    <div class="gallery-art"></div>
+                    <div class="gallery-art">
+                        <img src="https://tse1.mm.bing.net/th/id/OIP.YAhTDbDWYDCq486suxLJaQHaE8?cb=thfc1falcon&rs=1&pid=ImgDetMain&o=7&rm=3" alt="RingRoad City Walk Park">
+                    </div>
                     <h3>RingRoad City Walk Park</h3>
                     <span>Public space preview</span>
                 </article>
@@ -1538,11 +1541,11 @@
                 </article>
                 <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
                     data-member-card="ainuha-suraiya"
-                    data-member-photo="{{ asset('photo/Ainuha.jpeg') }}" 
+                    data-member-photo="{{ asset('photo/Ainuha.jpeg') }}"
                     data-member-name="Ainuha Suraiya"
                     data-member-role="Frontend Developer"
                     data-member-summary="Mahasiswa dengan minat pada tampilan web yang bersih, responsif, dan nyaman dipakai."
-                    data-member-about="Tipe orang yang senang mengubah ide menjadi tampilan yang bisa dilihat dan digunakan langsung. Punya ketertarikan pada desain, interaksi pengguna, dan bagaimana sebuah website dapat terasa nyaman saat digunakan. 
+                    data-member-about="Tipe orang yang senang mengubah ide menjadi tampilan yang bisa dilihat dan digunakan langsung. Punya ketertarikan pada desain, interaksi pengguna, dan bagaimana sebuah website dapat terasa nyaman saat digunakan.
                         Di tim, bertugas membangun tampilan CityZen agar responsif, intuitif, dan mudah dipahami. Percaya bahwa pengalaman pengguna yang baik dapat membuat sebuah sistem menjadi lebih bermanfaat."
                     data-member-interests="HTML|CSS|JavaScript|UI/UX Design|Graphic Design|Canva"
                     data-member-personality="Suka mempelajari hal baru, terutama di bidang IT, bisnis, dan pengembangan digital.| Senang menggabungkan logika, kreativitas, dan pemecahan masalah dalam sebuah proyek.|
@@ -1557,7 +1560,7 @@
                 </article>
                 <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card data-member-card="Chyntia Hutabarat" data-member-avatar="CH" data-member-name="Chyntia Rachel Anandita Hutabarat" data-member-role="BackendDeveloper" data-member-summary="Mahasiswa semester 2 yang tertarik mengeksplorasi kode web." data-member-about="Mahasiswa semester 2 yang tertarik dengan perpaduan antara logika pemrograman dan estetika visual. Sangat menikmati proses menerjemahkan ide menjadi struktur kode yang simpel dan mudah dimengerti, serta merancang visual mockup agar presentasi proyek terlihat lebih menarik."
                         data-member-card="Chyntia-Hutabarat" data-member-photo="{{ asset('photo/chyntia.jpg') }}"
-                        data-member-interests="SQL|Graphic Design|Time Management|Workout|Team Work|Canva"                            
+                        data-member-interests="SQL|Graphic Design|Time Management|Workout|Team Work|Canva"
                         data-member-personality="Suka membuat jadwal terstruktur untuk menyeimbangkan tugas kuliah, eksplorasi kode, dan latihan fisik mingguan.|Lebih menyukai pendekatan visual seperti animasi 2D yang simpel namun informatif dibandingkan desain realistis yang rumit.|Fleksibel dalam merencanakan pertemuan."
                         data-member-facts="Style: Simpel & Terstruktur|Mode: Terjadwal|Habit: Olahraga|Goal: Ahli Database"
                         aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog">
@@ -1567,7 +1570,7 @@
                     <h3>Chyntia Rachel Anandita Hutabarat</h3>
                     <p>Backend Developer</p>
                 </article>
-                
+
                 <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
                     data-member-card="felix-desselo" data-member-photo="{{ asset('photo/Felix.jpeg') }}"
                     data-member-name="Felix Desselo Tambunan" data-member-role="UI/UX Designer"
@@ -1579,7 +1582,7 @@
                     aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
                     aria-label="Buka detail Felix Desselo Tambunan, UI/UX Designer">
                     <img src="{{ asset('photo/Felix.jpeg') }}" alt="Felix Desselo Tambunan" class="avatar" style="object-fit: cover;">
-                    
+
                     <h3>Felix Desselo Tambunan</h3>
                     <p>UI/UX Designer</p>
                 </article>
