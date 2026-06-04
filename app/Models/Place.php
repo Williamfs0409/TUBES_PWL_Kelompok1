@@ -29,6 +29,16 @@ class Place extends Model
         'status',
     ];
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function likes()
     {
         return $this->hasMany(Like::class);
@@ -44,13 +54,8 @@ class Place extends Model
         return $this->hasMany(Review::class);
     }
 
-    public function category()
+    public function reports()
     {
-        return $this->belongsTo(Category::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Report::class);
     }
 }

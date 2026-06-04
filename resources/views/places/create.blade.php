@@ -86,6 +86,7 @@
 
         .button--primary {
             background: var(--lime);
+            color: #ffffff;
             box-shadow: 6px 6px 0 rgba(23, 32, 26, 0.12);
         }
 
