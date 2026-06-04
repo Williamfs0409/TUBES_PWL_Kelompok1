@@ -18,7 +18,9 @@ class PlaceController extends Controller
 
     public function create()
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
         return view('places.create', compact('categories'));
     }
@@ -36,13 +38,17 @@ class PlaceController extends Controller
             'google_maps_url' => ['nullable', 'url', 'max:255'],
         ]);
 
+        $cityzenUser = $request->session()->get('cityzen_user');
+
+        $data['user_id'] = $cityzenUser['id'] ?? null;
         $data['slug'] = Str::slug($data['name']).'-'.Str::random(6);
         $data['status'] = 'active';
 
         Place::create($data);
 
-        return redirect('/places')->with('status', 'Place berhasil ditambahkan.');
+        return redirect('/dashboard')->with('status', 'Tempat publik berhasil ditambahkan.');
     }
+
 
     public function edit(Place $place)
     {
