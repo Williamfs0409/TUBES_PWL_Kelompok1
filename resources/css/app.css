@@ -639,7 +639,12 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.cz-dash-post-actions button {
+.cz-dash-post-actions form {
+    margin: 0;
+}
+
+.cz-dash-post-actions button,
+.cz-dash-post-actions a {
     align-items: center;
     background: transparent;
     border: 0;
@@ -653,6 +658,7 @@
 }
 
 .cz-dash-post-actions button:hover,
+.cz-dash-post-actions a:hover,
 .cz-dash-post-actions button.is-active {
     background: var(--cz-accent-soft);
     color: var(--cz-accent);
@@ -670,6 +676,50 @@
 .cz-dash-post-actions svg {
     height: 19px;
     width: 19px;
+}
+
+.cz-dash-review-form {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 88px minmax(0, 1fr) auto;
+}
+
+.cz-dash-review-form select,
+.cz-dash-review-form input {
+    background: color-mix(in srgb, var(--cz-surface) 88%, var(--cz-raised));
+    border: 1px solid var(--cz-line);
+    border-radius: 999px;
+    color: var(--cz-ink);
+    min-height: 38px;
+    outline: none;
+    padding: 0 12px;
+    width: 100%;
+}
+
+.cz-dash-review-form select:focus,
+.cz-dash-review-form input:focus {
+    border-color: var(--cz-accent);
+    box-shadow: 0 0 0 3px var(--cz-accent-glow);
+}
+
+.cz-dash-review-form button {
+    background: var(--cz-accent);
+    border: 1px solid var(--cz-ink);
+    border-radius: 999px;
+    color: #ffffff;
+    font-weight: 900;
+    min-height: 38px;
+    padding: 0 16px;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.cz-dashboard-page[data-theme='dark'] .cz-dash-review-form button {
+    color: #071b10;
+}
+
+.cz-dash-review-form button:hover {
+    box-shadow: var(--cz-button-glow);
+    transform: translateY(-2px);
 }
 
 .cz-dash-right-rail {
@@ -1041,6 +1091,163 @@
     transform: translate(-50%, 0);
 }
 
+.cz-form-page,
+.cz-admin-page {
+    margin-inline: auto;
+    max-width: 980px;
+    min-height: 100vh;
+    padding: clamp(28px, 6vw, 72px) 20px;
+}
+
+.cz-form-card,
+.cz-admin-report-card {
+    background: color-mix(in srgb, var(--cz-surface) 96%, transparent);
+    border: 1px solid var(--cz-line);
+    border-radius: 16px;
+    box-shadow: var(--cz-shadow);
+}
+
+.cz-form-card {
+    display: grid;
+    gap: 24px;
+    margin-inline: auto;
+    max-width: 720px;
+    padding: clamp(24px, 5vw, 40px);
+}
+
+.cz-form-back,
+.cz-admin-header a {
+    color: var(--cz-accent);
+    font-weight: 900;
+    width: max-content;
+}
+
+.cz-form-heading {
+    display: grid;
+    gap: 8px;
+}
+
+.cz-form-heading span,
+.cz-admin-report-card span,
+.cz-admin-report-card small {
+    color: var(--cz-muted);
+    font-weight: 800;
+}
+
+.cz-form-heading h1,
+.cz-admin-header h1,
+.cz-admin-report-card h2 {
+    font-family: "Hanken Grotesk", Inter, sans-serif;
+    font-weight: 800;
+    margin: 0;
+}
+
+.cz-form-heading h1,
+.cz-admin-header h1 {
+    font-size: clamp(34px, 5vw, 58px);
+    line-height: 0.96;
+}
+
+.cz-form-heading p,
+.cz-admin-header p,
+.cz-admin-report-card p {
+    color: var(--cz-muted);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.cz-form-alert {
+    background: color-mix(in srgb, var(--cz-danger) 12%, var(--cz-surface));
+    border: 1px solid color-mix(in srgb, var(--cz-danger) 48%, var(--cz-line));
+    border-radius: 12px;
+    color: var(--cz-danger);
+    font-weight: 800;
+    padding: 14px 16px;
+}
+
+.cz-form-alert--success {
+    background: color-mix(in srgb, var(--cz-accent-soft) 72%, var(--cz-surface));
+    border-color: var(--cz-accent);
+    color: var(--cz-accent);
+    margin-bottom: 18px;
+}
+
+.cz-form-grid,
+.cz-form-grid label {
+    display: grid;
+    gap: 12px;
+}
+
+.cz-form-grid label span {
+    font-weight: 900;
+}
+
+.cz-form-grid select,
+.cz-form-grid textarea,
+.cz-admin-report-card select,
+.cz-admin-report-card input {
+    background: color-mix(in srgb, var(--cz-surface) 88%, var(--cz-raised));
+    border: 1px solid var(--cz-line);
+    border-radius: 12px;
+    color: var(--cz-ink);
+    font: inherit;
+    outline: none;
+    padding: 13px 14px;
+    width: 100%;
+}
+
+.cz-form-grid select:focus,
+.cz-form-grid textarea:focus,
+.cz-admin-report-card select:focus,
+.cz-admin-report-card input:focus {
+    border-color: var(--cz-accent);
+    box-shadow: 0 0 0 3px var(--cz-accent-glow);
+}
+
+.cz-form-grid button,
+.cz-admin-report-card button {
+    background: var(--cz-accent);
+    border: 1px solid var(--cz-ink);
+    border-radius: 999px;
+    color: #ffffff;
+    font-weight: 900;
+    min-height: 46px;
+    padding: 0 20px;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.cz-dashboard-page[data-theme='dark'] .cz-form-grid button,
+.cz-dashboard-page[data-theme='dark'] .cz-admin-report-card button {
+    color: #071b10;
+}
+
+.cz-form-grid button:hover,
+.cz-admin-report-card button:hover {
+    box-shadow: var(--cz-button-glow);
+    transform: translateY(-2px);
+}
+
+.cz-admin-header {
+    margin-bottom: 24px;
+}
+
+.cz-admin-report-list {
+    display: grid;
+    gap: 16px;
+}
+
+.cz-admin-report-card {
+    display: grid;
+    gap: 18px;
+    padding: 22px;
+}
+
+.cz-admin-report-card form {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 150px minmax(0, 1fr) auto;
+}
+
 .sr-only {
     clip: rect(0, 0, 0, 0);
     border: 0;
@@ -1161,6 +1368,11 @@
 
     .cz-dash-post-actions {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .cz-dash-review-form,
+    .cz-admin-report-card form {
+        grid-template-columns: 1fr;
     }
 
     .cz-explore-searchbar {

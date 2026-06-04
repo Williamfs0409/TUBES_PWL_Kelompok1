@@ -60,6 +60,10 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c1.6-4 14.4-4 16 0" /></svg>
                     <span>Profile</span>
                 </a>
+                <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
+                    <span>Admin</span>
+                </a>
             </nav>
 
             <div class="cz-dash-sidebar-bottom">
@@ -148,23 +152,42 @@
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4V5Z" /></svg>
                                     <span>{{ $post['comments'] }}</span>
                                 </button>
-                                <button type="button" data-action-toast="Post reshared.">
+                                <a href="{{ route('reports.create', $post['id']) }}" data-action-link>
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l4 4-4 4" /><path d="M3 11V9a3 3 0 0 1 3-3h15" /><path d="M7 22l-4-4 4-4" /><path d="M21 13v2a3 3 0 0 1-3 3H3" /></svg>
                                     <span>{{ $post['reposts'] }}</span>
-                                </button>
-                                <button type="button" data-like-post aria-pressed="false">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.6c0 5.4-8.8 10-8.8 10s-8.8-4.6-8.8-10a4.7 4.7 0 0 1 8.8-2.4 4.7 4.7 0 0 1 8.8 2.4Z" /></svg>
-                                    <span>{{ $post['likes'] }}</span>
-                                </button>
-                                <button type="button" data-bookmark-post aria-pressed="false">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" /></svg>
-                                    <span class="sr-only">Bookmark</span>
-                                </button>
+                                </a>
+                                <form method="POST" action="{{ route('places.like', $post['id']) }}">
+                                    @csrf
+                                    <button type="submit" data-like-post aria-pressed="{{ $post['liked'] ? 'true' : 'false' }}" class="{{ $post['liked'] ? 'is-liked' : '' }}">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.6c0 5.4-8.8 10-8.8 10s-8.8-4.6-8.8-10a4.7 4.7 0 0 1 8.8-2.4 4.7 4.7 0 0 1 8.8 2.4Z" /></svg>
+                                        <span>{{ $post['likes'] }}</span>
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('places.bookmark', $post['id']) }}">
+                                    @csrf
+                                    <button type="submit" data-bookmark-post aria-pressed="{{ $post['bookmarked'] ? 'true' : 'false' }}" class="{{ $post['bookmarked'] ? 'is-active' : '' }}">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" /></svg>
+                                        <span class="sr-only">Bookmark</span>
+                                    </button>
+                                </form>
                                 <button type="button" data-action-toast="Share sheet prepared.">
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 10.8 8-4.6" /><path d="m8.6 13.2 8 4.6" /></svg>
                                     <span class="sr-only">Share</span>
                                 </button>
                             </footer>
+                            <form method="POST" action="{{ route('places.review', $post['id']) }}" class="cz-dash-review-form">
+                                @csrf
+                                <select name="rating" aria-label="Rating" required>
+                                    <option value="">Rating</option>
+                                    <option value="5">5</option>
+                                    <option value="4">4</option>
+                                    <option value="3">3</option>
+                                    <option value="2">2</option>
+                                    <option value="1">1</option>
+                                </select>
+                                <input name="review" maxlength="500" placeholder="Tulis review singkat">
+                                <button type="submit">Review</button>
+                            </form>
                         </div>
                     </article>
                 @empty

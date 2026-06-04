@@ -18,9 +18,14 @@ class PlaceController extends Controller
 
     public function create()
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
 
         return view('places.create', compact('categories'));
+    }
+
+    public function show(Place $place)
+    {
+        return redirect('/dashboard')->with('status', $place->name.' dibuka dari feed CityZen.');
     }
 
     public function store(Request $request)
@@ -38,41 +43,42 @@ class PlaceController extends Controller
 
         $data['slug'] = Str::slug($data['name']).'-'.Str::random(6);
         $data['status'] = 'active';
+        $data['user_id'] = session('cityzen_user.id');
 
         Place::create($data);
 
-        return redirect('/places')->with('status', 'Place berhasil ditambahkan.');
+        return redirect('/dashboard')->with('status', 'Place berhasil ditambahkan.');
     }
 
     public function edit(Place $place)
     {
-    $categories = Category::orderBy('name')->get();
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
 
-    return view('places.edit', compact('place', 'categories'));
+        return view('places.edit', compact('place', 'categories'));
     }
 
     public function update(Request $request, Place $place)
     {
-    $data = $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'category_id' => ['required', 'exists:categories,id'],
-        'short_description' => ['nullable', 'string', 'max:255'],
-        'description' => ['required', 'string'],
-        'address' => ['required', 'string', 'max:255'],
-        'city' => ['required', 'string', 'max:100'],
-        'province' => ['nullable', 'string', 'max:100'],
-        'google_maps_url' => ['nullable', 'url', 'max:255'],
-    ]);
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'short_description' => ['nullable', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'address' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:100'],
+            'province' => ['nullable', 'string', 'max:100'],
+            'google_maps_url' => ['nullable', 'url', 'max:255'],
+        ]);
 
-    $place->update($data);
+        $place->update($data);
 
-    return redirect('/places')->with('status', 'Place berhasil diperbarui.');
+        return redirect('/places')->with('status', 'Place berhasil diperbarui.');
     }
 
     public function destroy(Place $place)
     {
-    $place->delete();
+        $place->delete();
 
-    return redirect('/places')->with('status', 'Place berhasil dihapus.');
+        return redirect('/places')->with('status', 'Place berhasil dihapus.');
     }
 }
