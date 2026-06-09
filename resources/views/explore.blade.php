@@ -3,18 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Profile | CityZen</title>
+    <title>CityZen Explore</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=hanken-grotesk:700,800|inter:400,500,600,700,800,900" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="cz-dashboard-page cz-profile-page" data-theme="light">
+<body class="cz-dashboard-page cz-explore-page" data-explore-page data-theme="light">
     @php
         $user = session('cityzen_user', ['name' => 'CityZen User', 'email' => 'member@cityzen.local']);
         $nameParts = collect(explode(' ', trim($user['name'] ?? 'CityZen User')))->filter()->values();
         $initials = $nameParts->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode('') ?: 'CZ';
         $handle = '@'.str(str($user['email'] ?? 'member@cityzen.local')->before('@'))->replace(['.', '_', '-'], ' ')->slug('_');
-        $lastReport = session('cityzen_last_report');
     @endphp
 
     <div class="cz-dash-shell">
@@ -39,7 +38,7 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 11 8-7 8 7v8a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-8Z" /></svg>
                     <span>Home</span>
                 </a>
-                <a class="cz-dash-nav-link" href="{{ url('/explore') }}">
+                <a class="cz-dash-nav-link is-active" href="{{ url('/explore') }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 8.5-2.1 5.9-5.9 2.1 2.1-5.9 5.9-2.1Z" /><circle cx="12" cy="12" r="9" /></svg>
                     <span>Explore</span>
                 </a>
@@ -51,7 +50,7 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" /></svg>
                     <span>Bookmarks</span>
                 </a>
-                <a class="cz-dash-nav-link is-active" href="{{ url('/profile') }}">
+                <a class="cz-dash-nav-link" href="{{ url('/profile') }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c1.6-4 14.4-4 16 0" /></svg>
                     <span>Profile</span>
                 </a>
@@ -83,66 +82,76 @@
             </div>
         </aside>
 
-        <main class="cz-profile-main">
-            <section class="cz-profile-hero">
-                <span class="cz-profile-avatar">{{ $initials }}</span>
-                <div>
-                    <span class="cz-profile-eyebrow">Citizen profile</span>
-                    <h1>{{ $user['name'] }}</h1>
-                    <p>{{ $user['email'] }} &middot; Verified CityZen contributor</p>
-                    <div class="cz-profile-actions">
-                        <a class="cz-profile-button cz-profile-button--primary" href="{{ url('/places/create') }}">Start Report</a>
-                        <a class="cz-profile-button cz-profile-button--secondary" href="{{ url('/dashboard') }}">Explore Dashboard</a>
-                    </div>
-                </div>
-            </section>
+        <main class="cz-explore-main">
+            <header class="cz-explore-searchbar">
+                <label class="cz-dash-search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4 4" /></svg>
+                    <input type="search" placeholder="Search public spaces" data-explore-search>
+                </label>
+                <button class="cz-dash-theme-toggle" type="button" data-theme-toggle aria-pressed="false">
+                    <span class="cz-theme-sun" aria-hidden="true"></span>
+                    <span data-theme-label>Dark mode</span>
+                </button>
+            </header>
 
-            <section class="cz-profile-grid" aria-label="Impact stats">
-                <article>
-                    <span>Watched places</span>
-                    <strong>24</strong>
-                    <p>Places you keep an eye on from the dashboard.</p>
-                </article>
-                <article>
-                    <span>Reports drafted</span>
-                    <strong>{{ $lastReport ? '1' : '0' }}</strong>
-                    <p>Drafted reports currently stored in your session.</p>
-                </article>
-                <article>
-                    <span>Impact score</span>
-                    <strong>91</strong>
-                    <p>A starting civic participation score for this prototype.</p>
-                </article>
-            </section>
+            <nav class="cz-explore-tabs" aria-label="Explore categories">
+                <button class="is-active" type="button">For You</button>
+                @foreach ($categories as $category)
+                    <button type="button" data-explore-chip="{{ strtolower($category) }}">{{ $category }}</button>
+                @endforeach
+            </nav>
 
-            <section class="cz-profile-report-card {{ $lastReport ? '' : 'is-empty' }}">
-                @if ($lastReport)
-                    <span>Latest draft</span>
-                    <h2>{{ $lastReport['place_name'] }}</h2>
-                    <p>{{ $lastReport['category'] }} &middot; {{ $lastReport['issue'] }}</p>
-                    <p>{{ $lastReport['description'] }}</p>
-                @else
-                    <span>No report yet</span>
-                    <h2>Your first report can start here.</h2>
-                    <p>Use the report flow to save a public space issue and see it reflected across dashboard/profile.</p>
-                    <div class="cz-profile-actions">
-                        <a class="cz-profile-button cz-profile-button--primary" href="{{ url('/places/create') }}">Create Report</a>
-                    </div>
-                @endif
-            </section>
+            <section class="cz-explore-section" aria-label="Explore CityZen places">
+                <h1>Explore Public Spaces</h1>
 
-            <section class="cz-profile-activity">
-                <span class="cz-profile-eyebrow">Recent activity</span>
-                <article>
-                    <h3>Dashboard connected</h3>
-                    <p>Login and register now lead directly into the protected dashboard.</p>
-                </article>
-                <article>
-                    <h3>Profile connected</h3>
-                    <p>Dashboard, report, profile, and logout now share the same session flow.</p>
-                </article>
+                @forelse ($places as $place)
+                    <article
+                        class="cz-explore-item"
+                        data-explore-item
+                        data-title="{{ strtolower($place['category'].' '.$place['title'].' '.$place['description'].' '.$place['location']) }}"
+                    >
+                        <span>{{ $place['category'] }} &middot; Trending</span>
+                        <h2>{{ $place['title'] }}</h2>
+                        <p>{{ $place['description'] }}</p>
+                        <small>{{ $place['location'] }} &middot; {{ $place['meta'] }}</small>
+                    </article>
+                @empty
+                    <article class="cz-dash-empty" data-explore-item data-title="">
+                        <h2>Belum ada data explore.</h2>
+                        <p>Halaman Explore akan menampilkan ruang publik, kategori, dan aktivitas setelah database terisi.</p>
+                        <a href="{{ url('/places/create') }}">Tambah kontribusi</a>
+                    </article>
+                @endforelse
             </section>
         </main>
+
+        <aside class="cz-explore-rail" aria-label="Explore side panel">
+            <section class="cz-explore-card">
+                <h2>Recent Reports</h2>
+                @forelse ($reports as $report)
+                    <article>
+                        <strong>{{ $report['place_name'] }}</strong>
+                        <span>{{ $report['category'] }} &middot; {{ $report['status'] }}</span>
+                    </article>
+                @empty
+                    <p>Belum ada laporan terbaru.</p>
+                @endforelse
+            </section>
+
+            <section class="cz-explore-card">
+                <h2>Recommended</h2>
+                @forelse ($places->take(3) as $place)
+                    <article>
+                        <strong>{{ $place['title'] }}</strong>
+                        <span>{{ $place['category'] }} &middot; {{ $place['meta'] }}</span>
+                    </article>
+                @empty
+                    <p>Rekomendasi akan muncul setelah ada data tempat.</p>
+                @endforelse
+            </section>
+        </aside>
     </div>
+
+    <div class="cz-dash-toast" role="status" aria-live="polite" data-dashboard-toast></div>
 </body>
 </html>
