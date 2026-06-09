@@ -42,11 +42,11 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 8.5-2.1 5.9-5.9 2.1 2.1-5.9 5.9-2.1Z" /><circle cx="12" cy="12" r="9" /></svg>
                     <span>Explore</span>
                 </a>
-                <a class="cz-dash-nav-link" href="{{ url('/dashboard#notifications') }}">
+                <a class="cz-dash-nav-link" href="{{ url('/notifications') }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" /><path d="M10 20a2 2 0 0 0 4 0" /></svg>
                     <span>Notifications</span>
                 </a>
-                <a class="cz-dash-nav-link" href="{{ url('/dashboard#bookmarks') }}">
+                <a class="cz-dash-nav-link" href="{{ url('/bookmarks') }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" /></svg>
                     <span>Bookmarks</span>
                 </a>
@@ -54,18 +54,15 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c1.6-4 14.4-4 16 0" /></svg>
                     <span>Profile</span>
                 </a>
-                <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
-                    <span>Admin</span>
-                </a>
+                @if ($isAdmin ?? false)
+                    <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
+                        <span>Admin</span>
+                    </a>
+                @endif
             </nav>
 
             <div class="cz-dash-sidebar-bottom">
-                <a class="cz-dash-report-button" href="{{ url('/places/create') }}">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v3a2 2 0 0 0 2 2h2l4 4v-4h3l7 3V6l-7 3H5a2 2 0 0 0-2 2Z" /><path d="M14 9v7" /></svg>
-                    <span>Report</span>
-                </a>
-
                 <div class="cz-dash-user-card">
                     <span class="cz-dash-avatar">{{ $initials }}</span>
                     <span class="cz-dash-user-copy">

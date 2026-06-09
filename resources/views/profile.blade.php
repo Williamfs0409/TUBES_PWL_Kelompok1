@@ -43,11 +43,11 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 8.5-2.1 5.9-5.9 2.1 2.1-5.9 5.9-2.1Z" /><circle cx="12" cy="12" r="9" /></svg>
                     <span>Explore</span>
                 </a>
-                <a class="cz-dash-nav-link" href="{{ url('/dashboard#notifications') }}">
+                <a class="cz-dash-nav-link" href="{{ url('/notifications') }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" /><path d="M10 20a2 2 0 0 0 4 0" /></svg>
                     <span>Notifications</span>
                 </a>
-                <a class="cz-dash-nav-link" href="{{ url('/dashboard#bookmarks') }}">
+                <a class="cz-dash-nav-link" href="{{ url('/bookmarks') }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" /></svg>
                     <span>Bookmarks</span>
                 </a>
@@ -55,18 +55,15 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c1.6-4 14.4-4 16 0" /></svg>
                     <span>Profile</span>
                 </a>
-                <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
-                    <span>Admin</span>
-                </a>
+                @if ($isAdmin ?? false)
+                    <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
+                        <span>Admin</span>
+                    </a>
+                @endif
             </nav>
 
             <div class="cz-dash-sidebar-bottom">
-                <a class="cz-dash-report-button" href="{{ url('/places/create') }}">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v3a2 2 0 0 0 2 2h2l4 4v-4h3l7 3V6l-7 3H5a2 2 0 0 0-2 2Z" /><path d="M14 9v7" /></svg>
-                    <span>Report</span>
-                </a>
-
                 <div class="cz-dash-user-card">
                     <span class="cz-dash-avatar">{{ $initials }}</span>
                     <span class="cz-dash-user-copy">
@@ -91,7 +88,6 @@
                     <h1>{{ $user['name'] }}</h1>
                     <p>{{ $user['email'] }} &middot; Verified CityZen contributor</p>
                     <div class="cz-profile-actions">
-                        <a class="cz-profile-button cz-profile-button--primary" href="{{ url('/places/create') }}">Start Report</a>
                         <a class="cz-profile-button cz-profile-button--secondary" href="{{ url('/dashboard') }}">Explore Dashboard</a>
                     </div>
                 </div>
@@ -100,34 +96,30 @@
             <section class="cz-profile-grid" aria-label="Impact stats">
                 <article>
                     <span>Watched places</span>
-                    <strong>24</strong>
-                    <p>Places you keep an eye on from the dashboard.</p>
+                    <strong>{{ $stats['watched_places'] ?? 0 }}</strong>
+                    <p>Tempat yang kamu simpan di bookmark.</p>
                 </article>
                 <article>
-                    <span>Reports drafted</span>
-                    <strong>{{ $lastReport ? '1' : '0' }}</strong>
-                    <p>Drafted reports currently stored in your session.</p>
+                    <span>Reports sent</span>
+                    <strong>{{ $stats['reports_drafted'] ?? 0 }}</strong>
+                    <p>Laporan yang sudah tersimpan di database.</p>
                 </article>
                 <article>
-                    <span>Impact score</span>
-                    <strong>91</strong>
-                    <p>A starting civic participation score for this prototype.</p>
+                    <span>Interactions</span>
+                    <strong>{{ ($stats['reviews_count'] ?? 0) + ($stats['likes_count'] ?? 0) }}</strong>
+                    <p>Total review dan like yang kamu berikan.</p>
                 </article>
             </section>
 
-            <section class="cz-profile-report-card {{ $lastReport ? '' : 'is-empty' }}">
-                @if ($lastReport)
-                    <span>Latest draft</span>
-                    <h2>{{ $lastReport['place_name'] }}</h2>
-                    <p>{{ $lastReport['category'] }} &middot; {{ $lastReport['issue'] }}</p>
-                    <p>{{ $lastReport['description'] }}</p>
+            <section class="cz-profile-report-card {{ ($stats['reports_drafted'] ?? 0) > 0 ? '' : 'is-empty' }}">
+                @if (($stats['reports_drafted'] ?? 0) > 0)
+                    <span>Report activity</span>
+                    <h2>{{ $stats['reports_drafted'] }} laporan terkirim.</h2>
+                    <p>Semua laporan yang kamu kirim tersimpan dan bisa diverifikasi oleh admin.</p>
                 @else
                     <span>No report yet</span>
                     <h2>Your first report can start here.</h2>
-                    <p>Use the report flow to save a public space issue and see it reflected across dashboard/profile.</p>
-                    <div class="cz-profile-actions">
-                        <a class="cz-profile-button cz-profile-button--primary" href="{{ url('/places/create') }}">Create Report</a>
-                    </div>
+                    <p>Report hanya tersedia dari post tempat di dashboard agar laporan selalu terhubung ke data tempat yang jelas.</p>
                 @endif
             </section>
 

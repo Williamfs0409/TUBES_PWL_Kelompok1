@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (! Schema::hasTable('places') || Schema::hasColumn('places', 'image')) {
+            return;
+        }
+
         Schema::table('places', function (Blueprint $table) {
             $table->string('image')->nullable()->after('google_maps_url');
         });
@@ -15,6 +19,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! Schema::hasTable('places') || ! Schema::hasColumn('places', 'image')) {
+            return;
+        }
+
         Schema::table('places', function (Blueprint $table) {
             $table->dropColumn('image');
         });

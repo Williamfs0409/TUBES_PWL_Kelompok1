@@ -8,11 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('report_statuses')) {
+            return;
+        }
+
         Schema::create('report_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

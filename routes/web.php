@@ -1,16 +1,61 @@
 <?php
 
+use App\Http\Controllers\PlaceController;
+use App\Models\Category;
+use App\Models\Place;
+use App\Models\Report;
+use App\Models\ReportCategory;
+use App\Models\ReportStatus;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
-use App\Http\Controllers\PlaceController;
-use App\Models\User;
+use Illuminate\Support\Str;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+$isAdminUser = function (?array $sessionUser): bool {
+    $userId = $sessionUser['id'] ?? null;
+
+    if (! $userId || ! Schema::hasTable('users') || ! Schema::hasTable('roles')) {
+        return false;
+    }
+
+    $roleName = DB::table('users')
+        ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
+        ->where('users.id', $userId)
+        ->value('roles.name');
+
+    return in_array(strtolower((string) ($roleName ?? '')), ['admin', 'superadmin'], true);
+};
+
+$sessionPayload = function (User $user): array {
+    $roleName = null;
+
+    if (Schema::hasTable('roles') && Schema::hasColumn('users', 'role_id')) {
+        $roleName = DB::table('roles')->where('id', $user->role_id)->value('name');
+    }
+
+    return [
+        'id' => $user->id,
+        'name' => $user->name,
+        'email' => $user->email,
+        'role' => $roleName ?: 'user',
+    ];
+};
+
+$profileStats = function (int $userId): array {
+    return [
+        'watched_places' => Schema::hasTable('bookmarks') ? DB::table('bookmarks')->where('user_id', $userId)->count() : 0,
+        'reports_drafted' => Schema::hasTable('reports') ? DB::table('reports')->where('user_id', $userId)->count() : 0,
+        'reviews_count' => Schema::hasTable('reviews') ? DB::table('reviews')->where('user_id', $userId)->count() : 0,
+        'likes_count' => Schema::hasTable('likes') ? DB::table('likes')->where('user_id', $userId)->count() : 0,
+    ];
+};
 
 Route::get('/login', function (Request $request) {
     if ($request->session()->has('cityzen_user')) {
@@ -20,40 +65,7 @@ Route::get('/login', function (Request $request) {
     return view('auth.cityzen', ['mode' => 'login']);
 })->name('login');
 
-Route::post('/places/{place}/report', function (
-    \Illuminate\Http\Request $request,
-    \App\Models\Place $place
-) {
-    if (! session('cityzen_user')) {
-        return redirect('/login');
-    }
-
-    $validated = $request->validate([
-        'report_category_id' => ['required', 'exists:report_categories,id'],
-        'description' => ['required', 'string', 'max:800'],
-    ]);
-
-    $pendingStatus = \App\Models\ReportStatus::firstOrCreate(
-        ['slug' => 'pending'],
-        [
-            'name' => 'Pending',
-            'description' => 'Menunggu verifikasi admin',
-        ]
-    );
-
-    \App\Models\Report::create([
-        'user_id' => session('cityzen_user.id'),
-        'place_id' => $place->id,
-        'report_category_id' => $validated['report_category_id'],
-        'report_status_id' => $pendingStatus->id,
-        'description' => $validated['description'],
-    ]);
-
-    return redirect('/dashboard')
-        ->with('success', 'Laporan berhasil dikirim.');
-})->name('reports.store');
-
-Route::post('/login', function (Request $request) {
+Route::post('/login', function (Request $request) use ($sessionPayload) {
     $credentials = $request->validate([
         'email' => ['required', 'email'],
         'password' => ['required', 'min:4'],
@@ -67,11 +79,7 @@ Route::post('/login', function (Request $request) {
             ->onlyInput('email');
     }
 
-    $request->session()->put('cityzen_user', [
-        'id' => $user->id,
-        'name' => $user->name,
-        'email' => $user->email,
-    ]);
+    $request->session()->put('cityzen_user', $sessionPayload($user));
 
     $request->session()->regenerate();
 
@@ -86,7 +94,7 @@ Route::get('/register', function (Request $request) {
     return view('auth.cityzen', ['mode' => 'register']);
 });
 
-Route::post('/register', function (Request $request) {
+Route::post('/register', function (Request $request) use ($sessionPayload) {
     $data = $request->validate([
         'name' => ['required', 'string', 'max:80'],
         'email' => ['required', 'email', 'unique:users,email'],
@@ -95,18 +103,14 @@ Route::post('/register', function (Request $request) {
 
     $user = User::create($data);
 
-    $request->session()->put('cityzen_user', [
-        'id' => $user->id,
-        'name' => $user->name,
-        'email' => $user->email,
-    ]);
+    $request->session()->put('cityzen_user', $sessionPayload($user));
 
     $request->session()->regenerate();
 
     return redirect('/dashboard');
 });
 
-Route::get('/dashboard', function (Request $request) {
+Route::get('/dashboard', function (Request $request) use ($isAdminUser) {
     if (! $request->session()->has('cityzen_user')) {
         return redirect('/login')->with('notice', 'Please login to open the CityZen dashboard.');
     }
@@ -143,28 +147,32 @@ Route::get('/dashboard', function (Request $request) {
         $placesQuery = DB::table('places')
             ->leftJoin('categories', 'categories.id', '=', 'places.category_id')
             ->leftJoin('users', 'users.id', '=', 'places.user_id')
-            ->leftJoin('place_photos', function ($join) {
+            ->where('places.status', 'active')
+            ->whereNull('places.deleted_at');
+
+        if (Schema::hasTable('place_photos')) {
+            $placesQuery->leftJoin('place_photos', function ($join) {
                 $join->on('place_photos.place_id', '=', 'places.id')
                     ->where('place_photos.is_cover', '=', true);
-            })
-            ->where('places.status', 'active')
-            ->whereNull('places.deleted_at')
-            ->select([
-                'places.id',
-                'places.name',
-                'places.short_description',
-                'places.description',
-                'places.city',
-                'places.province',
-                'places.average_rating',
-                'places.reviews_count',
-                'places.likes_count',
-                'places.reports_count',
-                'places.created_at',
-                'categories.name as category_name',
-                'users.name as user_name',
-                'place_photos.image_path',
-            ]);
+            });
+        }
+
+        $placesQuery->select([
+            'places.id',
+            'places.name',
+            'places.short_description',
+            'places.description',
+            'places.city',
+            'places.province',
+            'places.average_rating',
+            'places.reviews_count',
+            'places.likes_count',
+            'places.reports_count',
+            'places.created_at',
+            'categories.name as category_name',
+            'users.name as user_name',
+            Schema::hasTable('place_photos') ? 'place_photos.image_path' : DB::raw('NULL as image_path'),
+        ]);
 
         $feedPosts = (clone $placesQuery)
             ->orderByDesc('places.created_at')
@@ -213,21 +221,11 @@ Route::get('/dashboard', function (Request $request) {
     return view('dashboard', [
         'feedPosts' => $feedPosts,
         'trends' => $trends,
+        'isAdmin' => $isAdminUser($request->session()->get('cityzen_user')),
     ]);
 });
-Route::get('/places/{place}/report', function (\App\Models\Place $place) {
-    if (! session('cityzen_user')) {
-        return redirect('/login');
-    }
 
-    $categories = \App\Models\Category::where('is_active', true)
-    ->orderBy('sort_order')
-    ->get();
-
-    return view('places.create', compact('categories'));
-})->name('reports.create');
-
-Route::get('/explore', function (Request $request) {
+Route::get('/explore', function (Request $request) use ($isAdminUser) {
     if (! $request->session()->has('cityzen_user')) {
         return redirect('/login')->with('notice', 'Please login to explore CityZen spaces.');
     }
@@ -288,15 +286,22 @@ Route::get('/explore', function (Request $request) {
     if (Schema::hasTable('reports')) {
         $reports = DB::table('reports')
             ->leftJoin('places', 'places.id', '=', 'reports.place_id')
-            ->select('reports.report_category_id', 'reports.report_status_id', 'reports.description', 'places.name as place_name')
+            ->leftJoin('report_categories', 'report_categories.id', '=', 'reports.report_category_id')
+            ->leftJoin('report_statuses', 'report_statuses.id', '=', 'reports.report_status_id')
+            ->select([
+                'reports.description',
+                'places.name as place_name',
+                'report_categories.name as category_name',
+                'report_statuses.name as status_name',
+            ])
             ->orderByDesc('reports.created_at')
             ->limit(4)
             ->get()
             ->map(function ($report) {
                 return [
                     'place_name' => $report->place_name ?: 'Unknown place',
-                    'category' => $report->report_category_id ? 'Category #'.$report->report_category_id : 'Report',
-                    'status' => $report->report_status_id ? 'Status #'.$report->report_status_id : 'Pending',
+                    'category' => $report->category_name ?: 'Report',
+                    'status' => $report->status_name ?: 'Pending',
                     'description' => $report->description,
                 ];
             });
@@ -306,6 +311,7 @@ Route::get('/explore', function (Request $request) {
         'places' => $places,
         'categories' => $categories,
         'reports' => $reports,
+        'isAdmin' => $isAdminUser($request->session()->get('cityzen_user')),
     ]);
 });
 
@@ -331,19 +337,18 @@ Route::post('/places/{place}/like', function (\App\Models\Place $place) {
     $userId = session('cityzen_user.id');
 
 Route::post('/places/{place}/like', function (Request $request, int $place) {
+=======
+Route::post('/places/{place}/like', function (Request $request, Place $place) {
+
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
         return redirect('/login')->with('notice', 'Please login to like a place.');
     }
 
-    if (! Schema::hasTable('likes') || ! Schema::hasTable('places')) {
-        return back()->with('status', 'Tabel likes belum tersedia.');
-    }
-
     $existing = DB::table('likes')
         ->where('user_id', $userId)
-        ->where('place_id', $place)
+        ->where('place_id', $place->id)
         ->first();
 
     if ($existing) {
@@ -351,37 +356,30 @@ Route::post('/places/{place}/like', function (Request $request, int $place) {
     } else {
         DB::table('likes')->insert([
             'user_id' => $userId,
-            'place_id' => $place,
+            'place_id' => $place->id,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
     }
 })->name('places.like');
 
-    DB::table('places')
-        ->where('id', $place)
-        ->update([
-            'likes_count' => DB::table('likes')->where('place_id', $place)->count(),
-            'updated_at' => now(),
-        ]);
+    $place->update([
+        'likes_count' => DB::table('likes')->where('place_id', $place->id)->count(),
+    ]);
 
     return back()->with('status', $existing ? 'Like removed.' : 'Place liked.');
 })->name('places.like');
 
-Route::post('/places/{place}/bookmark', function (Request $request, int $place) {
+Route::post('/places/{place}/bookmark', function (Request $request, Place $place) {
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
         return redirect('/login')->with('notice', 'Please login to bookmark a place.');
     }
 
-    if (! Schema::hasTable('bookmarks') || ! Schema::hasTable('places')) {
-        return back()->with('status', 'Tabel bookmarks belum tersedia.');
-    }
-
     $existing = DB::table('bookmarks')
         ->where('user_id', $userId)
-        ->where('place_id', $place)
+        ->where('place_id', $place->id)
         ->first();
 
     if ($existing) {
@@ -389,23 +387,20 @@ Route::post('/places/{place}/bookmark', function (Request $request, int $place) 
     } else {
         DB::table('bookmarks')->insert([
             'user_id' => $userId,
-            'place_id' => $place,
+            'place_id' => $place->id,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
     }
 
-    DB::table('places')
-        ->where('id', $place)
-        ->update([
-            'bookmarks_count' => DB::table('bookmarks')->where('place_id', $place)->count(),
-            'updated_at' => now(),
-        ]);
+    $place->update([
+        'bookmarks_count' => DB::table('bookmarks')->where('place_id', $place->id)->count(),
+    ]);
 
     return back()->with('status', $existing ? 'Bookmark removed.' : 'Place saved.');
 })->name('places.bookmark');
 
-Route::post('/places/{place}/review', function (Request $request, int $place) {
+Route::post('/places/{place}/review', function (Request $request, Place $place) {
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
@@ -434,78 +429,67 @@ if (!$userId) {
 }
 
 $validated = $request->validate([
+=======
+        return redirect('/login')->with('notice', 'Please login to review a place.');
+    }
+
+    $data = $request->validate([
         'rating' => ['required', 'integer', 'min:1', 'max:5'],
         'review' => ['nullable', 'string', 'max:500'],
     ]);
 
-    if (! Schema::hasTable('reviews') || ! Schema::hasTable('places')) {
-        return back()->with('status', 'Tabel reviews belum tersedia.');
-    }
-
-    $existing = DB::table('reviews')
-        ->where('user_id', $userId)
-        ->where('place_id', $place)
-        ->first();
-
-    $payload = [
-        'rating' => $data['rating'],
-        'review' => $data['review'] ?? null,
-        'updated_at' => now(),
-    ];
-
-    if ($existing) {
-        DB::table('reviews')->where('id', $existing->id)->update($payload);
-    } else {
-        DB::table('reviews')->insert($payload + [
+    DB::table('reviews')->updateOrInsert(
+        [
             'user_id' => $userId,
-            'place_id' => $place,
+            'place_id' => $place->id,
+        ],
+        [
+            'rating' => $data['rating'],
+            'review' => $data['review'] ?? null,
             'created_at' => now(),
-        ]);
-    }
+            'updated_at' => now(),
+        ]
+    );
 
     $ratingStats = DB::table('reviews')
-        ->where('place_id', $place)
+        ->where('place_id', $place->id)
         ->selectRaw('COUNT(*) as total, AVG(rating) as average')
         ->first();
 
-    DB::table('places')
-        ->where('id', $place)
-        ->update([
-            'reviews_count' => (int) $ratingStats->total,
-            'average_rating' => round((float) $ratingStats->average, 2),
-            'updated_at' => now(),
-        ]);
+    $place->update([
+        'reviews_count' => (int) $ratingStats->total,
+        'average_rating' => round((float) $ratingStats->average, 2),
+    ]);
 
-    return back()->with('status', $existing ? 'Review updated.' : 'Review submitted.');
+    return back()->with('status', 'Review submitted.');
 })->name('places.review');
 
-Route::get('/places/{place}/report', function (Request $request, int $place) {
+Route::get('/places/{place}/report', function (Request $request, Place $place) {
     if (! $request->session()->has('cityzen_user')) {
         return redirect('/login')->with('notice', 'Please login to report a place.');
     }
 
-    $placeData = Schema::hasTable('places')
-        ? DB::table('places')->where('id', $place)->first()
-        : null;
+    $categories = ReportCategory::where('is_active', true)->orderBy('name')->get();
 
-    abort_unless($placeData, 404);
+    if ($categories->isEmpty()) {
+        collect(['Sampah', 'Kerusakan fasilitas', 'Keamanan', 'Aksesibilitas', 'Vandalisme', 'Lainnya'])
+            ->each(function ($name) {
+                ReportCategory::firstOrCreate(
+                    ['slug' => Str::slug($name)],
+                    ['name' => $name, 'description' => null, 'is_active' => true]
+                );
+            });
 
-    $categories = [
-        'Sampah',
-        'Kerusakan fasilitas',
-        'Keamanan',
-        'Aksesibilitas',
-        'Vandalisme',
-        'Lainnya',
-    ];
+        $categories = ReportCategory::where('is_active', true)->orderBy('name')->get();
+    }
 
     return view('reports.create', [
-        'place' => $placeData,
+        'place' => $place,
         'categories' => $categories,
     ]);
 })->name('reports.create');
 
-Route::post('/places/{place}/report', function (Request $request, int $place) {
+Route::post('/places/{place}/report', function (Request $request, Place $place) {
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
@@ -513,109 +497,153 @@ Route::post('/places/{place}/report', function (Request $request, int $place) {
     }
 
     $data = $request->validate([
-        'category' => ['required', 'string', 'max:80'],
+        'report_category_id' => ['required', 'exists:report_categories,id'],
         'description' => ['required', 'string', 'max:800'],
     ]);
 
-    if (! Schema::hasTable('reports') || ! Schema::hasTable('places')) {
-        return back()->with('status', 'Tabel reports belum tersedia.');
-    }
+    $pendingStatus = ReportStatus::firstOrCreate(
+        ['slug' => 'pending'],
+        ['name' => 'Pending', 'description' => 'Menunggu verifikasi admin', 'is_active' => true]
+    );
 
-    $reportPayload = [
+    Report::create([
         'user_id' => $userId,
-        'place_id' => $place,
+        'place_id' => $place->id,
+        'report_category_id' => $data['report_category_id'],
+        'report_status_id' => $pendingStatus->id,
         'description' => $data['description'],
-        'admin_note' => null,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ];
+    ]);
 
-    if (Schema::hasColumn('reports', 'category')) {
-        $reportPayload['category'] = $data['category'];
-    } elseif (Schema::hasColumn('reports', 'report_category_id')) {
-        $reportPayload['report_category_id'] = null;
-    }
-
-    if (Schema::hasColumn('reports', 'status')) {
-        $reportPayload['status'] = 'pending';
-    } elseif (Schema::hasColumn('reports', 'report_status_id')) {
-        $reportPayload['report_status_id'] = null;
-    }
-
-    DB::table('reports')->insert($reportPayload);
-
-    DB::table('places')
-        ->where('id', $place)
-        ->update([
-            'reports_count' => DB::table('reports')->where('place_id', $place)->count(),
-            'updated_at' => now(),
-        ]);
+    $place->update([
+        'reports_count' => Report::where('place_id', $place->id)->count(),
+    ]);
 
     return redirect('/dashboard')->with('status', 'Laporan berhasil dikirim dan menunggu verifikasi admin.');
 })->name('reports.store');
 
-Route::get('/admin/reports', function (Request $request) {
+Route::get('/admin/reports', function (Request $request) use ($isAdminUser) {
     if (! $request->session()->has('cityzen_user')) {
         return redirect('/login')->with('notice', 'Please login to open admin reports.');
     }
 
-    $reports = collect();
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
 
-    if (Schema::hasTable('reports')) {
-        $reports = DB::table('reports')
-            ->leftJoin('places', 'places.id', '=', 'reports.place_id')
-            ->leftJoin('users', 'users.id', '=', 'reports.user_id')
-            ->select([
-                'reports.*',
-                'places.name as place_name',
-                'users.name as user_name',
-            ])
-            ->orderByDesc('reports.created_at')
-            ->get();
-    }
+    $reports = Report::with(['place', 'category', 'status', 'user'])
+        ->latest()
+        ->get();
 
-    return view('admin.reports.index', [
-        'reports' => $reports,
-        'statuses' => ['pending', 'verified', 'rejected', 'resolved'],
-    ]);
+    $statuses = ReportStatus::orderBy('name')->get();
+
+    return view('admin.reports.index', compact('reports', 'statuses'));
 })->name('admin.reports');
 
-Route::post('/admin/reports/{report}/status', function (Request $request, int $report) {
+Route::post('/admin/reports/{report}/status', function (Request $request, Report $report) use ($isAdminUser) {
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
         return redirect('/login')->with('notice', 'Please login to moderate reports.');
     }
 
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
     $data = $request->validate([
-        'status' => ['required', 'in:pending,verified,rejected,resolved'],
+        'report_status_id' => ['required', 'exists:report_statuses,id'],
         'admin_note' => ['nullable', 'string', 'max:500'],
     ]);
 
-    $payload = [
+    $report->update([
+        'report_status_id' => $data['report_status_id'],
         'admin_note' => $data['admin_note'] ?? null,
         'verified_by' => $userId,
         'verified_at' => now(),
-        'updated_at' => now(),
-    ];
-
-    if (Schema::hasColumn('reports', 'status')) {
-        $payload['status'] = $data['status'];
-    }
-
-    DB::table('reports')->where('id', $report)->update($payload);
+    ]);
 
     return back()->with('status', 'Status laporan berhasil diperbarui.');
 })->name('admin.reports.status');
 
 Route::resource('places', PlaceController::class);
 
-Route::get('/profile', function (Request $request) {
+Route::get('/bookmarks', function (Request $request) use ($isAdminUser) {
+    $userId = $request->session()->get('cityzen_user.id');
+
+    if (! $userId) {
+        return redirect('/login')->with('notice', 'Please login to open your bookmarks.');
+    }
+
+    $bookmarks = collect();
+
+    if (Schema::hasTable('bookmarks') && Schema::hasTable('places')) {
+        $bookmarks = DB::table('bookmarks')
+            ->join('places', 'places.id', '=', 'bookmarks.place_id')
+            ->leftJoin('categories', 'categories.id', '=', 'places.category_id')
+            ->where('bookmarks.user_id', $userId)
+            ->whereNull('places.deleted_at')
+            ->select([
+                'bookmarks.created_at as saved_at',
+                'places.id',
+                'places.name',
+                'places.short_description',
+                'places.city',
+                'places.province',
+                'places.average_rating',
+                'places.likes_count',
+                'places.reviews_count',
+                'categories.name as category_name',
+            ])
+            ->orderByDesc('bookmarks.created_at')
+            ->get();
+    }
+
+    return view('bookmarks', [
+        'bookmarks' => $bookmarks,
+        'isAdmin' => $isAdminUser($request->session()->get('cityzen_user')),
+    ]);
+})->name('bookmarks.index');
+
+Route::get('/notifications', function (Request $request) use ($isAdminUser) {
+    $userId = $request->session()->get('cityzen_user.id');
+
+    if (! $userId) {
+        return redirect('/login')->with('notice', 'Please login to open notifications.');
+    }
+
+    $notifications = collect();
+
+    if (Schema::hasTable('notifications')) {
+        $notifications = DB::table('notifications')
+            ->leftJoin('notification_types', 'notification_types.id', '=', 'notifications.notification_type_id')
+            ->leftJoin('users as actors', 'actors.id', '=', 'notifications.actor_id')
+            ->where('notifications.user_id', $userId)
+            ->select([
+                'notifications.title',
+                'notifications.message',
+                'notifications.read_at',
+                'notifications.created_at',
+                'notification_types.name as type_name',
+                'actors.name as actor_name',
+            ])
+            ->orderByDesc('notifications.created_at')
+            ->limit(30)
+            ->get();
+    }
+
+    return view('notifications', [
+        'notifications' => $notifications,
+        'isAdmin' => $isAdminUser($request->session()->get('cityzen_user')),
+    ]);
+})->name('notifications.index');
+
+Route::get('/profile', function (Request $request) use ($isAdminUser, $profileStats) {
     if (! $request->session()->has('cityzen_user')) {
         return redirect('/login')->with('notice', 'Please login to open your CityZen profile.');
     }
 
-    return view('profile');
+    $userId = $request->session()->get('cityzen_user.id');
+
+    return view('profile', [
+        'isAdmin' => $isAdminUser($request->session()->get('cityzen_user')),
+        'stats' => $profileStats((int) $userId),
+    ]);
 });
 
 Route::post('/logout', function (Request $request) {
