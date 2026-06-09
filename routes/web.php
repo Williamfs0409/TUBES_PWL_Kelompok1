@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\PlaceController;
 use App\Models\Category;
@@ -101,7 +101,6 @@ Route::post('/login', function (Request $request) use ($sessionPayload) {
     }
 
     $request->session()->put('cityzen_user', $sessionPayload($user));
-
     $request->session()->regenerate();
 
     return redirect('/dashboard');
@@ -129,7 +128,6 @@ Route::post('/register', function (Request $request) use ($sessionPayload) {
     $user = User::create($data);
 
     $request->session()->put('cityzen_user', $sessionPayload($user));
-
     $request->session()->regenerate();
 
     return redirect('/dashboard');
@@ -144,13 +142,11 @@ Route::get('/dashboard', function (Request $request) use ($isAdminUser) {
         if ($number >= 1000) {
             return rtrim(rtrim(number_format($number / 1000, 1), '0'), '.').'k';
         }
-
         return (string) $number;
     };
 
     $initials = function (?string $name): string {
         $parts = collect(explode(' ', trim($name ?: 'CityZen User')))->filter()->values();
-
         return $parts->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode('') ?: 'CZ';
     };
 
@@ -259,7 +255,6 @@ Route::get('/explore', function (Request $request) use ($isAdminUser) {
         if ($number >= 1000) {
             return rtrim(rtrim(number_format($number / 1000, 1), '0'), '.').'k';
         }
-
         return (string) $number;
     };
 
