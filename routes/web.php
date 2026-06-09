@@ -329,7 +329,7 @@ Route::post('/admin/reports/{report}/status', function (\Illuminate\Http\Request
     }
 Route::post('/places/{place}/like', function (\App\Models\Place $place) {
     $userId = session('cityzen_user.id');
-=======
+
 Route::post('/places/{place}/like', function (Request $request, int $place) {
     $userId = $request->session()->get('cityzen_user.id');
 
