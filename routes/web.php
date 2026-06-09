@@ -315,7 +315,31 @@ Route::get('/explore', function (Request $request) use ($isAdminUser) {
     ]);
 });
 
+Route::get('/admin/reports', function () {
+    if (! session('cityzen_user')) {
+        return redirect('/login');
+    }
+
+    $reports = \App\Models\Report::with(['place', 'category', 'status'])
+        ->latest()
+        ->get();
+
+    $statuses = \App\Models\ReportStatus::orderBy('name')->get();
+
+    return view('admin.reports.index', compact('reports', 'statuses'));
+})->name('admin.reports');
+
+Route::post('/admin/reports/{report}/status', function (\Illuminate\Http\Request $request, \App\Models\Report $report) {
+    if (! session('cityzen_user')) {
+        return redirect('/login');
+    }
+Route::post('/places/{place}/like', function (\App\Models\Place $place) {
+    $userId = session('cityzen_user.id');
+
+Route::post('/places/{place}/like', function (Request $request, int $place) {
+=======
 Route::post('/places/{place}/like', function (Request $request, Place $place) {
+
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
@@ -337,6 +361,7 @@ Route::post('/places/{place}/like', function (Request $request, Place $place) {
             'updated_at' => now(),
         ]);
     }
+})->name('places.like');
 
     $place->update([
         'likes_count' => DB::table('likes')->where('place_id', $place->id)->count(),
@@ -379,6 +404,32 @@ Route::post('/places/{place}/review', function (Request $request, Place $place) 
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
+      
+        return redirect('/login');
+    }
+
+    $validated = $request->validate([
+        'report_status_id' => ['required', 'exists:report_statuses,id'],
+        'admin_note' => ['nullable', 'string', 'max:500'],
+    ]);
+
+    $report->update([
+        'report_status_id' => $validated['report_status_id'],
+        'admin_note' => $validated['admin_note'] ?? null,
+        'verified_by' => session('cityzen_user.id'),
+        'verified_at' => now(),
+    ]);
+
+    return back()->with('success', 'Status laporan berhasil diperbarui.');
+})->name('admin.reports.status');
+$userId = session('cityzen_user.id');
+
+if (!$userId) {
+    return redirect('/login')->with('notice', 'Please login to review a place.');
+}
+
+$validated = $request->validate([
+=======
         return redirect('/login')->with('notice', 'Please login to review a place.');
     }
 
