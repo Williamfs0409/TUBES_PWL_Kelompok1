@@ -17,59 +17,53 @@
     @endphp
 
     <div class="cz-dash-shell">
-        <aside class="cz-dash-sidebar" aria-label="CityZen navigation">
-            <div class="cz-dash-brand-block">
-                <a class="cz-dash-brand" href="{{ url('/') }}" aria-label="CityZen landing page">
-                    <span class="cz-dash-brand-mark" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" role="img"><path d="M18.5 4.7c-6.7.6-11.9 4-13.4 8.2-1.2 3.4.8 6.4 4.2 6.4 4.2 0 7.9-4.7 9.2-14.6Z" /><path d="M7.5 15.5c2.8-.5 5.3-2.2 7.4-5.1" /></svg>
-                    </span>
-                    <span><strong>CityZen</strong><small>Civic Control</small></span>
-                </a>
-            </div>
+        @include('partials.dashboard-sidebar', ['activeNav' => 'notifications'])
 
-            <nav class="cz-dash-nav" aria-label="Dashboard menu">
-                <a class="cz-dash-nav-link" href="{{ url('/dashboard') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 11 8-7 8 7v8a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-8Z" /></svg><span>Home</span></a>
-                <a class="cz-dash-nav-link" href="{{ url('/explore') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 8.5-2.1 5.9-5.9 2.1 2.1-5.9 5.9-2.1Z" /><circle cx="12" cy="12" r="9" /></svg><span>Explore</span></a>
-                <a class="cz-dash-nav-link is-active" href="{{ url('/notifications') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" /><path d="M10 20a2 2 0 0 0 4 0" /></svg><span>Notifications</span></a>
-                <a class="cz-dash-nav-link" href="{{ url('/bookmarks') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" /></svg><span>Bookmarks</span></a>
-                <a class="cz-dash-nav-link" href="{{ url('/profile') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c1.6-4 14.4-4 16 0" /></svg><span>Profile</span></a>
-                @if ($isAdmin ?? false)
-                    <a class="cz-dash-nav-link" href="{{ url('/admin/reports') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg><span>Admin</span></a>
-                @endif
-            </nav>
-
-            <div class="cz-dash-sidebar-bottom">
-                <div class="cz-dash-user-card">
-                    <span class="cz-dash-avatar">{{ $initials }}</span>
-                    <span class="cz-dash-user-copy"><strong>{{ $user['name'] }}</strong><small>{{ $handle }}</small></span>
-                    <form method="POST" action="{{ url('/logout') }}">@csrf<button class="cz-dash-icon-button" type="submit" aria-label="Logout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8V5a1 1 0 0 0-1-1H5v16h8a1 1 0 0 0 1-1v-3" /><path d="M10 12h10" /><path d="m17 9 3 3-3 3" /></svg></button></form>
-                </div>
-            </div>
-        </aside>
-
-        <main class="cz-list-main">
-            <header class="cz-list-header">
-                <span>Database alerts</span>
+        <main class="cz-list-main cz-list-main--focused">
+            <header class="cz-list-topbar">
                 <h1>Notifications</h1>
-                <p>Notifikasi personal dari tabel notifications, termasuk status laporan, badge, dan aktivitas komunitas.</p>
+                <button class="cz-dash-theme-toggle" type="button" data-theme-toggle aria-pressed="false">
+                    <span class="cz-theme-sun" aria-hidden="true"></span>
+                    <span data-theme-label>Dark mode</span>
+                </button>
             </header>
 
-            <section class="cz-list-stack">
+            <nav class="cz-notification-filters" aria-label="Notification filters">
+                <a class="is-active" href="{{ url('/notifications') }}">All</a>
+                <a href="{{ url('/notifications') }}">Unread</a>
+                <a href="{{ url('/notifications') }}">Reports</a>
+                <a href="{{ url('/notifications') }}">System</a>
+            </nav>
+
+            <section class="cz-notification-list">
                 @forelse ($notifications as $notification)
-                    <article class="cz-list-card {{ $notification->read_at ? '' : 'is-unread' }}">
-                        <span class="cz-list-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" /><path d="M10 20a2 2 0 0 0 4 0" /></svg>
+                    <article class="cz-notification-card {{ $notification->read_at ? '' : 'is-unread' }}">
+                        <span class="cz-notification-icon" aria-hidden="true">
+                            @if (str($notification->type_name ?? '')->lower()->contains('report'))
+                                <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-5" /><circle cx="12" cy="12" r="9" /></svg>
+                            @elseif (str($notification->type_name ?? '')->lower()->contains('badge'))
+                                <svg viewBox="0 0 24 24"><path d="M8 4h8v7a4 4 0 0 1-8 0V4Z" /><path d="m10 15-1 5 3-2 3 2-1-5" /></svg>
+                            @else
+                                <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z" /><path d="M8 9h8" /><path d="M8 13h5" /></svg>
+                            @endif
                         </span>
-                        <div class="cz-list-copy">
-                            <div class="cz-list-eyebrow">{{ $notification->type_name ?? 'Notification' }} &middot; {{ $notification->created_at ? \Illuminate\Support\Carbon::parse($notification->created_at)->diffForHumans() : 'recently' }}</div>
-                            <h2 class="cz-list-title">{{ $notification->title }}</h2>
-                            <p class="cz-list-meta">{{ $notification->message ?: 'Tidak ada detail tambahan.' }}</p>
-                            <p class="cz-list-meta">{{ $notification->actor_name ? 'From '.$notification->actor_name : ($notification->read_at ? 'Read' : 'Unread') }}</p>
+                        <div class="cz-notification-copy">
+                            <div class="cz-notification-row">
+                                <h2>{{ $notification->title }}</h2>
+                                <span>{{ $notification->created_at ? \Illuminate\Support\Carbon::parse($notification->created_at)->diffForHumans() : 'recently' }}</span>
+                            </div>
+                            <p>{{ $notification->message ?: 'Tidak ada detail tambahan.' }}</p>
+                            <small>{{ $notification->actor_name ? 'From '.$notification->actor_name : ($notification->type_name ?? 'CityZen system') }}</small>
                         </div>
-                        <a class="cz-list-action" href="{{ url('/dashboard') }}">Buka</a>
+                        @unless ($notification->read_at)
+                            <span class="cz-notification-badge">Unread</span>
+                        @endunless
+                        <button class="cz-icon-dots" type="button" aria-label="Notification options">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /></svg>
+                        </button>
                     </article>
                 @empty
-                    <article class="cz-list-empty">
+                    <article class="cz-notification-empty">
                         <h2>Belum ada notifikasi.</h2>
                         <p>Notifikasi akan muncul setelah ada aktivitas seperti laporan diverifikasi, badge baru, atau interaksi warga.</p>
                         <a href="{{ url('/dashboard') }}">Kembali ke dashboard</a>
@@ -77,6 +71,20 @@
                 @endforelse
             </section>
         </main>
+
+        <aside class="cz-dash-right-rail" aria-label="Notification summary">
+            <section class="cz-list-side-card">
+                <h2>Inbox</h2>
+                <p>{{ $notifications->whereNull('read_at')->count() }} unread dari {{ $notifications->count() }} notifikasi.</p>
+                <a href="{{ url('/dashboard') }}">Dashboard</a>
+            </section>
+
+            <footer class="cz-dash-rail-footer">
+                <a href="{{ url('/') }}">CityZen Charter</a>
+                <a href="{{ url('/bookmarks') }}">Bookmarks</a>
+                <span>&copy; {{ date('Y') }} CityZen Corp.</span>
+            </footer>
+        </aside>
     </div>
 </body>
 </html>

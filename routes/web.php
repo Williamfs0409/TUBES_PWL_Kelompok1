@@ -33,6 +33,21 @@ $isAdminUser = function (?array $sessionUser): bool {
     return in_array(strtolower((string) ($roleName ?? '')), ['admin', 'superadmin'], true);
 };
 
+$isSuperAdminUser = function (?array $sessionUser): bool {
+    $userId = $sessionUser['id'] ?? null;
+
+    if (! $userId || ! Schema::hasTable('users') || ! Schema::hasTable('roles')) {
+        return false;
+    }
+
+    $roleName = DB::table('users')
+        ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
+        ->where('users.id', $userId)
+        ->value('roles.name');
+
+    return strtolower((string) ($roleName ?? '')) === 'superadmin';
+};
+
 $sessionPayload = function (User $user): array {
     $roleName = null;
 
@@ -79,6 +94,12 @@ Route::post('/login', function (Request $request) use ($sessionPayload) {
             ->onlyInput('email');
     }
 
+    if (Schema::hasColumn('users', 'is_suspended') && $user->is_suspended) {
+        return back()
+            ->withErrors(['email' => 'Akun CityZen ini sedang disuspend oleh admin.'])
+            ->onlyInput('email');
+    }
+
     $request->session()->put('cityzen_user', $sessionPayload($user));
 
     $request->session()->regenerate();
@@ -100,6 +121,10 @@ Route::post('/register', function (Request $request) use ($sessionPayload) {
         'email' => ['required', 'email', 'unique:users,email'],
         'password' => ['required', 'min:4'],
     ]);
+
+    if (Schema::hasTable('roles') && Schema::hasColumn('users', 'role_id')) {
+        $data['role_id'] = DB::table('roles')->where('slug', 'user')->value('id');
+    }
 
     $user = User::create($data);
 
@@ -315,31 +340,7 @@ Route::get('/explore', function (Request $request) use ($isAdminUser) {
     ]);
 });
 
-Route::get('/admin/reports', function () {
-    if (! session('cityzen_user')) {
-        return redirect('/login');
-    }
-
-    $reports = \App\Models\Report::with(['place', 'category', 'status'])
-        ->latest()
-        ->get();
-
-    $statuses = \App\Models\ReportStatus::orderBy('name')->get();
-
-    return view('admin.reports.index', compact('reports', 'statuses'));
-})->name('admin.reports');
-
-Route::post('/admin/reports/{report}/status', function (\Illuminate\Http\Request $request, \App\Models\Report $report) {
-    if (! session('cityzen_user')) {
-        return redirect('/login');
-    }
-Route::post('/places/{place}/like', function (\App\Models\Place $place) {
-    $userId = session('cityzen_user.id');
-
-Route::post('/places/{place}/like', function (Request $request, int $place) {
-=======
 Route::post('/places/{place}/like', function (Request $request, Place $place) {
-
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
@@ -361,7 +362,6 @@ Route::post('/places/{place}/like', function (Request $request, Place $place) {
             'updated_at' => now(),
         ]);
     }
-})->name('places.like');
 
     $place->update([
         'likes_count' => DB::table('likes')->where('place_id', $place->id)->count(),
@@ -404,32 +404,6 @@ Route::post('/places/{place}/review', function (Request $request, Place $place) 
     $userId = $request->session()->get('cityzen_user.id');
 
     if (! $userId) {
-      
-        return redirect('/login');
-    }
-
-    $validated = $request->validate([
-        'report_status_id' => ['required', 'exists:report_statuses,id'],
-        'admin_note' => ['nullable', 'string', 'max:500'],
-    ]);
-
-    $report->update([
-        'report_status_id' => $validated['report_status_id'],
-        'admin_note' => $validated['admin_note'] ?? null,
-        'verified_by' => session('cityzen_user.id'),
-        'verified_at' => now(),
-    ]);
-
-    return back()->with('success', 'Status laporan berhasil diperbarui.');
-})->name('admin.reports.status');
-$userId = session('cityzen_user.id');
-
-if (!$userId) {
-    return redirect('/login')->with('notice', 'Please login to review a place.');
-}
-
-$validated = $request->validate([
-=======
         return redirect('/login')->with('notice', 'Please login to review a place.');
     }
 
@@ -521,20 +495,88 @@ Route::post('/places/{place}/report', function (Request $request, Place $place) 
     return redirect('/dashboard')->with('status', 'Laporan berhasil dikirim dan menunggu verifikasi admin.');
 })->name('reports.store');
 
-Route::get('/admin/reports', function (Request $request) use ($isAdminUser) {
+Route::get('/admin', function (Request $request) use ($isAdminUser, $isSuperAdminUser) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login to open admin panel.');
+    }
+
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    $pendingReports = 0;
+
+    if (Schema::hasTable('reports')) {
+        if (Schema::hasTable('report_statuses') && Schema::hasColumn('report_statuses', 'slug')) {
+            $pendingReports = DB::table('reports')
+                ->leftJoin('report_statuses', 'report_statuses.id', '=', 'reports.report_status_id')
+                ->where('report_statuses.slug', 'pending')
+                ->count();
+        } elseif (Schema::hasTable('report_statuses') && Schema::hasColumn('report_statuses', 'name')) {
+            $pendingReports = DB::table('reports')
+                ->leftJoin('report_statuses', 'report_statuses.id', '=', 'reports.report_status_id')
+                ->whereRaw('LOWER(report_statuses.name) = ?', ['pending'])
+                ->count();
+        } elseif (Schema::hasColumn('reports', 'status')) {
+            $pendingReports = DB::table('reports')->where('status', 'pending')->count();
+        }
+    }
+
+    $stats = [
+        'users' => Schema::hasTable('users') ? DB::table('users')->count() : 0,
+        'places' => Schema::hasTable('places') ? DB::table('places')->whereNull('deleted_at')->count() : 0,
+        'reports' => Schema::hasTable('reports') ? DB::table('reports')->count() : 0,
+        'pending_reports' => $pendingReports,
+        'reviews' => Schema::hasTable('reviews') ? DB::table('reviews')->count() : 0,
+        'likes' => Schema::hasTable('likes') ? DB::table('likes')->count() : 0,
+        'bookmarks' => Schema::hasTable('bookmarks') ? DB::table('bookmarks')->count() : 0,
+    ];
+
+    $topPlaces = Schema::hasTable('places')
+        ? DB::table('places')
+            ->leftJoin('categories', 'categories.id', '=', 'places.category_id')
+            ->whereNull('places.deleted_at')
+            ->select('places.name', 'places.city', 'places.likes_count', 'places.reports_count', 'places.average_rating', 'categories.name as category_name')
+            ->orderByRaw('(places.likes_count + places.reports_count + places.reviews_count) DESC')
+            ->limit(5)
+            ->get()
+        : collect();
+
+    $categoryActivity = Schema::hasTable('places')
+        ? DB::table('places')
+            ->leftJoin('categories', 'categories.id', '=', 'places.category_id')
+            ->whereNull('places.deleted_at')
+            ->selectRaw('COALESCE(categories.name, "Uncategorized") as category_label, COUNT(places.id) as total')
+            ->groupByRaw('COALESCE(categories.name, "Uncategorized")')
+            ->orderByDesc('total')
+            ->limit(6)
+            ->get()
+        : collect();
+
+    return view('admin.dashboard', [
+        'stats' => $stats,
+        'topPlaces' => $topPlaces,
+        'categoryActivity' => $categoryActivity,
+        'isSuperAdmin' => $isSuperAdminUser($request->session()->get('cityzen_user')),
+    ]);
+})->name('admin.dashboard');
+
+Route::get('/admin/reports', function (Request $request) use ($isAdminUser, $isSuperAdminUser) {
     if (! $request->session()->has('cityzen_user')) {
         return redirect('/login')->with('notice', 'Please login to open admin reports.');
     }
 
     abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
 
-    $reports = Report::with(['place', 'category', 'status', 'user'])
+    $reports = Report::with(['place.user', 'place.category', 'category', 'status', 'user'])
         ->latest()
         ->get();
 
     $statuses = ReportStatus::orderBy('name')->get();
 
-    return view('admin.reports.index', compact('reports', 'statuses'));
+    return view('admin.reports.index', [
+        'reports' => $reports,
+        'statuses' => $statuses,
+        'isSuperAdmin' => $isSuperAdminUser($request->session()->get('cityzen_user')),
+    ]);
 })->name('admin.reports');
 
 Route::post('/admin/reports/{report}/status', function (Request $request, Report $report) use ($isAdminUser) {
@@ -561,6 +603,193 @@ Route::post('/admin/reports/{report}/status', function (Request $request, Report
     return back()->with('status', 'Status laporan berhasil diperbarui.');
 })->name('admin.reports.status');
 
+Route::post('/admin/reports/{report}/uploader-suspension', function (Request $request, Report $report) use ($isAdminUser) {
+    $currentUserId = $request->session()->get('cityzen_user.id');
+
+    if (! $currentUserId) {
+        return redirect('/login')->with('notice', 'Please login to moderate reports.');
+    }
+
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    $data = $request->validate([
+        'action' => ['required', 'in:suspend,restore'],
+    ]);
+
+    $report->loadMissing('place.user');
+    $uploader = $report->place?->user;
+
+    if (! $uploader || ! Schema::hasColumn('users', 'is_suspended')) {
+        return back()->withErrors(['report' => 'Uploader postingan tidak ditemukan atau tabel user belum mendukung suspend.']);
+    }
+
+    if ((int) $uploader->id === (int) $currentUserId) {
+        return back()->withErrors(['report' => 'Admin tidak bisa mensuspend akun sendiri dari report queue.']);
+    }
+
+    $shouldSuspend = $data['action'] === 'suspend';
+
+    $uploader->forceFill([
+        'is_suspended' => $shouldSuspend,
+        'suspended_at' => $shouldSuspend ? now() : null,
+    ])->save();
+
+    if ($shouldSuspend && $report->place && Schema::hasColumn('places', 'status')) {
+        $report->place->update(['status' => 'hidden']);
+    }
+
+    return back()->with('status', $shouldSuspend
+        ? 'Uploader berhasil disuspend dan postingan disembunyikan.'
+        : 'Suspend uploader berhasil dicabut.');
+})->name('admin.reports.uploader-suspension');
+
+Route::get('/admin/categories', function (Request $request) use ($isAdminUser, $isSuperAdminUser) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login to open category manager.');
+    }
+
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    return view('admin.categories.index', [
+        'categories' => Category::orderBy('sort_order')->orderBy('name')->get(),
+        'isSuperAdmin' => $isSuperAdminUser($request->session()->get('cityzen_user')),
+    ]);
+})->name('admin.categories');
+
+Route::post('/admin/categories', function (Request $request) use ($isAdminUser) {
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    $data = $request->validate([
+        'name' => ['required', 'string', 'max:80', 'unique:categories,name'],
+        'description' => ['nullable', 'string', 'max:255'],
+        'icon' => ['nullable', 'string', 'max:80'],
+    ]);
+
+    Category::create([
+        'name' => $data['name'],
+        'slug' => Str::slug($data['name']),
+        'description' => $data['description'] ?? null,
+        'icon' => $data['icon'] ?? null,
+        'is_active' => true,
+    ]);
+
+    return back()->with('status', 'Kategori berhasil ditambahkan.');
+})->name('admin.categories.store');
+
+Route::patch('/admin/categories/{category}', function (Request $request, Category $category) use ($isAdminUser) {
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    $data = $request->validate([
+        'name' => ['required', 'string', 'max:80', 'unique:categories,name,'.$category->id],
+        'description' => ['nullable', 'string', 'max:255'],
+        'icon' => ['nullable', 'string', 'max:80'],
+        'sort_order' => ['nullable', 'integer', 'min:0', 'max:999'],
+        'is_active' => ['nullable', 'boolean'],
+    ]);
+
+    $category->update([
+        'name' => $data['name'],
+        'slug' => Str::slug($data['name']),
+        'description' => $data['description'] ?? null,
+        'icon' => $data['icon'] ?? null,
+        'sort_order' => $data['sort_order'] ?? 0,
+        'is_active' => (bool) ($data['is_active'] ?? false),
+    ]);
+
+    return back()->with('status', 'Kategori berhasil diperbarui.');
+})->name('admin.categories.update');
+
+Route::delete('/admin/categories/{category}', function (Request $request, Category $category) use ($isAdminUser) {
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    if (Place::where('category_id', $category->id)->exists()) {
+        return back()->withErrors(['category' => 'Kategori masih dipakai oleh places. Nonaktifkan saja jika belum bisa dihapus.']);
+    }
+
+    $category->delete();
+
+    return back()->with('status', 'Kategori berhasil dihapus.');
+})->name('admin.categories.destroy');
+
+Route::get('/admin/places', function (Request $request) use ($isAdminUser, $isSuperAdminUser) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login to open place moderation.');
+    }
+
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    return view('admin.places.index', [
+        'places' => Place::with(['category', 'user'])->latest()->get(),
+        'isSuperAdmin' => $isSuperAdminUser($request->session()->get('cityzen_user')),
+    ]);
+})->name('admin.places');
+
+Route::patch('/admin/places/{place}/status', function (Request $request, Place $place) use ($isAdminUser) {
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    $data = $request->validate([
+        'status' => ['required', 'in:active,hidden,rejected'],
+    ]);
+
+    $place->update(['status' => $data['status']]);
+
+    return back()->with('status', 'Status place berhasil diperbarui.');
+})->name('admin.places.status');
+
+Route::delete('/admin/places/{place}', function (Request $request, Place $place) use ($isAdminUser) {
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    $place->delete();
+
+    return back()->with('status', 'Postingan place berhasil dihapus.');
+})->name('admin.places.destroy');
+
+Route::get('/admin/users', function (Request $request) use ($isAdminUser, $isSuperAdminUser) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login to open user manager.');
+    }
+
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    $users = User::query()
+        ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
+        ->select('users.*', 'roles.name as role_name')
+        ->orderBy('users.name')
+        ->get();
+
+    return view('admin.users.index', [
+        'users' => $users,
+        'roles' => Schema::hasTable('roles') ? DB::table('roles')->orderBy('id')->get() : collect(),
+        'isSuperAdmin' => $isSuperAdminUser($request->session()->get('cityzen_user')),
+        'currentUserId' => $request->session()->get('cityzen_user.id'),
+    ]);
+})->name('admin.users');
+
+Route::patch('/admin/users/{user}', function (Request $request, User $user) use ($isAdminUser, $isSuperAdminUser) {
+    abort_unless($isAdminUser($request->session()->get('cityzen_user')), 403);
+
+    $currentUserId = $request->session()->get('cityzen_user.id');
+
+    $data = $request->validate([
+        'is_suspended' => ['nullable', 'boolean'],
+        'role_id' => ['nullable', 'exists:roles,id'],
+    ]);
+
+    if ((int) $currentUserId !== (int) $user->id && Schema::hasColumn('users', 'is_suspended')) {
+        $shouldSuspend = (bool) ($data['is_suspended'] ?? false);
+        $user->is_suspended = $shouldSuspend;
+        $user->suspended_at = $shouldSuspend ? now() : null;
+    }
+
+    if ($isSuperAdminUser($request->session()->get('cityzen_user')) && Schema::hasColumn('users', 'role_id') && isset($data['role_id'])) {
+        $user->role_id = $data['role_id'];
+    }
+
+    $user->save();
+
+    return back()->with('status', 'User berhasil diperbarui.');
+})->name('admin.users.update');
+
 Route::resource('places', PlaceController::class);
 
 Route::get('/bookmarks', function (Request $request) use ($isAdminUser) {
@@ -578,6 +807,16 @@ Route::get('/bookmarks', function (Request $request) use ($isAdminUser) {
             ->leftJoin('categories', 'categories.id', '=', 'places.category_id')
             ->where('bookmarks.user_id', $userId)
             ->whereNull('places.deleted_at')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $term = '%'.$request->string('q')->trim().'%';
+
+                $query->where(function ($inner) use ($term) {
+                    $inner->where('places.name', 'like', $term)
+                        ->orWhere('places.short_description', 'like', $term)
+                        ->orWhere('places.city', 'like', $term)
+                        ->orWhere('categories.name', 'like', $term);
+                });
+            })
             ->select([
                 'bookmarks.created_at as saved_at',
                 'places.id',
@@ -639,12 +878,80 @@ Route::get('/profile', function (Request $request) use ($isAdminUser, $profileSt
     }
 
     $userId = $request->session()->get('cityzen_user.id');
+    $profile = Schema::hasTable('profiles')
+        ? DB::table('profiles')->where('user_id', $userId)->first()
+        : null;
 
     return view('profile', [
         'isAdmin' => $isAdminUser($request->session()->get('cityzen_user')),
         'stats' => $profileStats((int) $userId),
+        'profile' => $profile,
     ]);
 });
+
+Route::get('/settings', function (Request $request) use ($isAdminUser) {
+    if (! $request->session()->has('cityzen_user')) {
+        return redirect('/login')->with('notice', 'Please login to open settings.');
+    }
+
+    $userId = $request->session()->get('cityzen_user.id');
+    $account = User::findOrFail($userId);
+    $profile = Schema::hasTable('profiles')
+        ? DB::table('profiles')->where('user_id', $userId)->first()
+        : null;
+
+    return view('settings', [
+        'account' => $account,
+        'profile' => $profile,
+        'isAdmin' => $isAdminUser($request->session()->get('cityzen_user')),
+    ]);
+})->name('settings');
+
+Route::post('/settings', function (Request $request) use ($sessionPayload, $isAdminUser) {
+    $userId = $request->session()->get('cityzen_user.id');
+
+    if (! $userId) {
+        return redirect('/login')->with('notice', 'Please login to update settings.');
+    }
+
+    $data = $request->validate([
+        'name' => ['required', 'string', 'max:80'],
+        'email' => ['required', 'email', 'unique:users,email,'.$userId],
+        'username' => ['required', 'string', 'max:40', 'alpha_dash', 'unique:profiles,username,'.$userId.',user_id'],
+        'city' => ['nullable', 'string', 'max:100'],
+        'bio' => ['nullable', 'string', 'max:500'],
+        'password' => ['nullable', 'string', 'min:4'],
+    ]);
+
+    $account = User::findOrFail($userId);
+    $account->fill([
+        'name' => $data['name'],
+        'email' => $data['email'],
+    ]);
+
+    if (! empty($data['password'])) {
+        $account->password = Hash::make($data['password']);
+    }
+
+    $account->save();
+
+    if (Schema::hasTable('profiles')) {
+        DB::table('profiles')->updateOrInsert(
+            ['user_id' => $userId],
+            [
+                'username' => $data['username'],
+                'city' => $data['city'] ?? null,
+                'bio' => $data['bio'] ?? null,
+                'updated_at' => now(),
+                'created_at' => now(),
+            ]
+        );
+    }
+
+    $request->session()->put('cityzen_user', $sessionPayload($account));
+
+    return redirect('/settings')->with('status', 'Settings berhasil diperbarui.');
+})->name('settings.update');
 
 Route::post('/logout', function (Request $request) {
     $request->session()->forget('cityzen_user');

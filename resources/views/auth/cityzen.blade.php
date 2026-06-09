@@ -172,6 +172,63 @@
             box-shadow: 0 0 0 4px rgba(188, 240, 174, 0.55);
         }
 
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 52px;
+            width: 100%;
+        }
+
+        .password-toggle {
+            align-items: center;
+            background: transparent;
+            border: 0;
+            border-radius: 999px;
+            color: var(--muted);
+            cursor: pointer;
+            display: inline-flex;
+            height: 38px;
+            justify-content: center;
+            padding: 0;
+            position: absolute;
+            right: 6px;
+            top: 5px;
+            transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+            width: 38px;
+        }
+
+        .password-toggle:hover,
+        .password-toggle:focus-visible {
+            background: rgba(188, 240, 174, 0.55);
+            color: var(--primary);
+            outline: none;
+            transform: scale(1.04);
+        }
+
+        .password-toggle svg {
+            fill: none;
+            height: 21px;
+            stroke: currentColor;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 2;
+            width: 21px;
+        }
+
+        .password-toggle .eye-off {
+            display: none;
+        }
+
+        .password-toggle.is-visible .eye {
+            display: none;
+        }
+
+        .password-toggle.is-visible .eye-off {
+            display: block;
+        }
+
         .error {
             color: var(--danger);
             font-size: 13px;
@@ -337,7 +394,13 @@
 
                     <div class="field">
                         <label for="password">Password</label>
-                        <input id="password" name="password" type="password" autocomplete="{{ $isRegister ? 'new-password' : 'current-password' }}" minlength="4" required>
+                        <div class="password-wrap">
+                            <input id="password" name="password" type="password" autocomplete="{{ $isRegister ? 'new-password' : 'current-password' }}" minlength="4" required>
+                            <button class="password-toggle" type="button" data-password-toggle aria-label="Show password" aria-pressed="false">
+                                <svg class="eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="3" /></svg>
+                                <svg class="eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18" /><path d="M10.7 5.2A10.4 10.4 0 0 1 12 5c6 0 9.5 7 9.5 7a17.6 17.6 0 0 1-3.1 4.1" /><path d="M6.5 6.8A17.6 17.6 0 0 0 2.5 12s3.5 7 9.5 7a10.4 10.4 0 0 0 4.1-.8" /><path d="M9.9 9.9A3 3 0 0 0 14.1 14.1" /></svg>
+                            </button>
+                        </div>
                         @error('password')
                             <span class="error">{{ $message }}</span>
                         @enderror
@@ -358,5 +421,21 @@
             </div>
         </section>
     </main>
+    <script>
+        document.querySelectorAll('[data-password-toggle]').forEach((toggle) => {
+            const input = toggle.closest('.password-wrap')?.querySelector('input');
+
+            toggle.addEventListener('click', () => {
+                if (!input) return;
+
+                const isVisible = input.type === 'text';
+                input.type = isVisible ? 'password' : 'text';
+                toggle.classList.toggle('is-visible', !isVisible);
+                toggle.setAttribute('aria-pressed', String(!isVisible));
+                toggle.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+                input.focus();
+            });
+        });
+    </script>
 </body>
 </html>

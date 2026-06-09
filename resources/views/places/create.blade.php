@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>New Report | CityZen</title>
+    <title>Add Place | CityZen</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=hanken-grotesk:700,800|inter:400,500,600,700,800,900" rel="stylesheet" />
     <style>
@@ -306,19 +306,19 @@
         <a class="brand" href="{{ url('/') }}">CityZen</a>
         <nav aria-label="Report navigation">
             <a href="{{ url('/dashboard') }}">Dashboard</a>
-            <a href="{{ url('/profile') }}">Profile</a>
+            <a href="{{ url('/bookmarks') }}">Bookmarks</a>
         </nav>
     </header>
 
     <main>
         <aside class="intro">
-            <p class="eyebrow">Community report</p>
-            <h1>Turn a local concern into city data.</h1>
-            <p>Hi {{ $user['name'] }}, use this form to capture a public space issue clearly enough for the community to track and act on.</p>
+            <p class="eyebrow">Public place</p>
+            <h1>Add a public space into CityZen.</h1>
+            <p>Hi {{ $user['name'] }}, use this form to add a place that can later receive reviews, bookmarks, likes, and reports.</p>
             <ol class="steps">
                 <li>1. Describe the place and category</li>
-                <li>2. Explain what needs attention</li>
-                <li>3. Save the report draft to your dashboard</li>
+                <li>2. Add location and context</li>
+                <li>3. Publish it into dashboard and explore</li>
             </ol>
         </aside>
 
@@ -403,7 +403,7 @@
             </div>
 
             <div class="actions">
-            <a class="button button--secondary" href="{{ url('/places') }}">Cancel</a>
+            <a class="button button--secondary" href="{{ url('/dashboard') }}">Cancel</a>
             <button class="button button--primary" type="submit">Simpan Place</button>
             </div>
             </form>

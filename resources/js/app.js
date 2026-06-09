@@ -2,14 +2,88 @@ import './bootstrap';
 
 const dashboardAwal = document.querySelector('[data-dashboard-awal]');
 const explorePage = document.querySelector('[data-explore-page]');
+const dashboardPages = [...document.querySelectorAll('.cz-dashboard-page')];
+const themeStorageKey = 'cityzen-theme';
+
+dashboardPages.forEach((page) => {
+    const themeToggle = page.querySelector('[data-theme-toggle]');
+    const themeLabel = page.querySelector('[data-theme-label]');
+    const userMenu = page.querySelector('[data-user-menu]');
+    const userMenuToggle = page.querySelector('[data-user-menu-toggle]');
+    let toast = page.querySelector('[data-dashboard-toast]');
+    let toastTimer;
+
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'cz-dash-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        toast.dataset.dashboardToast = '';
+        document.body.append(toast);
+    }
+
+    const showPageToast = (message) => {
+        if (!toast || !message) return;
+
+        toast.textContent = message;
+        toast.classList.add('is-visible');
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove('is-visible'), 1800);
+    };
+
+    const setTheme = (theme) => {
+        const isDark = theme === 'dark';
+        page.dataset.theme = isDark ? 'dark' : 'light';
+
+        if (themeToggle) {
+            themeToggle.setAttribute('aria-pressed', String(isDark));
+        }
+
+        if (themeLabel) {
+            themeLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
+        }
+    };
+
+    const storedTheme = window.localStorage?.getItem(themeStorageKey);
+    setTheme(storedTheme === 'dark' ? 'dark' : 'light');
+
+    themeToggle?.addEventListener('click', () => {
+        const nextTheme = page.dataset.theme === 'dark' ? 'light' : 'dark';
+        setTheme(nextTheme);
+        window.localStorage?.setItem(themeStorageKey, nextTheme);
+        showPageToast(nextTheme === 'dark' ? 'Dark mode aktif.' : 'Light mode aktif.');
+    });
+
+    page.querySelectorAll('[data-action-toast]').forEach((control) => {
+        control.addEventListener('click', () => showPageToast(control.dataset.actionToast));
+    });
+
+    userMenuToggle?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const isOpen = userMenu?.classList.toggle('is-open') ?? false;
+        userMenuToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!userMenu || userMenu.contains(event.target)) return;
+
+        userMenu.classList.remove('is-open');
+        userMenuToggle?.setAttribute('aria-expanded', 'false');
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+
+        userMenu?.classList.remove('is-open');
+        userMenuToggle?.setAttribute('aria-expanded', 'false');
+    });
+});
 
 if (dashboardAwal) {
     const searchInput = dashboardAwal.querySelector('[data-dashboard-search]');
     const posts = [...dashboardAwal.querySelectorAll('[data-feed-post]')];
     const trendButtons = [...dashboardAwal.querySelectorAll('[data-trending-place]')];
     const toast = dashboardAwal.querySelector('[data-dashboard-toast]');
-    const themeToggle = dashboardAwal.querySelector('[data-theme-toggle]');
-    const themeLabel = dashboardAwal.querySelector('[data-theme-label]');
     const navLinks = [...dashboardAwal.querySelectorAll('.cz-dash-nav-link[href^="#"]')];
     let toastTimer;
 
@@ -21,27 +95,6 @@ if (dashboardAwal) {
         window.clearTimeout(toastTimer);
         toastTimer = window.setTimeout(() => toast.classList.remove('is-visible'), 1800);
     };
-
-    const setTheme = (theme) => {
-        const isDark = theme === 'dark';
-        dashboardAwal.dataset.theme = isDark ? 'dark' : 'light';
-
-        if (themeToggle) {
-            themeToggle.setAttribute('aria-pressed', String(isDark));
-        }
-
-        if (themeLabel) {
-            themeLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
-        }
-    };
-
-    setTheme('light');
-
-    themeToggle?.addEventListener('click', () => {
-        const nextTheme = dashboardAwal.dataset.theme === 'dark' ? 'light' : 'dark';
-        setTheme(nextTheme);
-        showToast(nextTheme === 'dark' ? 'Dark mode aktif.' : 'Light mode aktif.');
-    });
 
     const filterDashboard = () => {
         const term = searchInput?.value.trim().toLowerCase() || '';
@@ -89,10 +142,6 @@ if (dashboardAwal) {
         window.setTimeout(() => scrollToDashboardSection(window.location.hash, false), 0);
     }
 
-    dashboardAwal.querySelectorAll('[data-action-toast]').forEach((control) => {
-        control.addEventListener('click', () => showToast(control.dataset.actionToast));
-    });
-
     dashboardAwal.querySelectorAll('[data-like-post]').forEach((button) => {
         button.addEventListener('click', () => {
             const isLiked = button.classList.toggle('is-liked');
@@ -127,8 +176,6 @@ if (explorePage) {
     const items = [...explorePage.querySelectorAll('[data-explore-item]')];
     const chips = [...explorePage.querySelectorAll('[data-explore-chip]')];
     const toast = explorePage.querySelector('[data-dashboard-toast]');
-    const themeToggle = explorePage.querySelector('[data-theme-toggle]');
-    const themeLabel = explorePage.querySelector('[data-theme-label]');
     let toastTimer;
 
     const showToast = (message) => {
@@ -140,19 +187,6 @@ if (explorePage) {
         toastTimer = window.setTimeout(() => toast.classList.remove('is-visible'), 1800);
     };
 
-    const setTheme = (theme) => {
-        const isDark = theme === 'dark';
-        explorePage.dataset.theme = isDark ? 'dark' : 'light';
-
-        if (themeToggle) {
-            themeToggle.setAttribute('aria-pressed', String(isDark));
-        }
-
-        if (themeLabel) {
-            themeLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
-        }
-    };
-
     const filterExplore = () => {
         const term = searchInput?.value.trim().toLowerCase() || '';
 
@@ -160,14 +194,6 @@ if (explorePage) {
             item.classList.toggle('is-hidden', term.length > 0 && !item.dataset.title.includes(term));
         });
     };
-
-    setTheme('light');
-
-    themeToggle?.addEventListener('click', () => {
-        const nextTheme = explorePage.dataset.theme === 'dark' ? 'light' : 'dark';
-        setTheme(nextTheme);
-        showToast(nextTheme === 'dark' ? 'Dark mode aktif.' : 'Light mode aktif.');
-    });
 
     searchInput?.addEventListener('input', filterExplore);
 

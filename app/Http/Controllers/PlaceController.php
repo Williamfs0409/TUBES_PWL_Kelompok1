@@ -5,12 +5,47 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Place;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class PlaceController extends Controller
 {
+    private function ensureDefaultCategories(): void
+    {
+        collect([
+            'Taman Kota',
+            'Wisata',
+            'Kuliner',
+            'Fasilitas Umum',
+            'Tempat Olahraga',
+            'Ruang Komunitas',
+            'Edukasi',
+            'Transportasi Publik',
+            'Lainnya',
+        ])->each(function ($name, $index) {
+            $defaults = ['name' => $name];
+
+            if (Schema::hasColumn('categories', 'sort_order')) {
+                $defaults['sort_order'] = $index + 1;
+            }
+
+            if (Schema::hasColumn('categories', 'is_active')) {
+                $defaults['is_active'] = true;
+            }
+
+            Category::firstOrCreate(
+                ['slug' => Str::slug($name)],
+                $defaults
+            );
+        });
+    }
+
     public function index()
     {
+        if (! session()->has('cityzen_user')) {
+            return redirect('/login')->with('notice', 'Please login to manage places.');
+        }
+
         $places = Place::latest()->get();
 
         return view('places.index', compact('places'));
@@ -18,7 +53,15 @@ class PlaceController extends Controller
 
     public function create()
     {
-        $categories = Category::where('is_active', true)
+        if (! session()->has('cityzen_user')) {
+            return redirect('/login')->with('notice', 'Please login to add a place.');
+        }
+
+        $this->ensureDefaultCategories();
+
+        $categories = Category::query()
+            ->when(Schema::hasColumn('categories', 'is_active'), fn ($query) => $query->where('is_active', true))
+            ->when(Schema::hasColumn('categories', 'sort_order'), fn ($query) => $query->orderBy('sort_order'))
             ->orderBy('name')
             ->get();
 
@@ -58,13 +101,25 @@ class PlaceController extends Controller
 
     public function edit(Place $place)
     {
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        if (! session()->has('cityzen_user')) {
+            return redirect('/login')->with('notice', 'Please login to edit a place.');
+        }
+
+        $categories = Category::query()
+            ->when(Schema::hasColumn('categories', 'is_active'), fn ($query) => $query->where('is_active', true))
+            ->when(Schema::hasColumn('categories', 'sort_order'), fn ($query) => $query->orderBy('sort_order'))
+            ->orderBy('name')
+            ->get();
 
         return view('places.edit', compact('place', 'categories'));
     }
 
     public function update(Request $request, Place $place)
     {
+        if (! $request->session()->has('cityzen_user')) {
+            return redirect('/login')->with('notice', 'Please login to update a place.');
+        }
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
@@ -84,6 +139,10 @@ class PlaceController extends Controller
 
     public function destroy(Place $place)
     {
+        if (! session()->has('cityzen_user')) {
+            return redirect('/login')->with('notice', 'Please login to delete a place.');
+        }
+
         $place->delete();
 
         return redirect('/places')->with('status', 'Place berhasil dihapus.');
