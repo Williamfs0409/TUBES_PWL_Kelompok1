@@ -168,7 +168,8 @@ Route::get('/admin/reports', function () {
 
 Route::post('/admin/reports/{report}/status', function (\Illuminate\Http\Request $request, \App\Models\Report $report) {
     if (! session('cityzen_user')) {
-=======
+        return redirect('/login');
+    }
 Route::post('/places/{place}/like', function (\App\Models\Place $place) {
     $userId = session('cityzen_user.id');
 
@@ -188,6 +189,7 @@ Route::post('/places/{place}/like', function (\App\Models\Place $place) {
             'place_id' => $place->id,
         ]);
     }
+})->name('places.like');
 
     return back();
 })->name('places.like');
@@ -237,7 +239,14 @@ Route::post('/places/{place}/review', function (\Illuminate\Http\Request $reques
 
     return back()->with('success', 'Status laporan berhasil diperbarui.');
 })->name('admin.reports.status');
-=======
+Route::post('/places/{place}/review', function (\Illuminate\Http\Request $request, \App\Models\Place $place) {
+    $userId = session('cityzen_user.id');
+
+    if (! $userId) {
+        return redirect('/login');
+    }
+
+    $validated = $request->validate([
         'rating' => ['required', 'integer', 'min:1', 'max:5'],
         'review' => ['nullable', 'string', 'max:500'],
     ]);
