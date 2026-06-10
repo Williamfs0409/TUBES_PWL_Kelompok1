@@ -9,6 +9,52 @@ use Illuminate\Support\Facades\Schema;
 
 class InteractionController extends Controller
 {
+    private function notifyPostOwner(Place $place, int $actorId, string $action): void
+    {
+        if (
+            ! Schema::hasTable('notifications')
+            || ! Schema::hasTable('notification_types')
+            || ! $place->user_id
+            || (int) $place->user_id === $actorId
+        ) {
+            return;
+        }
+
+        $typeId = DB::table('notification_types')->where('slug', 'interaction')->value('id');
+
+        if (! $typeId) {
+            $typeId = DB::table('notification_types')->insertGetId([
+                'name' => 'Interaction',
+                'slug' => 'interaction',
+                'description' => 'Likes, reposts, and social activity.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $actorName = DB::table('users')->where('id', $actorId)->value('name') ?: 'Warga CityZen';
+        $isRepost = $action === 'repost';
+
+        DB::table('notifications')->updateOrInsert(
+            [
+                'user_id' => $place->user_id,
+                'actor_id' => $actorId,
+                'notification_type_id' => $typeId,
+                'related_table' => 'places',
+                'related_id' => $place->id,
+                'title' => $isRepost ? $actorName.' reposted your post' : $actorName.' liked your post',
+            ],
+            [
+                'message' => $isRepost
+                    ? $actorName.' membagikan ulang postingan "'.$place->name.'".'
+                    : $actorName.' menyukai postingan "'.$place->name.'".',
+                'read_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+    }
+
     private function interactionResponse(Request $request, string $message, array $payload)
     {
         if ($request->expectsJson() || $request->header('X-CityZen-Async') === '1') {
@@ -40,6 +86,8 @@ class InteractionController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
+            $this->notifyPostOwner($place, (int) $userId, 'like');
         }
 
         $count = DB::table('likes')->where('place_id', $place->id)->count();
@@ -108,6 +156,8 @@ class InteractionController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
+            $this->notifyPostOwner($place, (int) $userId, 'repost');
         }
 
         return $this->interactionResponse($request, $existing ? 'Repost removed.' : 'Reposted to your CityZen activity.', [

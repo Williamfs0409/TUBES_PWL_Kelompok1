@@ -36,6 +36,7 @@ Route::middleware('cityzen.auth')->group(function () {
     Route::get('/profile', ProfileController::class)->name('profile');
     Route::get('/settings', [SettingController::class, 'edit'])->name('settings');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/users/{user}/avatar', [SettingController::class, 'avatar'])->name('users.avatar');
 
     Route::get('/places/{place}/image', [PlaceController::class, 'image'])->name('places.image');
     Route::resource('places', PlaceController::class);

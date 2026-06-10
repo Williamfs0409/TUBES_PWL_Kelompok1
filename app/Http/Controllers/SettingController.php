@@ -56,30 +56,81 @@ class SettingController extends Controller
         if (Schema::hasTable('profiles')) {
             $existingAvatar = DB::table('profiles')->where('user_id', $userId)->value('avatar_path');
             $avatarPath = $existingAvatar;
+            $avatarMime = Schema::hasColumn('profiles', 'avatar_mime')
+                ? DB::table('profiles')->where('user_id', $userId)->value('avatar_mime')
+                : null;
+            $avatarData = Schema::hasColumn('profiles', 'avatar_data')
+                ? DB::table('profiles')->where('user_id', $userId)->value('avatar_data')
+                : null;
 
             if ($request->hasFile('avatar')) {
                 if ($existingAvatar && str_starts_with($existingAvatar, 'storage/')) {
                     Storage::disk('public')->delete(str($existingAvatar)->after('storage/')->toString());
                 }
 
-                $avatarPath = 'storage/'.$request->file('avatar')->store('avatars', 'public');
+                $avatar = $request->file('avatar');
+                $avatarPath = 'storage/'.$avatar->store('avatars', 'public');
+                $avatarMime = $avatar->getMimeType();
+                $avatarData = base64_encode(file_get_contents($avatar->getRealPath()));
+            }
+
+            $profilePayload = [
+                'username' => $data['username'],
+                'avatar_path' => $avatarPath,
+                'city' => $data['city'] ?? null,
+                'bio' => $data['bio'] ?? null,
+                'updated_at' => now(),
+                'created_at' => now(),
+            ];
+
+            if (Schema::hasColumn('profiles', 'avatar_mime')) {
+                $profilePayload['avatar_mime'] = $avatarMime;
+            }
+
+            if (Schema::hasColumn('profiles', 'avatar_data')) {
+                $profilePayload['avatar_data'] = $avatarData;
             }
 
             DB::table('profiles')->updateOrInsert(
                 ['user_id' => $userId],
-                [
-                    'username' => $data['username'],
-                    'avatar_path' => $avatarPath,
-                    'city' => $data['city'] ?? null,
-                    'bio' => $data['bio'] ?? null,
-                    'updated_at' => now(),
-                    'created_at' => now(),
-                ]
+                $profilePayload
             );
         }
 
         $request->session()->put('cityzen_user', CityZenAccess::sessionPayload($account));
 
         return redirect('/settings')->with('status', 'Settings berhasil diperbarui.');
+    }
+
+    public function avatar(User $user)
+    {
+        abort_unless(Schema::hasTable('profiles'), 404);
+
+        $profile = DB::table('profiles')->where('user_id', $user->id)->first();
+        abort_unless($profile, 404);
+
+        if (
+            Schema::hasColumn('profiles', 'avatar_data')
+            && Schema::hasColumn('profiles', 'avatar_mime')
+            && ! empty($profile->avatar_data)
+            && ! empty($profile->avatar_mime)
+        ) {
+            return response(base64_decode($profile->avatar_data), 200, [
+                'Content-Type' => $profile->avatar_mime,
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+
+        if (! empty($profile->avatar_path) && str_starts_with($profile->avatar_path, 'storage/')) {
+            $relativePath = str($profile->avatar_path)->after('storage/')->toString();
+
+            if (Storage::disk('public')->exists($relativePath)) {
+                return response()->file(Storage::disk('public')->path($relativePath), [
+                    'Cache-Control' => 'public, max-age=3600',
+                ]);
+            }
+        }
+
+        abort(404);
     }
 }

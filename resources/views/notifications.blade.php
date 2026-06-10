@@ -37,24 +37,50 @@
 
             <section class="cz-notification-list">
                 @forelse ($notifications as $notification)
-                    <article class="cz-notification-card {{ $notification->read_at ? '' : 'is-unread' }}">
-                        <span class="cz-notification-icon" aria-hidden="true">
-                            @if (str($notification->type_name ?? '')->lower()->contains('report'))
-                                <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-5" /><circle cx="12" cy="12" r="9" /></svg>
-                            @elseif (str($notification->type_name ?? '')->lower()->contains('badge'))
-                                <svg viewBox="0 0 24 24"><path d="M8 4h8v7a4 4 0 0 1-8 0V4Z" /><path d="m10 15-1 5 3-2 3 2-1-5" /></svg>
+                    @php
+                        $title = $notification->title ?? 'CityZen notification';
+                        $isRepost = str($title)->lower()->contains('reposted');
+                        $isLike = str($title)->lower()->contains('liked');
+                        $actorName = $notification->actor_name ?: 'CityZen';
+                        $actorInitial = strtoupper(substr($actorName, 0, 1));
+                        $placeUrl = ($notification->related_table === 'places' && $notification->related_id) ? route('places.show', $notification->related_id) : null;
+                        $time = $notification->updated_at ?: $notification->created_at;
+                    @endphp
+                    <article class="cz-notification-card cz-social-notification-card {{ $notification->read_at ? '' : 'is-unread' }}">
+                        <span class="cz-notification-icon cz-social-notification-icon {{ $isRepost ? 'is-repost' : ($isLike ? 'is-like' : '') }}" aria-hidden="true">
+                            @if ($isRepost)
+                                <svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
+                            @elseif ($isLike)
+                                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" /></svg>
                             @else
                                 <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z" /><path d="M8 9h8" /><path d="M8 13h5" /></svg>
                             @endif
                         </span>
-                        <div class="cz-notification-copy">
-                            <div class="cz-notification-row">
-                                <h2>{{ $notification->title }}</h2>
-                                <span>{{ $notification->created_at ? \Illuminate\Support\Carbon::parse($notification->created_at)->diffForHumans() : 'recently' }}</span>
+                        <div class="cz-social-notification-body">
+                            <a class="cz-social-notification-avatar" href="{{ $placeUrl ?? url('/notifications') }}" aria-label="Open related notification">
+                                @if ($notification->actor_id && $notification->actor_avatar_path)
+                                    <img src="{{ route('users.avatar', $notification->actor_id) }}" alt="">
+                                @else
+                                    <span>{{ $actorInitial }}</span>
+                                @endif
+                            </a>
+                            <div class="cz-notification-copy">
+                                <div class="cz-notification-row">
+                                    <h2>
+                                        <strong>{{ $actorName }}</strong>
+                                        {{ $isRepost ? 'reposted your post' : ($isLike ? 'liked your post' : $title) }}
+                                    </h2>
+                                    <span>{{ $time ? \Illuminate\Support\Carbon::parse($time)->diffForHumans() : 'recently' }}</span>
+                                </div>
+                                <p>{{ $notification->message ?: 'Ada aktivitas baru di CityZen.' }}</p>
+                                <small>{{ $notification->place_name ?: ($notification->type_name ?? 'CityZen system') }}</small>
                             </div>
-                            <p>{{ $notification->message ?: 'Tidak ada detail tambahan.' }}</p>
-                            <small>{{ $notification->actor_name ? 'From '.$notification->actor_name : ($notification->type_name ?? 'CityZen system') }}</small>
                         </div>
+                        @if ($placeUrl)
+                            <a class="cz-social-notification-thumb" href="{{ $placeUrl }}" aria-label="Open post">
+                                <img src="{{ route('places.image', $notification->related_id) }}" alt="">
+                            </a>
+                        @endif
                         @unless ($notification->read_at)
                             <span class="cz-notification-badge">Unread</span>
                         @endunless

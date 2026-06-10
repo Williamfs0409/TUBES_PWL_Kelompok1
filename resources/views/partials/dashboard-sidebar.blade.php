@@ -53,7 +53,7 @@
             <button class="cz-dash-user-card" type="button" data-user-menu-toggle aria-expanded="false" aria-label="Open account menu">
                 <span class="cz-dash-avatar">
                     @if ($avatarPath)
-                        <img src="{{ asset($avatarPath) }}" alt="">
+                        <img src="{{ route('users.avatar', $user['id']) }}" alt="">
                     @else
                         {{ $initials }}
                     @endif

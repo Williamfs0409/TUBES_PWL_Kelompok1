@@ -107,6 +107,49 @@ class CityZenCoreFlowTest extends TestCase
         $this->assertSoftDeleted('places', ['id' => $place->id]);
     }
 
+    public function test_like_and_repost_create_notifications_for_place_owner(): void
+    {
+        $this->seed(CityZenSeeder::class);
+
+        $owner = User::where('email', 'naufal@cityzen.test')->firstOrFail();
+        $actor = User::where('email', 'alya@cityzen.test')->firstOrFail();
+        $category = Category::firstOrFail();
+
+        $place = Place::create([
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'name' => 'Notification Test Park',
+            'slug' => 'notification-test-park',
+            'short_description' => 'A place used for notification checks.',
+            'description' => 'A place used for notification checks.',
+            'address' => 'Jl. Notify No. 1',
+            'city' => 'Jakarta',
+            'province' => 'DKI Jakarta',
+            'status' => 'active',
+        ]);
+
+        $actorSession = ['cityzen_user' => CityZenAccess::sessionPayload($actor)];
+
+        $this->withSession($actorSession)->post(route('places.like', $place))->assertRedirect();
+        $this->withSession($actorSession)->post(route('places.repost', $place))->assertRedirect();
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $owner->id,
+            'actor_id' => $actor->id,
+            'related_table' => 'places',
+            'related_id' => $place->id,
+            'title' => $actor->name.' liked your post',
+        ]);
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $owner->id,
+            'actor_id' => $actor->id,
+            'related_table' => 'places',
+            'related_id' => $place->id,
+            'title' => $actor->name.' reposted your post',
+        ]);
+    }
+
     public function test_user_can_report_place_and_admin_can_moderate_it(): void
     {
         $this->seed(CityZenSeeder::class);

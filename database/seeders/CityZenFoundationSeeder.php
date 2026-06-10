@@ -255,6 +255,7 @@ class CityZenFoundationSeeder extends Seeder
         $types = [
             'report' => 'Report moderation updates.',
             'review' => 'Review activity.',
+            'interaction' => 'Likes, reposts, and social activity.',
             'badge' => 'Badge and gamification updates.',
             'system' => 'System announcements.',
         ];

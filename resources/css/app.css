@@ -2221,6 +2221,95 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     text-transform: uppercase;
 }
 
+.cz-social-notification-card {
+    grid-template-columns: 42px minmax(0, 1fr) 86px auto auto;
+    min-height: 118px;
+    padding: 18px 18px 18px 20px;
+}
+
+.cz-social-notification-icon {
+    background: transparent;
+    border: 0;
+    color: var(--cz-accent);
+    height: 36px;
+    margin-top: 4px;
+    width: 36px;
+}
+
+.cz-social-notification-icon.is-like {
+    color: #ef4f7b;
+}
+
+.cz-social-notification-icon.is-repost {
+    color: #37d58a;
+}
+
+.cz-social-notification-icon svg {
+    height: 28px;
+    stroke-width: 2.4;
+    width: 28px;
+}
+
+.cz-social-notification-icon.is-like svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+.cz-social-notification-body {
+    align-items: start;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 46px minmax(0, 1fr);
+    min-width: 0;
+}
+
+.cz-social-notification-avatar {
+    align-items: center;
+    background: var(--cz-accent-soft);
+    border: 1px solid var(--cz-line);
+    border-radius: 999px;
+    color: var(--cz-accent);
+    display: inline-flex;
+    font-weight: 900;
+    height: 46px;
+    justify-content: center;
+    overflow: hidden;
+    text-decoration: none;
+    width: 46px;
+}
+
+.cz-social-notification-avatar img,
+.cz-social-notification-thumb img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.cz-social-notification-thumb {
+    align-self: center;
+    background: var(--cz-ink-soft);
+    border: 1px solid var(--cz-line);
+    border-radius: 18px;
+    display: block;
+    height: 78px;
+    overflow: hidden;
+    width: 86px;
+}
+
+.cz-social-notification-card .cz-notification-copy p {
+    color: var(--cz-muted);
+    margin: 5px 0 7px;
+}
+
+.cz-social-notification-card .cz-notification-row h2 {
+    font-weight: 600;
+}
+
+.cz-social-notification-card .cz-notification-row h2 strong {
+    color: var(--cz-ink);
+    font-weight: 900;
+}
+
 .cz-icon-dots {
     align-items: center;
     background: transparent;

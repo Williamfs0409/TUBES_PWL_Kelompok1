@@ -80,6 +80,7 @@ class DashboardController extends Controller
 
                     return [
                         'id' => $place->id,
+                        'author_id' => $place->user_id,
                         'author' => $author,
                         'handle' => '@'.str($author)->slug('_'),
                         'time' => $place->created_at ? Carbon::parse($place->created_at)->diffForHumans(null, true).' ago' : 'baru',

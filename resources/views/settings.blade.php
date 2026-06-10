@@ -74,7 +74,7 @@
                         <span>Profile photo</span>
                         <input name="avatar" type="file" accept="image/*">
                         @if (! empty($profile->avatar_path))
-                            <small>Foto saat ini sudah tersimpan dan akan muncul di feed.</small>
+                            <small>Foto saat ini sudah tersimpan dan akan muncul di feed/notifikasi.</small>
                         @else
                             <small>Unggah foto agar avatar tidak hanya berupa inisial.</small>
                         @endif

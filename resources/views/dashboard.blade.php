@@ -42,7 +42,7 @@
             <section class="cz-dash-composer" aria-label="Create a CityZen post">
                 <span class="cz-dash-avatar cz-dash-avatar-photo">
                     @if ($currentAvatar)
-                        <img src="{{ asset($currentAvatar) }}" alt="">
+                        <img src="{{ route('users.avatar', $user['id']) }}" alt="">
                     @else
                         {{ $initials }}
                     @endif
@@ -75,7 +75,7 @@
                     >
                         <div class="cz-dash-post-avatar" aria-hidden="true">
                             @if ($post['avatar_image'])
-                                <img src="{{ asset($post['avatar_image']) }}" alt="">
+                                <img src="{{ route('users.avatar', $post['author_id']) }}" alt="">
                             @else
                                 {{ $post['avatar'] }}
                             @endif

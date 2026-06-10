@@ -119,6 +119,7 @@ class PlaceController extends Controller
 
         $post = [
             'id' => $place->id,
+            'author_id' => $place->user_id,
             'author' => $author,
             'handle' => '@'.str($author)->slug('_'),
             'time' => $place->created_at ? Carbon::parse($place->created_at)->diffForHumans(null, true).' ago' : 'baru',
@@ -156,9 +157,11 @@ class PlaceController extends Controller
                     "reviews.$reviewColumn as review_text",
                     'reviews.updated_at',
                     'users.name as user_name',
+                    'users.id as user_id',
                     'profiles.avatar_path',
                 ])
                 ->map(fn ($review) => [
+                    'user_id' => $review->user_id,
                     'author' => $review->user_name ?: 'CityZen Citizen',
                     'handle' => '@'.str($review->user_name ?: 'cityzen_citizen')->slug('_'),
                     'avatar' => $initials($review->user_name),

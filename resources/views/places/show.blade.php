@@ -40,7 +40,7 @@
             <article class="cz-dash-post cz-post-detail-card">
                 <div class="cz-dash-post-avatar" aria-hidden="true">
                     @if ($post['avatar_image'])
-                        <img src="{{ asset($post['avatar_image']) }}" alt="">
+                        <img src="{{ route('users.avatar', $post['author_id']) }}" alt="">
                     @else
                         {{ $post['avatar'] }}
                     @endif
@@ -110,7 +110,7 @@
             <section class="cz-post-reply-box" aria-label="Tulis review atau komentar">
                 <span class="cz-dash-avatar cz-dash-avatar-photo">
                     @if ($currentAvatar)
-                        <img src="{{ asset($currentAvatar) }}" alt="">
+                        <img src="{{ route('users.avatar', $user['id']) }}" alt="">
                     @else
                         {{ $initials }}
                     @endif
@@ -145,7 +145,7 @@
                     <article class="cz-post-reply">
                         <div class="cz-dash-post-avatar" aria-hidden="true">
                             @if ($review['avatar_image'])
-                                <img src="{{ asset($review['avatar_image']) }}" alt="">
+                                <img src="{{ route('users.avatar', $review['user_id']) }}" alt="">
                             @else
                                 {{ $review['avatar'] }}
                             @endif
