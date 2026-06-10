@@ -41,19 +41,19 @@
             <section class="cz-dash-composer" aria-label="Create a CityZen post">
                 <span class="cz-dash-avatar cz-dash-avatar-photo">{{ $initials }}</span>
                 <div class="cz-dash-composer-content">
-                    <button type="button" class="cz-dash-compose-prompt" data-action-toast="Composer ready.">
+                    <a href="{{ url('/places/create') }}" class="cz-dash-compose-prompt">
                         What's happening in your city?
-                    </button>
+                    </a>
                     <div class="cz-dash-composer-tools">
-                        <button type="button" aria-label="Attach image" data-action-toast="Image upload prepared.">
+                        <a href="{{ url('/places/create') }}" aria-label="Attach image">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4V5Z" /><path d="m7 16 4-4 3 3 2-2 3 3" /><circle cx="8.5" cy="8.5" r="1.2" /></svg>
-                        </button>
-                        <button type="button" aria-label="Attach location" data-action-toast="Location picker prepared.">
+                        </a>
+                        <a href="{{ url('/places/create') }}" aria-label="Attach location">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-12A7 7 0 1 0 5 9c0 6.8 7 12 7 12Z" /><circle cx="12" cy="9" r="2.2" /></svg>
-                        </button>
-                        <button type="button" aria-label="Attach report data" data-action-toast="Report data prepared.">
+                        </a>
+                        <a href="{{ url('/places/create') }}" aria-label="Attach report data">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V5" /><path d="M9 19V9" /><path d="M13 19V7" /><path d="M17 19v-5" /><path d="M3 19h19" /></svg>
-                        </button>
+                        </a>
                         <a href="{{ url('/places/create') }}" class="cz-dash-post-button">Post</a>
                     </div>
                 </div>
@@ -114,14 +114,25 @@
                             </footer>
                             <form method="POST" action="{{ route('places.review', $post['id']) }}" class="cz-dash-review-form">
                                 @csrf
-                                <select name="rating" aria-label="Rating" required>
-                                    <option value="">Rating</option>
-                                    <option value="5">5</option>
-                                    <option value="4">4</option>
-                                    <option value="3">3</option>
-                                    <option value="2">2</option>
-                                    <option value="1">1</option>
-                                </select>
+                                <fieldset class="cz-dash-rating" aria-label="Rating tempat publik">
+                                    <legend>Rating</legend>
+                                    @for ($rating = 5; $rating >= 1; $rating--)
+                                        <input
+                                            id="rating-{{ $post['id'] }}-{{ $rating }}"
+                                            name="rating"
+                                            type="radio"
+                                            value="{{ $rating }}"
+                                            required
+                                        >
+                                        <label for="rating-{{ $post['id'] }}-{{ $rating }}" title="{{ $rating }} dari 5">
+                                            <svg aria-hidden="true" viewBox="0 0 24 24">
+                                                <path d="M20 4c-7.2.4-12.1 2.5-14.7 6.2C3 13.5 3.6 17 6.1 19.5c2.5 2.4 6 2.2 8.7-.3C17.8 16.4 19.5 11.4 20 4Z" />
+                                                <path d="M6 19c2.8-4.8 6.1-7.9 10-9.3" />
+                                            </svg>
+                                            <span class="sr-only">{{ $rating }} dari 5</span>
+                                        </label>
+                                    @endfor
+                                </fieldset>
                                 <input name="review" maxlength="500" placeholder="Tulis review singkat">
                                 <button type="submit">Review</button>
                             </form>

@@ -328,7 +328,7 @@
             <h2>Place details</h2>
             <p>Isi data tempat publik yang ingin ditambahkan ke CityZen.</p>
 
-            <form method="POST" action="{{ url('/places') }}">
+            <form method="POST" action="{{ url('/places') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="field">
@@ -400,6 +400,18 @@
             @error('google_maps_url')
                 <span class="error">{{ $message }}</span>
             @enderror
+            </div>
+
+            <div class="field">
+                <label for="photos">Foto tempat</label>
+                <input id="photos" name="photos[]" type="file" accept="image/*" multiple>
+                <small>Upload sampai 6 foto. Foto pertama otomatis menjadi cover feed.</small>
+                @error('photos')
+                    <span class="error">{{ $message }}</span>
+                @enderror
+                @error('photos.*')
+                    <span class="error">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="actions">

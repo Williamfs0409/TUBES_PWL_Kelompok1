@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Like;
 use App\Models\Bookmark;
+use App\Models\PlacePhoto;
 use App\Models\Review;
 
 class Place extends Model
@@ -52,6 +53,16 @@ class Place extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(PlacePhoto::class);
+    }
+
+    public function coverPhoto()
+    {
+        return $this->hasOne(PlacePhoto::class)->where('is_cover', true)->oldest('sort_order');
     }
 
     public function reports()

@@ -623,7 +623,8 @@ html {
     padding-top: 8px;
 }
 
-.cz-dash-composer-tools button {
+.cz-dash-composer-tools button,
+.cz-dash-composer-tools a:not(.cz-dash-post-button) {
     align-items: center;
     background: transparent;
     border: 0;
@@ -636,12 +637,14 @@ html {
     width: 36px;
 }
 
-.cz-dash-composer-tools button:hover {
+.cz-dash-composer-tools button:hover,
+.cz-dash-composer-tools a:not(.cz-dash-post-button):hover {
     background: var(--cz-accent-soft);
     transform: translateY(-2px) rotate(-3deg);
 }
 
-.cz-dash-composer-tools button:active {
+.cz-dash-composer-tools button:active,
+.cz-dash-composer-tools a:not(.cz-dash-post-button):active {
     transform: scale(0.92);
 }
 
@@ -796,10 +799,10 @@ html {
 .cz-dash-review-form {
     display: grid;
     gap: 8px;
-    grid-template-columns: 88px minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    position: relative;
 }
 
-.cz-dash-review-form select,
 .cz-dash-review-form input {
     background: color-mix(in srgb, var(--cz-surface) 88%, var(--cz-raised));
     border: 1px solid var(--cz-line);
@@ -811,10 +814,145 @@ html {
     width: 100%;
 }
 
-.cz-dash-review-form select:focus,
 .cz-dash-review-form input:focus {
     border-color: var(--cz-accent);
     box-shadow: 0 0 0 3px var(--cz-accent-glow);
+}
+
+.cz-dash-rating {
+    align-items: center;
+    background:
+        radial-gradient(circle at 15% 50%, rgba(106, 210, 118, 0.18), transparent 30%),
+        linear-gradient(135deg, color-mix(in srgb, var(--cz-surface) 88%, transparent), color-mix(in srgb, var(--cz-accent-soft) 70%, transparent));
+    border: 1px solid var(--cz-line);
+    border-radius: 999px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 1px;
+    isolation: isolate;
+    justify-content: center;
+    margin: 0;
+    min-height: 38px;
+    min-width: 148px;
+    padding: 0 12px;
+    position: relative;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.cz-dash-rating::before {
+    background:
+        radial-gradient(circle, rgba(88, 208, 105, 0.36), transparent 58%);
+    border-radius: inherit;
+    content: "";
+    inset: -8px;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transform: scale(0.72);
+    transition: opacity 220ms ease, transform 220ms ease;
+    z-index: -1;
+}
+
+.cz-dash-rating:hover,
+.cz-dash-rating:focus-within {
+    border-color: #52c76c;
+    box-shadow: 0 0 0 3px rgba(82, 199, 108, 0.18), 0 12px 24px rgba(28, 101, 44, 0.14);
+    transform: translateY(-1px);
+}
+
+.cz-dash-rating:hover::before,
+.cz-dash-rating:focus-within::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.cz-dash-rating legend {
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.cz-dash-rating input {
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 1px;
+}
+
+.cz-dash-rating label {
+    color: color-mix(in srgb, var(--cz-muted) 78%, transparent);
+    cursor: pointer;
+    display: grid;
+    min-height: 30px;
+    min-width: 24px;
+    place-items: center;
+    position: relative;
+    text-shadow: 0 0 0 transparent;
+    transform-origin: 50% 50%;
+    transition: color 170ms ease, filter 170ms ease, text-shadow 170ms ease, transform 170ms cubic-bezier(.2, .9, .2, 1.4);
+}
+
+.cz-dash-rating label svg {
+    height: 20px;
+    stroke-width: 2.2;
+    transition: fill 170ms ease, stroke 170ms ease, transform 170ms cubic-bezier(.2, .9, .2, 1.4);
+    width: 20px;
+}
+
+.cz-dash-rating label::after {
+    background:
+        radial-gradient(circle, #d9ffd1 0 18%, transparent 20%),
+        radial-gradient(circle, #52c76c 0 18%, transparent 20%),
+        radial-gradient(circle, #0e4f1d 0 14%, transparent 17%);
+    background-position: 35% 25%, 70% 70%;
+    background-repeat: no-repeat;
+    background-size: 7px 7px, 5px 5px, 4px 4px;
+    content: "";
+    inset: -7px;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transform: scale(0.6) rotate(-14deg);
+    transition: opacity 170ms ease, transform 170ms ease;
+}
+
+.cz-dash-rating label:hover,
+.cz-dash-rating label:hover ~ label,
+.cz-dash-rating input:checked ~ label {
+    color: #44c767;
+    filter: drop-shadow(0 5px 10px rgba(28, 101, 44, 0.24));
+    text-shadow: 0 0 14px rgba(82, 199, 108, 0.34);
+    transform: translateY(-2px) scale(1.13) rotate(-8deg);
+}
+
+.cz-dash-rating label:hover svg,
+.cz-dash-rating label:hover ~ label svg,
+.cz-dash-rating input:checked ~ label svg {
+    fill: currentColor;
+    stroke: currentColor;
+    transform: rotate(-8deg);
+}
+
+.cz-dash-rating label:hover::after,
+.cz-dash-rating input:checked + label::after {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+.cz-dash-rating input:focus-visible + label {
+    border-radius: 999px;
+    outline: 2px solid #52c76c;
+    outline-offset: 2px;
+}
+
+.cz-dash-rating input:checked + label {
+    animation: cz-rating-pop 360ms cubic-bezier(.2, .9, .2, 1.35);
 }
 
 .cz-dash-review-form button {
@@ -835,6 +973,35 @@ html {
 .cz-dash-review-form button:hover {
     box-shadow: var(--cz-button-glow);
     transform: translateY(-2px);
+}
+
+.cz-dash-review-form:focus-within button {
+    animation: cz-review-ready 1.8s ease-in-out infinite;
+}
+
+@keyframes cz-rating-pop {
+    0% {
+        transform: translateY(0) scale(0.82) rotate(0deg);
+    }
+
+    48% {
+        transform: translateY(-4px) scale(1.28) rotate(-15deg);
+    }
+
+    100% {
+        transform: translateY(-2px) scale(1.13) rotate(-8deg);
+    }
+}
+
+@keyframes cz-review-ready {
+    0%,
+    100% {
+        box-shadow: 0 0 0 rgba(255, 196, 61, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(82, 199, 108, 0.16), var(--cz-button-glow);
+    }
 }
 
 .cz-dash-report-button,
@@ -2536,6 +2703,515 @@ html {
     position: absolute;
     white-space: nowrap;
     width: 1px;
+}
+
+/* Visual polish: keep the CityZen structure, reduce template-like decoration. */
+.cz-dashboard-page {
+    --cz-bg: #e8f4e3;
+    --cz-surface: #fbfdf7;
+    --cz-raised: #f2f7ee;
+    --cz-soft: #dcedd5;
+    --cz-line: #bfd4ba;
+    --cz-muted: #5f6b63;
+    --cz-accent: #10551f;
+    --cz-accent-2: #377143;
+    --cz-accent-soft: #d8edce;
+    --cz-accent-glow: rgba(16, 85, 31, 0.12);
+    --cz-shadow: 0 10px 24px rgba(24, 39, 27, 0.08);
+    --cz-card-shadow: 3px 4px 0 rgba(24, 39, 27, 0.06);
+    --cz-button-glow: 0 8px 18px rgba(16, 85, 31, 0.14);
+    background: #e8f4e3;
+    letter-spacing: 0;
+}
+
+.cz-dashboard-page[data-theme='dark'] {
+    --cz-bg: #07110c;
+    --cz-surface: #0d1511;
+    --cz-raised: #131d17;
+    --cz-soft: #17261d;
+    --cz-line: #2b3b31;
+    --cz-muted: #9aa59d;
+    --cz-accent: #56d480;
+    --cz-accent-2: #35a95f;
+    --cz-accent-soft: rgba(86, 212, 128, 0.13);
+    --cz-accent-glow: rgba(86, 212, 128, 0.14);
+    --cz-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+    --cz-card-shadow: 0 1px 0 rgba(255, 255, 255, 0.02);
+    --cz-button-glow: 0 8px 20px rgba(86, 212, 128, 0.14);
+    background: #07110c;
+}
+
+.cz-dash-shell {
+    max-width: 1260px;
+}
+
+.cz-dash-sidebar {
+    backdrop-filter: none;
+    background: color-mix(in srgb, var(--cz-surface) 94%, var(--cz-bg));
+    gap: 24px;
+    padding: 18px 18px;
+}
+
+.cz-dash-brand-mark {
+    box-shadow: none;
+}
+
+.cz-dash-brand:hover .cz-dash-brand-mark {
+    box-shadow: none;
+    transform: rotate(-2deg);
+}
+
+.cz-dash-brand strong {
+    font-size: 27px;
+    letter-spacing: -0.01em;
+}
+
+.cz-dash-brand small,
+.cz-profile-eyebrow,
+.cz-profile-grid span,
+.cz-profile-report-card span,
+.cz-list-heading > span,
+.cz-form-heading span {
+    letter-spacing: 0.075em;
+}
+
+.cz-dash-nav {
+    gap: 5px;
+}
+
+.cz-dash-nav-link {
+    border-radius: 12px;
+    font-size: 18px;
+    gap: 15px;
+    min-height: 46px;
+    padding-inline: 12px;
+}
+
+.cz-dash-nav-link:hover,
+.cz-dash-nav-link.is-active {
+    background: color-mix(in srgb, var(--cz-soft) 72%, transparent);
+    transform: translateX(2px);
+}
+
+.cz-dash-report-button,
+.cz-dash-post-button,
+.cz-dash-empty a,
+.cz-form-grid button,
+.cz-admin-report-card button,
+.cz-profile-button--primary,
+.cz-list-side-card a,
+.cz-bookmark-body footer a,
+.cz-notification-empty a {
+    border-width: 1px;
+    box-shadow: none;
+    min-height: 42px;
+}
+
+.cz-dash-report-button {
+    min-height: 50px;
+}
+
+.cz-dash-report-button::before,
+.cz-dash-post-button::before,
+.cz-dash-empty a::before {
+    display: none;
+}
+
+.cz-dash-report-button:hover,
+.cz-dash-post-button:hover,
+.cz-dash-empty a:hover,
+.cz-form-grid button:hover,
+.cz-admin-report-card button:hover,
+.cz-profile-button:hover,
+.cz-list-side-card a:hover,
+.cz-bookmark-body footer a:hover,
+.cz-notification-empty a:hover {
+    box-shadow: var(--cz-button-glow);
+    filter: none;
+    transform: translateY(-1px);
+}
+
+.cz-dash-user-card,
+.cz-dash-account-panel,
+.cz-dash-search,
+.cz-bookmark-search,
+.cz-dash-theme-toggle {
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+.cz-dash-user-card:hover,
+.cz-dash-user-menu.is-open .cz-dash-user-card,
+.cz-dash-search:focus-within,
+.cz-bookmark-search:focus-within,
+.cz-dash-theme-toggle:hover {
+    box-shadow: 0 0 0 3px var(--cz-accent-glow);
+    transform: none;
+}
+
+.cz-dash-feed-header {
+    min-height: 60px;
+    padding-inline: 24px;
+}
+
+.cz-dash-feed-header h1,
+.cz-list-topbar h1 {
+    font-size: 28px;
+    letter-spacing: -0.015em;
+}
+
+.cz-dash-tabs {
+    min-height: 50px;
+}
+
+.cz-dash-tabs button {
+    font-size: 15px;
+    min-width: 180px;
+}
+
+.cz-dash-tabs button.is-active::after {
+    height: 2px;
+    width: 58px;
+}
+
+.cz-dash-composer {
+    background: color-mix(in srgb, var(--cz-surface) 44%, transparent);
+    padding: 16px 24px 13px;
+}
+
+.cz-dash-compose-prompt {
+    font-size: 17px;
+}
+
+.cz-dash-composer-tools {
+    gap: 8px;
+    min-height: 42px;
+}
+
+.cz-dash-composer-tools button,
+.cz-dash-composer-tools a:not(.cz-dash-post-button) {
+    border-radius: 10px;
+}
+
+.cz-dash-composer-tools button:hover,
+.cz-dash-composer-tools a:not(.cz-dash-post-button):hover {
+    background: color-mix(in srgb, var(--cz-accent-soft) 68%, transparent);
+    transform: none;
+}
+
+.cz-dash-post {
+    background: color-mix(in srgb, var(--cz-surface) 48%, transparent);
+    gap: 11px;
+    padding: 17px 24px 18px;
+    transition: background-color 160ms ease;
+}
+
+.cz-dash-post:hover {
+    background: color-mix(in srgb, var(--cz-surface) 66%, transparent);
+}
+
+.cz-dash-post-avatar {
+    height: 44px;
+    width: 44px;
+}
+
+.cz-dash-post-body {
+    gap: 10px;
+}
+
+.cz-dash-post-meta {
+    font-size: 13px;
+    gap: 5px;
+}
+
+.cz-dash-post-meta strong {
+    font-size: 15px;
+}
+
+.cz-dash-post-body p {
+    color: color-mix(in srgb, var(--cz-ink) 92%, var(--cz-muted));
+    font-size: 15px;
+    line-height: 1.52;
+}
+
+.cz-dash-post-body p strong {
+    color: var(--cz-ink);
+}
+
+.cz-dash-post-body p a {
+    color: var(--cz-accent);
+    font-weight: 700;
+}
+
+.cz-dash-post-image {
+    border-radius: 10px;
+}
+
+.cz-dash-post-actions {
+    max-width: 440px;
+}
+
+.cz-dash-post-actions button,
+.cz-dash-post-actions a {
+    border-radius: 10px;
+    min-height: 32px;
+    transform: none;
+}
+
+.cz-dash-post-actions button:hover,
+.cz-dash-post-actions a:hover,
+.cz-dash-post-actions button.is-active {
+    background: color-mix(in srgb, var(--cz-accent-soft) 62%, transparent);
+    transform: none;
+}
+
+.cz-dash-review-form {
+    gap: 7px;
+    grid-template-columns: auto minmax(140px, 1fr) auto;
+    margin-top: 2px;
+}
+
+.cz-dash-review-form input,
+.cz-dash-rating {
+    border-radius: 12px;
+    min-height: 36px;
+}
+
+.cz-dash-rating {
+    background: color-mix(in srgb, var(--cz-surface) 86%, var(--cz-raised));
+    min-width: 136px;
+}
+
+.cz-dash-rating::before,
+.cz-dash-rating label::after {
+    display: none;
+}
+
+.cz-dash-rating:hover,
+.cz-dash-rating:focus-within {
+    box-shadow: 0 0 0 3px var(--cz-accent-glow);
+    transform: none;
+}
+
+.cz-dash-rating label:hover,
+.cz-dash-rating label:hover ~ label,
+.cz-dash-rating input:checked ~ label {
+    filter: none;
+    text-shadow: none;
+    transform: translateY(-1px) rotate(-6deg);
+}
+
+.cz-dash-review-form:focus-within button {
+    animation: none;
+}
+
+.cz-dash-right-rail {
+    gap: 14px;
+    padding: 10px 18px 24px 22px;
+}
+
+.cz-dash-trending-card,
+.cz-explore-card,
+.cz-list-side-card,
+.cz-list-header,
+.cz-profile-hero,
+.cz-profile-grid article,
+.cz-profile-report-card,
+.cz-profile-activity article,
+.cz-form-card,
+.cz-admin-report-card,
+.cz-admin-stat-grid article,
+.cz-admin-panel,
+.cz-notification-card,
+.cz-notification-empty {
+    background: color-mix(in srgb, var(--cz-surface) 92%, transparent);
+    border-color: color-mix(in srgb, var(--cz-line) 82%, var(--cz-muted));
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.cz-dash-trending-card h2,
+.cz-explore-card h2,
+.cz-admin-panel h2,
+.cz-list-side-card h2 {
+    font-size: 22px;
+    letter-spacing: -0.01em;
+}
+
+.cz-dash-trend-list button {
+    padding: 15px 18px;
+}
+
+.cz-dash-trend-list button:hover,
+.cz-dash-show-more:hover {
+    background: color-mix(in srgb, var(--cz-raised) 68%, transparent);
+    transform: none;
+}
+
+.cz-list-header {
+    padding: 20px;
+}
+
+.cz-list-header::before {
+    opacity: 0.18;
+}
+
+.cz-list-header h1,
+.cz-profile-hero h1,
+.cz-form-heading h1,
+.cz-admin-header h1 {
+    letter-spacing: -0.025em;
+}
+
+.cz-list-header h1 {
+    font-size: clamp(34px, 4.5vw, 52px);
+    line-height: 1;
+}
+
+.cz-profile-main,
+.cz-list-main,
+.cz-admin-main {
+    gap: 18px;
+}
+
+.cz-profile-hero {
+    gap: 22px;
+    padding: clamp(22px, 4vw, 36px);
+}
+
+.cz-profile-hero h1 {
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 0.96;
+}
+
+.cz-profile-avatar,
+.cz-bookmark-avatar {
+    background: var(--cz-accent-soft);
+    border-color: var(--cz-line);
+    color: var(--cz-accent);
+}
+
+.cz-profile-grid {
+    gap: 14px;
+}
+
+.cz-profile-grid article,
+.cz-profile-report-card,
+.cz-profile-activity article,
+.cz-list-side-card {
+    padding: 20px;
+}
+
+.cz-profile-grid strong {
+    font-size: 42px;
+}
+
+.cz-profile-report-card,
+.cz-profile-report-card.is-empty {
+    background: color-mix(in srgb, var(--cz-surface) 88%, var(--cz-raised));
+}
+
+.cz-form-page,
+.cz-admin-page {
+    padding-block: clamp(24px, 5vw, 56px);
+}
+
+.cz-form-card {
+    gap: 22px;
+    padding: clamp(22px, 4vw, 34px);
+}
+
+.cz-form-heading h1,
+.cz-admin-header h1 {
+    font-size: clamp(32px, 4.5vw, 50px);
+    line-height: 1;
+}
+
+.cz-form-grid select,
+.cz-form-grid textarea,
+.cz-form-grid input,
+.cz-admin-report-card select,
+.cz-admin-report-card input {
+    border-radius: 10px;
+    padding: 12px 13px;
+}
+
+.cz-notification-filters {
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.cz-notification-filters a {
+    border-radius: 12px;
+    min-height: 36px;
+    padding-inline: 15px;
+}
+
+.cz-notification-filters a:hover,
+.cz-notification-filters a.is-active {
+    box-shadow: none;
+    transform: none;
+}
+
+.cz-notification-card {
+    gap: 12px;
+    grid-template-columns: 46px minmax(0, 1fr) auto auto;
+    min-height: 96px;
+    padding: 16px;
+}
+
+.cz-notification-card:hover {
+    box-shadow: 0 0 0 3px var(--cz-accent-glow);
+    transform: none;
+}
+
+.cz-notification-icon {
+    border-color: var(--cz-line);
+    border-radius: 10px;
+    height: 40px;
+    width: 40px;
+}
+
+.cz-notification-empty {
+    padding: 28px;
+}
+
+.cz-notification-empty h2 {
+    font-size: 30px;
+}
+
+.cz-bookmark-post {
+    gap: 12px;
+    padding: 16px 0;
+}
+
+.cz-bookmark-body strong {
+    font-size: 17px;
+}
+
+.cz-bookmark-body p {
+    color: color-mix(in srgb, var(--cz-ink) 90%, var(--cz-muted));
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.cz-bookmark-place-meta span {
+    border-radius: 10px;
+    padding: 5px 9px;
+}
+
+.cz-admin-nav {
+    border-radius: 12px;
+    padding: 3px;
+}
+
+.cz-admin-nav a {
+    border-radius: 9px;
+}
+
+.cz-admin-moderation-grid section,
+.cz-admin-check {
+    border-radius: 10px;
 }
 
 @media (max-width: 1240px) {

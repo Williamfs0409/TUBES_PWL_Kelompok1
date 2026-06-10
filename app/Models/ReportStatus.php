@@ -12,4 +12,9 @@ class ReportStatus extends Model
         'description',
         'is_active',
     ];
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
+    }
 }

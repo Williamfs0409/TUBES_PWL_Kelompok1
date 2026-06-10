@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Place;
+use App\Models\PlacePhoto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -75,6 +77,10 @@ class PlaceController extends Controller
 
     public function store(Request $request)
     {
+        if (! $request->session()->has('cityzen_user')) {
+            return redirect('/login')->with('notice', 'Please login to add a place.');
+        }
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
@@ -85,6 +91,8 @@ class PlaceController extends Controller
             'province' => ['nullable', 'string', 'max:100'],
             'google_maps_url' => ['nullable', 'url', 'max:255'],
             'image' => ['nullable', 'string', 'max:255'],
+            'photos' => ['nullable', 'array', 'max:6'],
+            'photos.*' => ['image', 'max:4096'],
         ]);
 
         $cityzenUser = $request->session()->get('cityzen_user');
@@ -93,7 +101,29 @@ class PlaceController extends Controller
         $data['slug'] = Str::slug($data['name']).'-'.Str::random(6);
         $data['status'] = 'active';
 
-        Place::create($data);
+        $photos = $request->file('photos', []);
+        unset($data['photos']);
+
+        DB::transaction(function () use ($data, $photos, $cityzenUser) {
+            $place = Place::create($data);
+
+            foreach ($photos as $index => $photo) {
+                $imagePath = 'storage/'.$photo->store('places', 'public');
+
+                PlacePhoto::create([
+                    'place_id' => $place->id,
+                    'user_id' => $cityzenUser['id'] ?? null,
+                    'image_path' => $imagePath,
+                    'caption' => $place->name,
+                    'sort_order' => $index + 1,
+                    'is_cover' => $index === 0,
+                ]);
+
+                if ($index === 0 && Schema::hasColumn('places', 'image')) {
+                    $place->update(['image' => $imagePath]);
+                }
+            }
+        });
 
         return redirect('/dashboard')->with('status', 'Tempat publik berhasil ditambahkan.');
     }

@@ -23,7 +23,7 @@
                 <div class="cz-form-alert">{{ $errors->first() }}</div>
             @endif
 
-            <form method="POST" action="{{ route('reports.store', $place) }}" class="cz-form-grid">
+            <form method="POST" action="{{ route('reports.store', $place) }}" class="cz-form-grid" enctype="multipart/form-data">
                 @csrf
 
                 <label>
@@ -41,6 +41,12 @@
                 <label>
                     <span>Deskripsi</span>
                     <textarea name="description" rows="6" placeholder="Contoh: Lampu taman mati di dekat pintu masuk barat." required>{{ old('description') }}</textarea>
+                </label>
+
+                <label>
+                    <span>Foto bukti</span>
+                    <input name="photos[]" type="file" accept="image/*" multiple>
+                    <small>Opsional, maksimal 6 foto agar admin lebih mudah memverifikasi laporan.</small>
                 </label>
 
                 <button type="submit">Kirim laporan</button>

@@ -19,16 +19,16 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('place_id')->constrained()->cascadeOnDelete();
-            $table->string('category');
+            $table->foreignId('report_category_id')->nullable()->constrained('report_categories')->nullOnDelete();
+            $table->foreignId('report_status_id')->nullable()->constrained('report_statuses')->nullOnDelete();
             $table->text('description');
-            $table->string('status')->default('pending');
             $table->text('admin_note')->nullable();
             $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('verified_at')->nullable();
             $table->timestamps();
 
-            $table->index(['place_id', 'status']);
-            $table->index(['category', 'status']);
+            $table->index(['place_id', 'report_status_id']);
+            $table->index(['report_category_id', 'report_status_id']);
         });
     }
 

@@ -6,17 +6,22 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class CityZenSeeder extends Seeder
 {
     /**
-     * Seed six dummy rows for every main CityZen table.
+     * Seed demo rows for local presentation and feature tests.
+     *
+     * Production deployment uses CityZenFoundationSeeder through DatabaseSeeder.
      */
     public function run(): void
     {
         DB::transaction(function () {
-            $users = $this->seedUsers();
+            $badges = $this->seedBadges();
+            $roles = $this->seedRoles();
+            $users = $this->seedUsers($badges, $roles);
             $categories = $this->seedCategories();
             $places = $this->seedPlaces($users, $categories);
 
@@ -24,7 +29,8 @@ class CityZenSeeder extends Seeder
             $this->seedReviews($places, $users);
             $this->seedLikes($places, $users);
             $this->seedBookmarks($places, $users);
-            $this->seedReports($places, $users);
+            $reportTaxonomy = $this->seedReportTaxonomy();
+            $this->seedReports($places, $users, $reportTaxonomy['categories'], $reportTaxonomy['statuses']);
             $this->refreshPlaceCounters();
         });
     }
@@ -32,7 +38,7 @@ class CityZenSeeder extends Seeder
     /**
      * @return array<string, int>
      */
-    private function seedUsers(): array
+    private function seedUsers(array $badges = [], array $roles = []): array
     {
         $now = now();
         $dummyUsers = [
@@ -95,33 +101,139 @@ class CityZenSeeder extends Seeder
         $users = [];
 
         foreach ($dummyUsers as $dummyUser) {
+            $roleSlug = $dummyUser['email'] === 'admin@cityzen.test' ? 'admin' : 'user';
+            $userPayload = [
+                'name' => $dummyUser['name'],
+                'password' => Hash::make('password'),
+                'email_verified_at' => $now,
+            ];
+
+            if (Schema::hasColumn('users', 'role_id') && isset($roles[$roleSlug])) {
+                $userPayload['role_id'] = $roles[$roleSlug];
+            }
+
+            if (Schema::hasColumn('users', 'is_suspended')) {
+                $userPayload['is_suspended'] = false;
+            }
+
+            if (Schema::hasColumn('users', 'status')) {
+                $userPayload['status'] = 'active';
+            }
+
             $user = User::query()->updateOrCreate(
                 ['email' => $dummyUser['email']],
-                [
-                    'name' => $dummyUser['name'],
-                    'password' => Hash::make('password'),
-                    'email_verified_at' => $now,
-                ]
+                $userPayload
             );
+
+            $profilePayload = [
+                'username' => $dummyUser['username'],
+                'avatar_path' => null,
+                'city' => $dummyUser['city'],
+                'bio' => $dummyUser['bio'],
+                'contribution_count' => $dummyUser['contribution_count'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            if (Schema::hasColumn('profiles', 'current_badge')) {
+                $profilePayload['current_badge'] = $dummyUser['current_badge'];
+            }
+
+            if (Schema::hasColumn('profiles', 'current_badge_id')) {
+                $profilePayload['current_badge_id'] = $badges[Str::slug($dummyUser['current_badge'])] ?? null;
+            }
 
             DB::table('profiles')->updateOrInsert(
                 ['user_id' => $user->id],
-                [
-                    'username' => $dummyUser['username'],
-                    'avatar_path' => null,
-                    'city' => $dummyUser['city'],
-                    'bio' => $dummyUser['bio'],
-                    'contribution_count' => $dummyUser['contribution_count'],
-                    'current_badge' => $dummyUser['current_badge'],
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]
+                $profilePayload
             );
 
             $users[$dummyUser['email']] = $user->id;
         }
 
         return $users;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function seedRoles(): array
+    {
+        if (! Schema::hasTable('roles')) {
+            return [];
+        }
+
+        $now = now();
+        $roles = [
+            ['name' => 'user', 'description' => 'Pengguna umum CityZen.'],
+            ['name' => 'admin', 'description' => 'Moderator laporan dan konten CityZen.'],
+            ['name' => 'superadmin', 'description' => 'Pengelola penuh sistem CityZen.'],
+        ];
+        $roleIds = [];
+
+        foreach ($roles as $role) {
+            $slug = Str::slug($role['name']);
+            $payload = [
+                'name' => $role['name'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            if (Schema::hasColumn('roles', 'slug')) {
+                $payload['slug'] = $slug;
+            }
+
+            if (Schema::hasColumn('roles', 'description')) {
+                $payload['description'] = $role['description'];
+            }
+
+            DB::table('roles')->updateOrInsert(
+                Schema::hasColumn('roles', 'slug') ? ['slug' => $slug] : ['name' => $role['name']],
+                $payload
+            );
+
+            $roleIds[$slug] = (int) DB::table('roles')
+                ->where(Schema::hasColumn('roles', 'slug') ? 'slug' : 'name', Schema::hasColumn('roles', 'slug') ? $slug : $role['name'])
+                ->value('id');
+        }
+
+        return $roleIds;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function seedBadges(): array
+    {
+        if (! Schema::hasTable('badges')) {
+            return [];
+        }
+
+        $now = now();
+        $badges = [
+            ['name' => 'Explorer', 'description' => 'Mulai aktif menjelajah dan membagikan ruang publik.', 'requirement_text' => '5 posting'],
+            ['name' => 'Contributor', 'description' => 'Kontributor konsisten untuk data ruang publik.', 'requirement_text' => '20 kontribusi'],
+            ['name' => 'Guardian', 'description' => 'Aktif menjaga kualitas fasilitas publik melalui laporan valid.', 'requirement_text' => '10 laporan valid'],
+            ['name' => 'City Hero', 'description' => 'Kontributor unggulan komunitas CityZen.', 'requirement_text' => 'Top contributor bulanan'],
+        ];
+        $badgeIds = [];
+
+        foreach ($badges as $badge) {
+            $slug = Str::slug($badge['name']);
+            $payload = [
+                'name' => $badge['name'],
+                'slug' => $slug,
+                'description' => $badge['description'],
+                'requirement_text' => $badge['requirement_text'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            DB::table('badges')->updateOrInsert(['slug' => $slug], $payload);
+            $badgeIds[$slug] = (int) DB::table('badges')->where('slug', $slug)->value('id');
+        }
+
+        return $badgeIds;
     }
 
     /**
@@ -334,6 +446,8 @@ class CityZenSeeder extends Seeder
         ];
 
         foreach ($reviews as $review) {
+            $reviewColumn = Schema::hasColumn('reviews', 'review_text') ? 'review_text' : 'review';
+
             DB::table('reviews')->updateOrInsert(
                 [
                     'user_id' => $users[$review['user']],
@@ -341,7 +455,7 @@ class CityZenSeeder extends Seeder
                 ],
                 [
                     'rating' => $review['rating'],
-                    'review' => $review['review'],
+                    $reviewColumn => $review['review'],
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]
@@ -410,17 +524,102 @@ class CityZenSeeder extends Seeder
     }
 
     /**
+     * @return array{categories: array<string, int>, statuses: array<string, int>}
+     */
+    private function seedReportTaxonomy(): array
+    {
+        $now = now();
+        $categories = [
+            ['name' => 'Sampah', 'description' => 'Laporan kebersihan, tumpukan sampah, atau limbah.'],
+            ['name' => 'Kerusakan fasilitas', 'description' => 'Laporan fasilitas rusak, aus, atau tidak bisa dipakai.'],
+            ['name' => 'Keamanan', 'description' => 'Laporan penerangan, titik rawan, atau kondisi tidak aman.'],
+            ['name' => 'Aksesibilitas', 'description' => 'Laporan hambatan akses untuk pejalan kaki, kursi roda, dan pengguna rentan.'],
+            ['name' => 'Vandalisme', 'description' => 'Laporan coretan, perusakan, atau penyalahgunaan fasilitas.'],
+            ['name' => 'Lainnya', 'description' => 'Laporan lain yang belum masuk kategori utama.'],
+        ];
+        $statuses = [
+            ['name' => 'Pending', 'description' => 'Menunggu verifikasi admin.'],
+            ['name' => 'Verified', 'description' => 'Laporan valid dan sudah diverifikasi.'],
+            ['name' => 'Rejected', 'description' => 'Laporan ditolak karena kurang valid atau kurang bukti.'],
+            ['name' => 'Resolved', 'description' => 'Masalah pada laporan sudah ditangani.'],
+        ];
+
+        $categoryIds = [];
+        foreach ($categories as $category) {
+            $slug = Str::slug($category['name']);
+            $payload = [
+                'name' => $category['name'],
+                'description' => $category['description'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            if (Schema::hasColumn('report_categories', 'slug')) {
+                $payload['slug'] = $slug;
+            }
+
+            if (Schema::hasColumn('report_categories', 'is_active')) {
+                $payload['is_active'] = true;
+            }
+
+            DB::table('report_categories')->updateOrInsert(
+                Schema::hasColumn('report_categories', 'slug') ? ['slug' => $slug] : ['name' => $category['name']],
+                $payload
+            );
+
+            $categoryIds[$slug] = (int) DB::table('report_categories')
+                ->where(Schema::hasColumn('report_categories', 'slug') ? 'slug' : 'name', Schema::hasColumn('report_categories', 'slug') ? $slug : $category['name'])
+                ->value('id');
+        }
+
+        $statusIds = [];
+        foreach ($statuses as $status) {
+            $slug = Str::slug($status['name']);
+            $payload = [
+                'name' => $status['name'],
+                'description' => $status['description'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            if (Schema::hasColumn('report_statuses', 'slug')) {
+                $payload['slug'] = $slug;
+            }
+
+            if (Schema::hasColumn('report_statuses', 'is_active')) {
+                $payload['is_active'] = true;
+            }
+
+            DB::table('report_statuses')->updateOrInsert(
+                Schema::hasColumn('report_statuses', 'slug') ? ['slug' => $slug] : ['name' => $status['name']],
+                $payload
+            );
+
+            $statusIds[$slug] = (int) DB::table('report_statuses')
+                ->where(Schema::hasColumn('report_statuses', 'slug') ? 'slug' : 'name', Schema::hasColumn('report_statuses', 'slug') ? $slug : $status['name'])
+                ->value('id');
+        }
+
+        return [
+            'categories' => $categoryIds,
+            'statuses' => $statusIds,
+        ];
+    }
+
+    /**
      * @param array<string, int> $places
      * @param array<string, int> $users
+     * @param array<string, int> $reportCategories
+     * @param array<string, int> $reportStatuses
      */
-    private function seedReports(array $places, array $users): void
+    private function seedReports(array $places, array $users, array $reportCategories, array $reportStatuses): void
     {
         $now = now();
         $reports = [
             [
                 'place' => 'central-park-commons',
                 'user' => 'raka@cityzen.test',
-                'category' => 'Sampah',
+                'category' => 'sampah',
                 'description' => 'Tempat sampah dekat pintu utara penuh saat akhir pekan.',
                 'status' => 'pending',
                 'admin_note' => null,
@@ -429,7 +628,7 @@ class CityZenSeeder extends Seeder
             [
                 'place' => 'riverfront-walk',
                 'user' => 'alya@cityzen.test',
-                'category' => 'Keamanan',
+                'category' => 'keamanan',
                 'description' => 'Beberapa lampu jalur pedestrian mati setelah pukul 19.00.',
                 'status' => 'verified',
                 'admin_note' => 'Laporan valid dan diteruskan ke pengelola kawasan.',
@@ -438,7 +637,7 @@ class CityZenSeeder extends Seeder
             [
                 'place' => 'solar-loop-plaza',
                 'user' => 'naufal@cityzen.test',
-                'category' => 'Aksesibilitas',
+                'category' => 'aksesibilitas',
                 'description' => 'Ramp kursi roda tertutup parkir motor di sisi timur.',
                 'status' => 'resolved',
                 'admin_note' => 'Area sudah dibersihkan oleh petugas.',
@@ -447,7 +646,7 @@ class CityZenSeeder extends Seeder
             [
                 'place' => 'eco-zen-garden',
                 'user' => 'dimas@cityzen.test',
-                'category' => 'Kerusakan fasilitas',
+                'category' => 'kerusakan-fasilitas',
                 'description' => 'Papan edukasi kompos mulai lapuk dan beberapa teks sulit dibaca.',
                 'status' => 'pending',
                 'admin_note' => null,
@@ -456,7 +655,7 @@ class CityZenSeeder extends Seeder
             [
                 'place' => 'lapangan-merdeka-active-park',
                 'user' => 'mira@cityzen.test',
-                'category' => 'Vandalisme',
+                'category' => 'vandalisme',
                 'description' => 'Coretan ditemukan di dinding dekat jogging track sisi barat.',
                 'status' => 'rejected',
                 'admin_note' => 'Foto tidak cukup jelas, perlu laporan ulang dengan lokasi detail.',
@@ -465,7 +664,7 @@ class CityZenSeeder extends Seeder
             [
                 'place' => 'kota-lama-food-court',
                 'user' => 'alya@cityzen.test',
-                'category' => 'Lainnya',
+                'category' => 'lainnya',
                 'description' => 'Area antrean terlalu sempit saat jam ramai dan perlu pengaturan alur.',
                 'status' => 'verified',
                 'admin_note' => 'Diteruskan sebagai rekomendasi penataan area kuliner.',
@@ -475,16 +674,18 @@ class CityZenSeeder extends Seeder
 
         foreach ($reports as $report) {
             $verified = in_array($report['status'], ['verified', 'resolved'], true);
+            $reportCategoryId = $reportCategories[$report['category']];
+            $reportStatusId = $reportStatuses[$report['status']];
 
             DB::table('reports')->updateOrInsert(
                 [
                     'user_id' => $users[$report['user']],
                     'place_id' => $places[$report['place']],
-                    'category' => $report['category'],
+                    'report_category_id' => $reportCategoryId,
                 ],
                 [
+                    'report_status_id' => $reportStatusId,
                     'description' => $report['description'],
-                    'status' => $report['status'],
                     'admin_note' => $report['admin_note'],
                     'verified_by' => $verified ? $users['admin@cityzen.test'] : null,
                     'verified_at' => $verified ? $now : null,
@@ -496,7 +697,7 @@ class CityZenSeeder extends Seeder
             $reportId = (int) DB::table('reports')
                 ->where('user_id', $users[$report['user']])
                 ->where('place_id', $places[$report['place']])
-                ->where('category', $report['category'])
+                ->where('report_category_id', $reportCategoryId)
                 ->value('id');
 
             DB::table('report_photos')->updateOrInsert(
@@ -505,7 +706,7 @@ class CityZenSeeder extends Seeder
                     'image_path' => $report['photo'],
                 ],
                 [
-                    'caption' => $report['category'].' report evidence',
+                    'caption' => str($report['category'])->replace('-', ' ')->title().' report evidence',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]

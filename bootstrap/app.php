@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'cityzen.auth' => \App\Http\Middleware\CityZenAuthenticate::class,
+            'cityzen.admin' => \App\Http\Middleware\CityZenAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

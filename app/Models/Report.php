@@ -43,4 +43,14 @@ class Report extends Model
     {
         return $this->belongsTo(ReportStatus::class, 'report_status_id');
     }
+
+    public function photos()
+    {
+        return $this->hasMany(ReportPhoto::class);
+    }
+
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
 }

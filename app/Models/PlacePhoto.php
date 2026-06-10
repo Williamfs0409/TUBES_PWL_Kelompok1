@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Review extends Model
+class PlacePhoto extends Model
 {
     protected $fillable = [
-        'user_id',
         'place_id',
-        'rating',
-        'review_text',
+        'user_id',
+        'image_path',
+        'caption',
+        'sort_order',
+        'is_cover',
     ];
 
     public function place()

@@ -1277,6 +1277,178 @@
             grid-template-columns: repeat(2, minmax(150px, 1fr));
         }
 
+        /* Visual polish: keep the same structure, make the surface calmer and less template-like. */
+        .topbar {
+            background: rgba(247, 249, 244, 0.96);
+            border-bottom-color: rgba(31, 44, 33, 0.2);
+            box-shadow: 0 1px 0 rgba(31, 44, 33, 0.04);
+        }
+
+        .brand {
+            letter-spacing: -0.02em;
+        }
+
+        .nav a {
+            color: #344337;
+            transition: color 160ms ease, background 160ms ease;
+        }
+
+        .nav a:hover,
+        .nav a:focus-visible {
+            background: rgba(213, 232, 205, 0.62);
+            color: var(--primary);
+            outline: none;
+        }
+
+        .hero {
+            background: linear-gradient(180deg, #f6f8f3 0%, #f9faf7 100%);
+        }
+
+        .hero::before {
+            animation: none;
+            opacity: 0.28;
+        }
+
+        .hero::after {
+            display: none;
+        }
+
+        .hero-copy>*,
+        .hero-stage {
+            animation-duration: 520ms;
+        }
+
+        .hero-copy>h1 {
+            letter-spacing: -0.04em;
+        }
+
+        .hero p:not(.eyebrow),
+        .section-head p,
+        .split p,
+        .launch p {
+            color: #536052;
+        }
+
+        .button {
+            border-width: 1px;
+            box-shadow: none;
+            letter-spacing: 0;
+            min-height: 42px;
+            transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        }
+
+        .button:hover,
+        .button:focus-visible {
+            box-shadow: 0 8px 18px rgba(25, 28, 29, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .button:active,
+        .button.is-pressed {
+            box-shadow: 0 2px 8px rgba(25, 28, 29, 0.12);
+            transform: translateY(1px);
+        }
+
+        .floating-card,
+        .mockup,
+        .card,
+        .team-card,
+        .launch-card,
+        .gallery-card,
+        .member-detail__card {
+            border-width: 1px;
+            border-radius: 14px;
+            box-shadow: 4px 5px 0 rgba(25, 28, 29, 0.08);
+        }
+
+        .floating-card:first-child,
+        .floating-card:last-child {
+            animation: card-pop 520ms ease both;
+        }
+
+        .floating-card {
+            background: rgba(255, 255, 251, 0.96);
+        }
+
+        .mockup {
+            background: #fbfcf7;
+        }
+
+        .mockup::before {
+            box-shadow: 0 0 0 1px rgba(25, 28, 29, 0.08);
+        }
+
+        .card,
+        .launch-card,
+        .gallery-card {
+            background: #fffef9;
+        }
+
+        .card:hover,
+        .launch-card:hover,
+        .gallery-card:hover {
+            box-shadow: 5px 6px 0 rgba(25, 28, 29, 0.09);
+            transform: translateY(-2px);
+        }
+
+        .gallery-card::after {
+            display: none;
+        }
+
+        .team-card {
+            background: #fffef9;
+            padding: 26px;
+            transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        }
+
+        .team-card::before {
+            background: rgba(223, 236, 218, 0.74);
+            border-bottom-color: rgba(25, 28, 29, 0.12);
+        }
+
+        .team-card:hover,
+        .team-card:focus-visible {
+            background: #fffffb;
+            box-shadow: 5px 6px 0 rgba(25, 28, 29, 0.09);
+            transform: translateY(-2px);
+        }
+
+        .team-card:active,
+        .team-card.is-pressed,
+        .team-card.is-pressed[data-member-card] {
+            box-shadow: 2px 3px 0 rgba(25, 28, 29, 0.12);
+            transform: translateY(1px) scale(0.99);
+        }
+
+        .team-card p {
+            background: rgba(238, 244, 240, 0.78);
+            border-color: rgba(25, 28, 29, 0.08);
+        }
+
+        .avatar,
+        .member-detail__avatar {
+            background: #386e3b;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+        }
+
+        .avatar::after {
+            display: none;
+        }
+
+        .member-detail__hero {
+            background: #e7f2df;
+            border-bottom-width: 1px;
+        }
+
+        .member-detail__close {
+            box-shadow: none;
+        }
+
+        .footer {
+            background: #f3f6ef;
+            border-top-color: rgba(31, 44, 33, 0.14);
+        }
+
         @media (max-width: 980px) {
 
             .hero,

@@ -311,6 +311,106 @@
             width: 100%;
         }
 
+        /* Visual polish: calmer auth surface while preserving the current layout. */
+        body {
+            background: #f6f8f2;
+            color: #161d17;
+        }
+
+        .page {
+            background:
+                linear-gradient(90deg, rgba(224, 240, 214, 0.46), transparent 42%),
+                #f6f8f2;
+        }
+
+        .brand {
+            letter-spacing: -0.02em;
+        }
+
+        .intro {
+            border-right-color: rgba(30, 45, 32, 0.22);
+            gap: clamp(28px, 6vw, 64px);
+        }
+
+        .intro h1 {
+            letter-spacing: -0.045em;
+            line-height: 0.96;
+        }
+
+        .intro p {
+            color: #536052;
+            line-height: 1.66;
+            max-width: 680px;
+        }
+
+        .signal {
+            background: rgba(255, 255, 250, 0.78);
+            border-width: 1px;
+            border-radius: 12px;
+            box-shadow: 3px 4px 0 rgba(25, 28, 29, 0.06);
+        }
+
+        .signal strong {
+            color: #1b5226;
+        }
+
+        .panel {
+            background: #fffef9;
+            border-width: 1px;
+            border-radius: 14px;
+            box-shadow: 5px 6px 0 rgba(25, 28, 29, 0.08);
+        }
+
+        .panel h2 {
+            letter-spacing: -0.035em;
+        }
+
+        .panel > p {
+            color: #536052;
+        }
+
+        input {
+            background: #fbfcf7;
+            border-width: 1px;
+            border-radius: 10px;
+            transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+        }
+
+        input:focus {
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(49, 112, 58, 0.14);
+        }
+
+        .password-toggle {
+            border-radius: 999px;
+            color: #344337;
+            transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+        }
+
+        .password-toggle:hover,
+        .password-toggle:focus-visible {
+            background: rgba(216, 235, 207, 0.82);
+            transform: translateY(-1px);
+        }
+
+        .button {
+            border-width: 1px;
+            box-shadow: none;
+            letter-spacing: 0;
+            min-height: 44px;
+            transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        }
+
+        .button:hover,
+        .button:focus-visible {
+            box-shadow: 0 8px 18px rgba(25, 28, 29, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .home-link {
+            color: #536052;
+        }
+
         @media (max-width: 900px) {
             .page {
                 grid-template-columns: 1fr;
