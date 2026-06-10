@@ -42,13 +42,12 @@ class InteractionController extends Controller
             ]);
         }
 
-        $place->update([
-            'likes_count' => DB::table('likes')->where('place_id', $place->id)->count(),
-        ]);
+        $count = DB::table('likes')->where('place_id', $place->id)->count();
+        $place->update(['likes_count' => $count]);
 
         return $this->interactionResponse($request, $existing ? 'Like removed.' : 'Place liked.', [
             'active' => ! $existing,
-            'count' => (int) $place->likes_count,
+            'count' => $count,
             'target' => 'likes',
         ]);
     }
@@ -77,13 +76,12 @@ class InteractionController extends Controller
             ]);
         }
 
-        $place->update([
-            'bookmarks_count' => DB::table('bookmarks')->where('place_id', $place->id)->count(),
-        ]);
+        $count = DB::table('bookmarks')->where('place_id', $place->id)->count();
+        $place->update(['bookmarks_count' => $count]);
 
         return $this->interactionResponse($request, $existing ? 'Bookmark removed.' : 'Place saved.', [
             'active' => ! $existing,
-            'count' => (int) $place->bookmarks_count,
+            'count' => $count,
             'target' => 'bookmarks',
         ]);
     }

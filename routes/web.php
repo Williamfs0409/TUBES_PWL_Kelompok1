@@ -37,6 +37,7 @@ Route::middleware('cityzen.auth')->group(function () {
     Route::get('/settings', [SettingController::class, 'edit'])->name('settings');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
+    Route::get('/places/{place}/image', [PlaceController::class, 'image'])->name('places.image');
     Route::resource('places', PlaceController::class);
     Route::post('/places/{place}/like', [InteractionController::class, 'like'])->name('places.like');
     Route::post('/places/{place}/bookmark', [InteractionController::class, 'bookmark'])->name('places.bookmark');

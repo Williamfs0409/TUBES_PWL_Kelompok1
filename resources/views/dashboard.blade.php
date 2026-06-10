@@ -93,7 +93,7 @@
 
                             @if ($post['image'])
                                 <figure class="cz-dash-post-image">
-                                    <img src="{{ asset($post['image']) }}" alt="{{ $post['image_alt'] }}">
+                                    <img src="{{ route('places.image', $post['id']) }}" alt="{{ $post['image_alt'] }}">
                                 </figure>
                             @endif
 

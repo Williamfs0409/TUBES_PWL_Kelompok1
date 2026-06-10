@@ -9,6 +9,7 @@ use App\Support\CityZenAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PlaceController extends Controller
@@ -74,6 +75,57 @@ class PlaceController extends Controller
     public function show(Place $place)
     {
         return redirect('/dashboard')->with('status', $place->name.' dibuka dari feed CityZen.');
+    }
+
+    public function image(Place $place)
+    {
+        $imagePath = $place->coverPhoto()->value('image_path') ?: $place->image;
+        $relativePath = $imagePath ? str($imagePath)->after('storage/')->toString() : null;
+
+        if ($relativePath && Storage::disk('public')->exists($relativePath)) {
+            return response()->file(Storage::disk('public')->path($relativePath), [
+                'Cache-Control' => 'public, max-age=3600',
+            ]);
+        }
+
+        $title = e($place->name);
+        $category = e($place->category?->name ?? 'CityZen public space');
+        $svg = <<<SVG
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-label="{$title}">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#d8f3c9"/>
+      <stop offset="0.55" stop-color="#8fbc83"/>
+      <stop offset="1" stop-color="#173522"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="650" rx="28" fill="url(#sky)"/>
+  <rect y="430" width="1200" height="220" fill="#102919" opacity=".88"/>
+  <g opacity=".92">
+    <rect x="150" y="220" width="78" height="210" fill="#f5fff1"/>
+    <rect x="310" y="170" width="92" height="260" fill="#f5fff1"/>
+    <rect x="500" y="250" width="76" height="180" fill="#f5fff1"/>
+    <rect x="740" y="205" width="88" height="225" fill="#f5fff1"/>
+    <rect x="930" y="260" width="76" height="170" fill="#f5fff1"/>
+  </g>
+  <g fill="#347c3d">
+    <circle cx="110" cy="360" r="64"/>
+    <circle cx="245" cy="330" r="66"/>
+    <circle cx="405" cy="365" r="76"/>
+    <circle cx="590" cy="335" r="68"/>
+    <circle cx="745" cy="365" r="76"/>
+    <circle cx="915" cy="325" r="68"/>
+    <circle cx="1080" cy="360" r="70"/>
+  </g>
+  <text x="86" y="520" fill="#fffef7" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="800">{$title}</text>
+  <text x="88" y="570" fill="#dff7d8" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="600">{$category} · CityZen public space</text>
+</svg>
+SVG;
+
+        return response($svg, 200, [
+            'Content-Type' => 'image/svg+xml',
+            'Cache-Control' => 'public, max-age=300',
+        ]);
     }
 
     public function store(Request $request)
