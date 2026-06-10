@@ -49,7 +49,7 @@
                     <p>Data ini dipakai di dashboard, kontribusi, bookmark, dan aktivitas report.</p>
                 </div>
 
-                <form class="cz-form-grid" method="POST" action="{{ route('settings.update') }}">
+                <form class="cz-form-grid" method="POST" action="{{ route('settings.update') }}" enctype="multipart/form-data">
                     @csrf
 
                     <label>
@@ -68,6 +68,17 @@
                         <span>Username</span>
                         <input name="username" value="{{ old('username', $profile->username ?? $fallbackUsername) }}" required maxlength="40">
                         @error('username') <small class="cz-field-error">{{ $message }}</small> @enderror
+                    </label>
+
+                    <label>
+                        <span>Profile photo</span>
+                        <input name="avatar" type="file" accept="image/*">
+                        @if (! empty($profile->avatar_path))
+                            <small>Foto saat ini sudah tersimpan dan akan muncul di feed.</small>
+                        @else
+                            <small>Unggah foto agar avatar tidak hanya berupa inisial.</small>
+                        @endif
+                        @error('avatar') <small class="cz-field-error">{{ $message }}</small> @enderror
                     </label>
 
                     <label>

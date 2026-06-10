@@ -31,11 +31,13 @@ class DashboardController extends Controller
         $userId = $request->session()->get('cityzen_user.id');
         $likedPlaceIds = Schema::hasTable('likes') ? DB::table('likes')->where('user_id', $userId)->pluck('place_id') : collect();
         $bookmarkedPlaceIds = Schema::hasTable('bookmarks') ? DB::table('bookmarks')->where('user_id', $userId)->pluck('place_id') : collect();
+        $repostedPlaceIds = Schema::hasTable('reposts') ? DB::table('reposts')->where('user_id', $userId)->pluck('place_id') : collect();
 
         if (Schema::hasTable('places')) {
             $placesQuery = DB::table('places')
                 ->leftJoin('categories', 'categories.id', '=', 'places.category_id')
                 ->leftJoin('users', 'users.id', '=', 'places.user_id')
+                ->leftJoin('profiles', 'profiles.user_id', '=', 'users.id')
                 ->where('places.status', 'active')
                 ->whereNull('places.deleted_at');
 
@@ -57,10 +59,13 @@ class DashboardController extends Controller
                 'places.average_rating',
                 'places.reviews_count',
                 'places.likes_count',
+                'places.bookmarks_count',
                 'places.reports_count',
                 'places.created_at',
                 'categories.name as category_name',
                 'users.name as user_name',
+                'profiles.avatar_path as avatar_path',
+                Schema::hasTable('reposts') ? DB::raw('(select count(*) from reposts where reposts.place_id = places.id) as reposts_count') : DB::raw('0 as reposts_count'),
                 Schema::hasTable('place_photos') ? 'place_photos.image_path' : DB::raw('NULL as image_path'),
             ]);
 
@@ -68,7 +73,7 @@ class DashboardController extends Controller
                 ->orderByDesc('places.created_at')
                 ->limit(15)
                 ->get()
-                ->map(function ($place) use ($compactNumber, $initials, $likedPlaceIds, $bookmarkedPlaceIds, $userId) {
+                ->map(function ($place) use ($compactNumber, $initials, $likedPlaceIds, $bookmarkedPlaceIds, $repostedPlaceIds, $userId) {
                     $author = $place->user_name ?: 'CityZen Citizen';
                     $location = collect([$place->city, $place->province])->filter()->implode(', ');
                     $description = $place->short_description ?: $place->description;
@@ -79,6 +84,7 @@ class DashboardController extends Controller
                         'handle' => '@'.str($author)->slug('_'),
                         'time' => $place->created_at ? Carbon::parse($place->created_at)->diffForHumans(null, true).' ago' : 'baru',
                         'avatar' => $initials($author),
+                        'avatar_image' => $place->avatar_path,
                         'verified' => false,
                         'lead' => $place->name,
                         'text' => trim($description.' '.($location ? 'Lokasi: '.$location.'.' : '')),
@@ -86,11 +92,13 @@ class DashboardController extends Controller
                         'image_alt' => $place->name,
                         'badge' => str($place->category_name ?: 'Public Space')->studly()->toString(),
                         'comments' => $compactNumber((int) $place->reviews_count),
-                        'reposts' => $compactNumber((int) $place->reports_count),
+                        'reposts' => $compactNumber((int) $place->reposts_count),
                         'likes' => $compactNumber((int) $place->likes_count),
+                        'bookmarks' => $compactNumber((int) $place->bookmarks_count),
                         'rating' => number_format((float) $place->average_rating, 1),
                         'liked' => $likedPlaceIds->contains($place->id),
                         'bookmarked' => $bookmarkedPlaceIds->contains($place->id),
+                        'reposted' => $repostedPlaceIds->contains($place->id),
                         'owned' => (int) $place->user_id === (int) $userId,
                     ];
                 });

@@ -4,6 +4,7 @@
     $nameParts = collect(explode(' ', trim($user['name'] ?? 'CityZen User')))->filter()->values();
     $initials = $initials ?? ($nameParts->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode('') ?: 'CZ');
     $handle = $handle ?? ('@'.str(str($user['email'] ?? 'member@cityzen.local')->before('@'))->replace(['.', '_', '-'], ' ')->slug('_'));
+    $avatarPath = $user['avatar_path'] ?? null;
 @endphp
 
 <aside class="cz-dash-sidebar" aria-label="CityZen navigation">
@@ -50,7 +51,13 @@
     <div class="cz-dash-sidebar-bottom">
         <div class="cz-dash-user-menu" data-user-menu>
             <button class="cz-dash-user-card" type="button" data-user-menu-toggle aria-expanded="false" aria-label="Open account menu">
-                <span class="cz-dash-avatar">{{ $initials }}</span>
+                <span class="cz-dash-avatar">
+                    @if ($avatarPath)
+                        <img src="{{ asset($avatarPath) }}" alt="">
+                    @else
+                        {{ $initials }}
+                    @endif
+                </span>
                 <span class="cz-dash-user-copy">
                     <strong>{{ $user['name'] }}</strong>
                     <small>{{ $handle }}</small>

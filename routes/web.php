@@ -40,6 +40,7 @@ Route::middleware('cityzen.auth')->group(function () {
     Route::resource('places', PlaceController::class);
     Route::post('/places/{place}/like', [InteractionController::class, 'like'])->name('places.like');
     Route::post('/places/{place}/bookmark', [InteractionController::class, 'bookmark'])->name('places.bookmark');
+    Route::post('/places/{place}/repost', [InteractionController::class, 'repost'])->name('places.repost');
     Route::post('/places/{place}/review', [InteractionController::class, 'review'])->name('places.review');
     Route::get('/places/{place}/report', [ReportController::class, 'create'])->name('reports.create');
     Route::post('/places/{place}/report', [ReportController::class, 'store'])->name('reports.store');

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
@@ -36,6 +37,7 @@ class SettingController extends Controller
             'username' => ['required', 'string', 'max:40', 'alpha_dash', 'unique:profiles,username,'.$userId.',user_id'],
             'city' => ['nullable', 'string', 'max:100'],
             'bio' => ['nullable', 'string', 'max:500'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
             'password' => ['nullable', 'string', 'min:4'],
         ]);
 
@@ -52,10 +54,22 @@ class SettingController extends Controller
         $account->save();
 
         if (Schema::hasTable('profiles')) {
+            $existingAvatar = DB::table('profiles')->where('user_id', $userId)->value('avatar_path');
+            $avatarPath = $existingAvatar;
+
+            if ($request->hasFile('avatar')) {
+                if ($existingAvatar && str_starts_with($existingAvatar, 'storage/')) {
+                    Storage::disk('public')->delete(str($existingAvatar)->after('storage/')->toString());
+                }
+
+                $avatarPath = 'storage/'.$request->file('avatar')->store('avatars', 'public');
+            }
+
             DB::table('profiles')->updateOrInsert(
                 ['user_id' => $userId],
                 [
                     'username' => $data['username'],
+                    'avatar_path' => $avatarPath,
                     'city' => $data['city'] ?? null,
                     'bio' => $data['bio'] ?? null,
                     'updated_at' => now(),

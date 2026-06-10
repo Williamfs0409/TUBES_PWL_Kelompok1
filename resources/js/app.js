@@ -142,19 +142,53 @@ if (dashboardAwal) {
         window.setTimeout(() => scrollToDashboardSection(window.location.hash, false), 0);
     }
 
-    dashboardAwal.querySelectorAll('[data-like-post]').forEach((button) => {
-        button.addEventListener('click', () => {
-            const isLiked = button.classList.toggle('is-liked');
-            button.setAttribute('aria-pressed', String(isLiked));
-            showToast(isLiked ? 'Post liked.' : 'Like removed.');
-        });
-    });
+    const formatCompactNumber = (number) => {
+        if (number >= 1000) {
+            return `${Number((number / 1000).toFixed(1)).toString()}k`;
+        }
 
-    dashboardAwal.querySelectorAll('[data-bookmark-post]').forEach((button) => {
-        button.addEventListener('click', () => {
-            const isBookmarked = button.classList.toggle('is-active');
-            button.setAttribute('aria-pressed', String(isBookmarked));
-            showToast(isBookmarked ? 'Saved to bookmarks.' : 'Bookmark removed.');
+        return String(number);
+    };
+
+    dashboardAwal.querySelectorAll('[data-async-interaction]').forEach((form) => {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const button = form.querySelector('button[type="submit"]');
+            const count = form.querySelector('[data-count]');
+            const activeClass = button?.hasAttribute('data-like-post') ? 'is-liked' : 'is-active';
+
+            button?.setAttribute('disabled', 'disabled');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        Accept: 'application/json',
+                        'X-CityZen-Async': '1',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Interaction failed');
+                }
+
+                const payload = await response.json();
+
+                button?.classList.toggle(activeClass, Boolean(payload.active));
+                button?.setAttribute('aria-pressed', String(Boolean(payload.active)));
+
+                if (count && typeof payload.count === 'number') {
+                    count.textContent = formatCompactNumber(payload.count);
+                }
+
+                showToast(payload.message || 'Interaction updated.');
+            } catch (error) {
+                showToast('Aksi belum berhasil. Coba ulang sebentar lagi.');
+            } finally {
+                button?.removeAttribute('disabled');
+            }
         });
     });
 

@@ -164,6 +164,15 @@ html {
     width: 24px;
 }
 
+.cz-dash-avatar img,
+.cz-dash-post-avatar img {
+    border-radius: inherit;
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
 .cz-dash-brand strong,
 .cz-dash-feed-header h1,
 .cz-dash-trending-card h2 {
@@ -796,9 +805,23 @@ html {
     color: var(--cz-danger);
 }
 
+.cz-dash-post-actions a.is-report {
+    color: var(--cz-danger);
+}
+
+.cz-dash-post-actions a.is-report:hover {
+    background: color-mix(in srgb, var(--cz-danger) 12%, transparent);
+    color: var(--cz-danger);
+}
+
 .cz-dash-post-actions button.is-danger:hover {
     background: color-mix(in srgb, var(--cz-danger) 12%, transparent);
     color: var(--cz-danger);
+}
+
+.cz-dash-post-actions button:disabled {
+    cursor: wait;
+    opacity: 0.62;
 }
 
 .cz-dash-post-actions svg {

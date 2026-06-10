@@ -24,11 +24,16 @@ class CityZenAccess
 
     public static function sessionPayload(User $user): array
     {
+        $avatarPath = Schema::hasTable('profiles')
+            ? DB::table('profiles')->where('user_id', $user->id)->value('avatar_path')
+            : null;
+
         return [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'role' => self::roleNameForUserId((int) $user->id),
+            'avatar_path' => $avatarPath,
         ];
     }
 

@@ -20,6 +20,7 @@
         $nameParts = collect(explode(' ', trim($user['name'] ?? 'CityZen User')))->filter()->values();
         $initials = $nameParts->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode('') ?: 'CZ';
         $handle = '@'.str(str($user['email'] ?? 'member@cityzen.local')->before('@'))->replace(['.', '_', '-'], ' ')->slug('_');
+        $currentAvatar = $user['avatar_path'] ?? null;
     @endphp
 
     <div class="cz-dash-shell">
@@ -39,7 +40,13 @@
             </div>
 
             <section class="cz-dash-composer" aria-label="Create a CityZen post">
-                <span class="cz-dash-avatar cz-dash-avatar-photo">{{ $initials }}</span>
+                <span class="cz-dash-avatar cz-dash-avatar-photo">
+                    @if ($currentAvatar)
+                        <img src="{{ asset($currentAvatar) }}" alt="">
+                    @else
+                        {{ $initials }}
+                    @endif
+                </span>
                 <div class="cz-dash-composer-content">
                     <a href="{{ url('/places/create') }}" class="cz-dash-compose-prompt">
                         What's happening in your city?
@@ -66,7 +73,13 @@
                         data-feed-post
                         data-title="{{ strtolower($post['author'].' '.$post['handle'].' '.$post['lead'].' '.$post['text'].' '.$post['badge']) }}"
                     >
-                        <div class="cz-dash-post-avatar" aria-hidden="true">{{ $post['avatar'] }}</div>
+                        <div class="cz-dash-post-avatar" aria-hidden="true">
+                            @if ($post['avatar_image'])
+                                <img src="{{ asset($post['avatar_image']) }}" alt="">
+                            @else
+                                {{ $post['avatar'] }}
+                            @endif
+                        </div>
                         <div class="cz-dash-post-body">
                             <header class="cz-dash-post-meta">
                                 <strong>{{ $post['author'] }}</strong>
@@ -89,28 +102,37 @@
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4V5Z" /></svg>
                                     <span>{{ $post['comments'] }}</span>
                                 </button>
-                                <a href="{{ route('reports.create', $post['id']) }}" data-action-link>
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l4 4-4 4" /><path d="M3 11V9a3 3 0 0 1 3-3h15" /><path d="M7 22l-4-4 4-4" /><path d="M21 13v2a3 3 0 0 1-3 3H3" /></svg>
-                                    <span>{{ $post['reposts'] }}</span>
-                                </a>
-                                <form method="POST" action="{{ route('places.like', $post['id']) }}">
+                                <form method="POST" action="{{ route('places.repost', $post['id']) }}" data-async-interaction>
+                                    @csrf
+                                    <button type="submit" data-repost-post aria-pressed="{{ $post['reposted'] ? 'true' : 'false' }}" class="{{ $post['reposted'] ? 'is-active' : '' }}">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l4 4-4 4" /><path d="M3 11V9a3 3 0 0 1 3-3h15" /><path d="M7 22l-4-4 4-4" /><path d="M21 13v2a3 3 0 0 1-3 3H3" /></svg>
+                                        <span data-count="reposts">{{ $post['reposts'] }}</span>
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('places.like', $post['id']) }}" data-async-interaction>
                                     @csrf
                                     <button type="submit" data-like-post aria-pressed="{{ $post['liked'] ? 'true' : 'false' }}" class="{{ $post['liked'] ? 'is-liked' : '' }}">
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.6c0 5.4-8.8 10-8.8 10s-8.8-4.6-8.8-10a4.7 4.7 0 0 1 8.8-2.4 4.7 4.7 0 0 1 8.8 2.4Z" /></svg>
-                                        <span>{{ $post['likes'] }}</span>
+                                        <span data-count="likes">{{ $post['likes'] }}</span>
                                     </button>
                                 </form>
-                                <form method="POST" action="{{ route('places.bookmark', $post['id']) }}">
+                                <form method="POST" action="{{ route('places.bookmark', $post['id']) }}" data-async-interaction>
                                     @csrf
                                     <button type="submit" data-bookmark-post aria-pressed="{{ $post['bookmarked'] ? 'true' : 'false' }}" class="{{ $post['bookmarked'] ? 'is-active' : '' }}">
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" /></svg>
-                                        <span class="sr-only">Bookmark</span>
+                                        <span data-count="bookmarks">{{ $post['bookmarks'] }}</span>
                                     </button>
                                 </form>
                                 <button type="button" data-action-toast="Share sheet prepared.">
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 10.8 8-4.6" /><path d="m8.6 13.2 8 4.6" /></svg>
                                     <span class="sr-only">Share</span>
                                 </button>
+                                @unless ($post['owned'])
+                                    <a href="{{ route('reports.create', $post['id']) }}" class="is-report" aria-label="Report post">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16" /><path d="M5 5h12l-1.5 4L17 13H5" /></svg>
+                                        <span class="sr-only">Report</span>
+                                    </a>
+                                @endunless
                                 @if ($post['owned'])
                                     <form method="POST" action="{{ route('places.destroy', $post['id']) }}" data-confirm-delete>
                                         @csrf

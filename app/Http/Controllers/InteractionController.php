@@ -9,6 +9,15 @@ use Illuminate\Support\Facades\Schema;
 
 class InteractionController extends Controller
 {
+    private function interactionResponse(Request $request, string $message, array $payload)
+    {
+        if ($request->expectsJson() || $request->header('X-CityZen-Async') === '1') {
+            return response()->json(['message' => $message] + $payload);
+        }
+
+        return back()->with('status', $message);
+    }
+
     public function like(Request $request, Place $place)
     {
         $userId = $request->session()->get('cityzen_user.id');
@@ -37,7 +46,11 @@ class InteractionController extends Controller
             'likes_count' => DB::table('likes')->where('place_id', $place->id)->count(),
         ]);
 
-        return back()->with('status', $existing ? 'Like removed.' : 'Place liked.');
+        return $this->interactionResponse($request, $existing ? 'Like removed.' : 'Place liked.', [
+            'active' => ! $existing,
+            'count' => (int) $place->likes_count,
+            'target' => 'likes',
+        ]);
     }
 
     public function bookmark(Request $request, Place $place)
@@ -68,7 +81,42 @@ class InteractionController extends Controller
             'bookmarks_count' => DB::table('bookmarks')->where('place_id', $place->id)->count(),
         ]);
 
-        return back()->with('status', $existing ? 'Bookmark removed.' : 'Place saved.');
+        return $this->interactionResponse($request, $existing ? 'Bookmark removed.' : 'Place saved.', [
+            'active' => ! $existing,
+            'count' => (int) $place->bookmarks_count,
+            'target' => 'bookmarks',
+        ]);
+    }
+
+    public function repost(Request $request, Place $place)
+    {
+        $userId = $request->session()->get('cityzen_user.id');
+
+        if (! $userId) {
+            return redirect('/login')->with('notice', 'Please login to repost a place.');
+        }
+
+        $existing = DB::table('reposts')
+            ->where('user_id', $userId)
+            ->where('place_id', $place->id)
+            ->first();
+
+        if ($existing) {
+            DB::table('reposts')->where('id', $existing->id)->delete();
+        } else {
+            DB::table('reposts')->insert([
+                'user_id' => $userId,
+                'place_id' => $place->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return $this->interactionResponse($request, $existing ? 'Repost removed.' : 'Reposted to your CityZen activity.', [
+            'active' => ! $existing,
+            'count' => DB::table('reposts')->where('place_id', $place->id)->count(),
+            'target' => 'reposts',
+        ]);
     }
 
     public function review(Request $request, Place $place)
