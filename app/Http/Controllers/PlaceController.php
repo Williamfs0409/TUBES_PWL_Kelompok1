@@ -82,7 +82,7 @@ class PlaceController extends Controller
             abort(404);
         }
 
-        $place->load(['category', 'user', 'coverPhoto']);
+        $place->load(['category', 'user', 'coverPhoto', 'photos']);
 
         $compactNumber = function (int $number): string {
             if ($number >= 1000) {
@@ -144,6 +144,14 @@ class PlaceController extends Controller
             'owned' => (int) $place->user_id === (int) $userId,
         ];
 
+        $photos = $place->photos
+            ->sortBy('sort_order')
+            ->values()
+            ->map(fn (PlacePhoto $photo) => [
+                'id' => $photo->id,
+                'caption' => $photo->caption ?: $place->name,
+            ]);
+
         $reviews = Schema::hasTable('reviews')
             ? DB::table('reviews')
                 ->leftJoin('users', 'users.id', '=', 'reviews.user_id')
@@ -185,6 +193,7 @@ class PlaceController extends Controller
 
         return view('places.show', [
             'post' => $post,
+            'photos' => $photos,
             'reviews' => $reviews,
             'related' => $related,
             'isAdmin' => CityZenAccess::isAdmin($cityzenUser),
@@ -249,6 +258,28 @@ SVG;
             'Content-Type' => 'image/svg+xml',
             'Cache-Control' => 'public, max-age=300',
         ]);
+    }
+
+    public function photo(Place $place, PlacePhoto $photo)
+    {
+        abort_unless((int) $photo->place_id === (int) $place->id, 404);
+
+        if ($photo->image_data && $photo->image_mime) {
+            return response(base64_decode($photo->image_data), 200, [
+                'Content-Type' => $photo->image_mime,
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+
+        $relativePath = $photo->image_path ? str($photo->image_path)->after('storage/')->toString() : null;
+
+        if ($relativePath && Storage::disk('public')->exists($relativePath)) {
+            return response()->file(Storage::disk('public')->path($relativePath), [
+                'Cache-Control' => 'public, max-age=3600',
+            ]);
+        }
+
+        abort(404);
     }
 
     public function store(Request $request)

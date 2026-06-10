@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Support\CityZenAccess;
+use App\Support\CityZenEmailVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -44,6 +45,10 @@ class AuthController extends Controller
         $request->session()->put('cityzen_user', CityZenAccess::sessionPayload($user));
         $request->session()->regenerate();
 
+        if (! $user->email_verified_at) {
+            return redirect()->route('verification.notice');
+        }
+
         return redirect('/dashboard');
     }
 
@@ -73,7 +78,16 @@ class AuthController extends Controller
         $request->session()->put('cityzen_user', CityZenAccess::sessionPayload($user));
         $request->session()->regenerate();
 
-        return redirect('/dashboard');
+        $sent = CityZenEmailVerification::send($user);
+
+        return redirect()
+            ->route('verification.notice')
+            ->with(
+                $sent ? 'status' : 'notice',
+                $sent
+                    ? 'Kami sudah mengirim link verifikasi ke email kamu.'
+                    : 'Akun dibuat, tapi email verifikasi belum terkirim. Cek konfigurasi SMTP lalu kirim ulang.'
+            );
     }
 
     public function logout(Request $request)

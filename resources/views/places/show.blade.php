@@ -63,6 +63,16 @@
                         </figure>
                     @endif
 
+                    @if ($photos->count() > 1)
+                        <div class="cz-post-photo-strip" aria-label="Foto tambahan {{ $post['lead'] }}">
+                            @foreach ($photos as $photo)
+                                <a href="{{ route('places.photos.show', [$post['id'], $photo['id']]) }}" target="_blank" rel="noreferrer">
+                                    <img src="{{ route('places.photos.show', [$post['id'], $photo['id']]) }}" alt="{{ $photo['caption'] }}">
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="cz-post-detail-meta">
                         @if ($post['timestamp'])
                             <span>{{ $post['timestamp'] }}</span>

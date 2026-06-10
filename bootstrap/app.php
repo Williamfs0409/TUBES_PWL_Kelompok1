@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'cityzen.auth' => \App\Http\Middleware\CityZenAuthenticate::class,
             'cityzen.admin' => \App\Http\Middleware\CityZenAdmin::class,
+            'cityzen.verified' => \App\Http\Middleware\CityZenEnsureEmailIsVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

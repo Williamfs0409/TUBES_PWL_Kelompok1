@@ -2310,6 +2310,138 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     font-weight: 900;
 }
 
+.cz-post-photo-strip {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    margin-top: 12px;
+}
+
+.cz-post-photo-strip a {
+    aspect-ratio: 4 / 3;
+    background: var(--cz-ink-soft);
+    border: 1px solid var(--cz-line);
+    border-radius: 16px;
+    display: block;
+    overflow: hidden;
+    transition: border-color 160ms ease, filter 160ms ease, transform 160ms ease;
+}
+
+.cz-post-photo-strip a:hover {
+    border-color: var(--cz-accent);
+    filter: saturate(1.06);
+    transform: translateY(-1px);
+}
+
+.cz-post-photo-strip img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.cz-verification-page {
+    min-height: 100vh;
+}
+
+.cz-verification-shell {
+    align-items: center;
+    display: grid;
+    min-height: 100vh;
+    padding: clamp(22px, 6vw, 64px);
+}
+
+.cz-verification-card {
+    background: color-mix(in srgb, var(--cz-surface) 94%, transparent);
+    border: 1px solid var(--cz-line);
+    border-radius: 22px;
+    box-shadow: 10px 12px 0 color-mix(in srgb, var(--cz-ink) 10%, transparent);
+    display: grid;
+    gap: 18px;
+    margin: 0 auto;
+    max-width: 620px;
+    padding: clamp(24px, 5vw, 44px);
+}
+
+.cz-verification-brand {
+    align-items: center;
+    color: var(--cz-accent);
+    display: inline-flex;
+    font-size: 24px;
+    font-weight: 900;
+    gap: 12px;
+    text-decoration: none;
+    width: fit-content;
+}
+
+.cz-verification-eyebrow {
+    color: var(--cz-accent);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    margin: 10px 0 -8px;
+    text-transform: uppercase;
+}
+
+.cz-verification-card h1 {
+    font-family: "Hanken Grotesk", Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(42px, 8vw, 72px);
+    line-height: 0.95;
+    margin: 0;
+}
+
+.cz-verification-card p {
+    color: var(--cz-muted);
+    font-size: 17px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.cz-verification-card p strong {
+    color: var(--cz-ink);
+}
+
+.cz-verification-status,
+.cz-verification-notice {
+    border: 1px solid var(--cz-line);
+    border-radius: 14px;
+    font-weight: 800;
+    padding: 13px 14px;
+}
+
+.cz-verification-status {
+    background: var(--cz-accent-soft);
+    color: var(--cz-accent);
+}
+
+.cz-verification-notice {
+    background: color-mix(in srgb, #ffd9c9 72%, var(--cz-surface));
+    color: #7a2b0d;
+}
+
+.cz-verification-card form {
+    margin: 0;
+}
+
+.cz-verification-card button {
+    align-items: center;
+    background: var(--cz-accent);
+    border: 1px solid var(--cz-ink);
+    border-radius: 999px;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-weight: 900;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 22px;
+}
+
+.cz-verification-card button.is-secondary {
+    background: transparent;
+    color: var(--cz-ink);
+}
+
 .cz-icon-dots {
     align-items: center;
     background: transparent;

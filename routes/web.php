@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\ExploreController;
 use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\NotificationController;
@@ -28,6 +29,16 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('cityzen.auth');
 
 Route::middleware('cityzen.auth')->group(function () {
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+        ->middleware('signed')
+        ->name('verification.verify');
+});
+
+Route::middleware(['cityzen.auth', 'cityzen.verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/explore', ExploreController::class)->name('explore');
 
@@ -39,6 +50,7 @@ Route::middleware('cityzen.auth')->group(function () {
     Route::get('/users/{user}/avatar', [SettingController::class, 'avatar'])->name('users.avatar');
 
     Route::get('/places/{place}/image', [PlaceController::class, 'image'])->name('places.image');
+    Route::get('/places/{place}/photos/{photo}', [PlaceController::class, 'photo'])->name('places.photos.show');
     Route::resource('places', PlaceController::class);
     Route::post('/places/{place}/like', [InteractionController::class, 'like'])->name('places.like');
     Route::post('/places/{place}/bookmark', [InteractionController::class, 'bookmark'])->name('places.bookmark');
@@ -50,7 +62,7 @@ Route::middleware('cityzen.auth')->group(function () {
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware('cityzen.admin')
+    ->middleware(['cityzen.admin', 'cityzen.verified'])
     ->group(function () {
         Route::get('/', AdminDashboardController::class)->name('dashboard');
 

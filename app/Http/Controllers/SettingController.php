@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Support\CityZenAccess;
+use App\Support\CityZenEmailVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -42,10 +43,16 @@ class SettingController extends Controller
         ]);
 
         $account = User::findOrFail($userId);
+        $emailChanged = $account->email !== $data['email'];
+
         $account->fill([
             'name' => $data['name'],
             'email' => $data['email'],
         ]);
+
+        if ($emailChanged && Schema::hasColumn('users', 'email_verified_at')) {
+            $account->email_verified_at = null;
+        }
 
         if (! empty($data['password'])) {
             $account->password = Hash::make($data['password']);
@@ -98,6 +105,19 @@ class SettingController extends Controller
         }
 
         $request->session()->put('cityzen_user', CityZenAccess::sessionPayload($account));
+
+        if ($emailChanged) {
+            $sent = CityZenEmailVerification::send($account);
+
+            return redirect()
+                ->route('verification.notice')
+                ->with(
+                    $sent ? 'status' : 'notice',
+                    $sent
+                        ? 'Email kamu berubah. Link verifikasi baru sudah dikirim.'
+                        : 'Email berubah, tapi link verifikasi belum terkirim. Cek konfigurasi SMTP lalu kirim ulang.'
+                );
+        }
 
         return redirect('/settings')->with('status', 'Settings berhasil diperbarui.');
     }

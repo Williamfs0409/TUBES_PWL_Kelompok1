@@ -11,11 +11,22 @@ use Database\Seeders\CityZenFoundationSeeder;
 use Database\Seeders\CityZenSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class CityZenCoreFlowTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function fakePng(string $name): UploadedFile
+    {
+        $png = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=');
+
+        return UploadedFile::fake()->createWithContent($name, $png);
+    }
 
     public function test_guest_is_redirected_from_dashboard(): void
     {
@@ -42,6 +53,7 @@ class CityZenCoreFlowTest extends TestCase
     public function test_user_can_create_place_and_interact_with_it(): void
     {
         $this->seed(CityZenSeeder::class);
+        Storage::fake('public');
 
         $user = User::where('email', 'naufal@cityzen.test')->firstOrFail();
         $category = Category::firstOrFail();
@@ -56,6 +68,10 @@ class CityZenCoreFlowTest extends TestCase
                 'address' => 'Jl. Testing No. 1',
                 'city' => 'Jakarta',
                 'province' => 'DKI Jakarta',
+                'photos' => [
+                    $this->fakePng('cover.png'),
+                    $this->fakePng('second.png'),
+                ],
             ])
             ->assertRedirect('/dashboard');
 
@@ -71,6 +87,41 @@ class CityZenCoreFlowTest extends TestCase
         $this->assertDatabaseHas('likes', ['user_id' => $user->id, 'place_id' => $place->id]);
         $this->assertDatabaseHas('bookmarks', ['user_id' => $user->id, 'place_id' => $place->id]);
         $this->assertDatabaseHas('reviews', ['user_id' => $user->id, 'place_id' => $place->id, 'rating' => 5]);
+        $this->assertSame(2, DB::table('place_photos')->where('place_id', $place->id)->count());
+    }
+
+    public function test_new_user_must_verify_email_before_dashboard(): void
+    {
+        $this->seed(CityZenFoundationSeeder::class);
+        Mail::fake();
+
+        $this->post('/register', [
+            'name' => 'Verification User',
+            'email' => 'verify-user@cityzen.test',
+            'password' => 'password',
+        ])->assertRedirect(route('verification.notice'));
+
+        $user = User::where('email', 'verify-user@cityzen.test')->firstOrFail();
+        $session = ['cityzen_user' => CityZenAccess::sessionPayload($user)];
+
+        $this->withSession($session)
+            ->get('/dashboard')
+            ->assertRedirect(route('verification.notice'));
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            [
+                'id' => $user->id,
+                'hash' => sha1($user->email),
+            ]
+        );
+
+        $this->withSession($session)
+            ->get($verificationUrl)
+            ->assertRedirect('/dashboard');
+
+        $this->assertNotNull($user->fresh()->email_verified_at);
     }
 
     public function test_user_can_delete_only_their_own_place(): void
