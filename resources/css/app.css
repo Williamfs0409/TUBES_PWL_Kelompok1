@@ -3711,6 +3711,138 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     font-size: 16px;
 }
 
+.cz-admin-category-create {
+    display: grid;
+    gap: 18px;
+}
+
+.cz-admin-category-heading {
+    display: grid;
+    gap: 6px;
+}
+
+.cz-admin-category-heading span,
+.cz-admin-category-create-form label span,
+.cz-admin-category-edit-form label span,
+.cz-admin-category-meta small {
+    color: var(--cz-muted);
+    font-size: 11px;
+    font-weight: 850;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+}
+
+.cz-admin-category-heading h2 {
+    font-size: 28px;
+    letter-spacing: -0.015em;
+    margin: 0;
+}
+
+.cz-admin-category-heading p {
+    color: var(--cz-muted);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 620px;
+}
+
+.cz-admin-category-create-form,
+.cz-admin-category-edit-form {
+    display: grid;
+    gap: 12px;
+}
+
+.cz-admin-category-create-form {
+    align-items: end;
+    grid-template-columns: minmax(150px, 1fr) minmax(140px, 0.7fr) minmax(220px, 1.35fr) auto;
+}
+
+.cz-admin-category-create-form label,
+.cz-admin-category-edit-form label:not(.cz-admin-check) {
+    display: grid;
+    gap: 7px;
+}
+
+.cz-admin-category-create-form button {
+    min-width: 96px;
+}
+
+.cz-admin-category-list {
+    gap: 14px;
+}
+
+.cz-admin-category-card {
+    gap: 16px;
+}
+
+.cz-admin-category-card-header {
+    align-items: start;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) minmax(170px, 0.34fr);
+}
+
+.cz-admin-category-card-header h2 {
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    margin-top: 4px;
+}
+
+.cz-admin-category-card-header p {
+    max-width: 660px;
+}
+
+.cz-admin-category-meta {
+    background: color-mix(in srgb, var(--cz-raised) 72%, transparent);
+    border: 1px solid color-mix(in srgb, var(--cz-line) 78%, transparent);
+    border-radius: 10px;
+    display: grid;
+    gap: 4px;
+    padding: 12px;
+}
+
+.cz-admin-category-meta strong {
+    color: var(--cz-ink);
+    font-size: 13px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.cz-admin-category-edit-form {
+    align-items: end;
+    grid-template-columns:
+        minmax(150px, 1fr)
+        minmax(190px, 1.2fr)
+        minmax(120px, 0.7fr)
+        minmax(80px, 0.45fr)
+        minmax(105px, 0.55fr)
+        auto;
+}
+
+.cz-admin-category-edit-form .cz-admin-check {
+    min-height: 44px;
+}
+
+.cz-admin-category-edit-form button {
+    min-width: 92px;
+}
+
+.cz-admin-category-delete-form {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cz-admin-category-delete-form .cz-list-danger {
+    background: color-mix(in srgb, var(--cz-danger) 9%, var(--cz-surface));
+    border-color: color-mix(in srgb, var(--cz-danger) 42%, var(--cz-line));
+    color: var(--cz-danger);
+    min-width: 110px;
+}
+
+.cz-admin-category-delete-form .cz-list-danger:hover {
+    background: color-mix(in srgb, var(--cz-danger) 14%, var(--cz-surface));
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--cz-danger) 14%, transparent);
+}
+
 @media (max-width: 1240px) {
     .cz-dash-shell {
         grid-template-columns: 240px minmax(0, 600px);
@@ -3728,6 +3860,17 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     .cz-dash-search,
     .cz-dash-rail-footer {
         grid-column: 1 / -1;
+    }
+
+    .cz-admin-category-create-form,
+    .cz-admin-category-edit-form,
+    .cz-admin-category-card-header {
+        grid-template-columns: 1fr;
+    }
+
+    .cz-admin-category-create-form button,
+    .cz-admin-category-edit-form button {
+        width: max-content;
     }
 }
 
