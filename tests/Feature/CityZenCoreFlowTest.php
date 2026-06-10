@@ -73,6 +73,40 @@ class CityZenCoreFlowTest extends TestCase
         $this->assertDatabaseHas('reviews', ['user_id' => $user->id, 'place_id' => $place->id, 'rating' => 5]);
     }
 
+    public function test_user_can_delete_only_their_own_place(): void
+    {
+        $this->seed(CityZenSeeder::class);
+
+        $owner = User::where('email', 'naufal@cityzen.test')->firstOrFail();
+        $otherUser = User::where('email', 'alya@cityzen.test')->firstOrFail();
+        $category = Category::firstOrFail();
+
+        $place = Place::create([
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'name' => 'Owner Managed Pocket Park',
+            'slug' => 'owner-managed-pocket-park',
+            'short_description' => 'A place owned by the test user.',
+            'description' => 'A place owned by the test user.',
+            'address' => 'Jl. Owner No. 1',
+            'city' => 'Jakarta',
+            'province' => 'DKI Jakarta',
+            'status' => 'active',
+        ]);
+
+        $this->withSession(['cityzen_user' => CityZenAccess::sessionPayload($otherUser)])
+            ->delete(route('places.destroy', $place))
+            ->assertForbidden();
+
+        $this->assertFalse($place->fresh()->trashed());
+
+        $this->withSession(['cityzen_user' => CityZenAccess::sessionPayload($owner)])
+            ->delete(route('places.destroy', $place))
+            ->assertRedirect('/dashboard');
+
+        $this->assertSoftDeleted('places', ['id' => $place->id]);
+    }
+
     public function test_user_can_report_place_and_admin_can_moderate_it(): void
     {
         $this->seed(CityZenSeeder::class);

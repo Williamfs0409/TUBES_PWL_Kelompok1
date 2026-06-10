@@ -158,6 +158,14 @@ if (dashboardAwal) {
         });
     });
 
+    dashboardAwal.querySelectorAll('[data-confirm-delete]').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            if (window.confirm('Hapus post ini dari feed CityZen?')) return;
+
+            event.preventDefault();
+        });
+    });
+
     trendButtons.forEach((button) => {
         button.addEventListener('click', () => {
             if (searchInput) {

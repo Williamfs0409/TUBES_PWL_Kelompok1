@@ -755,7 +755,7 @@ html {
     align-items: center;
     display: grid;
     gap: 8px;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
 }
 
 .cz-dash-post-actions form {
@@ -789,6 +789,15 @@ html {
 }
 
 .cz-dash-post-actions button.is-liked {
+    color: var(--cz-danger);
+}
+
+.cz-dash-post-actions button.is-danger {
+    color: var(--cz-danger);
+}
+
+.cz-dash-post-actions button.is-danger:hover {
+    background: color-mix(in srgb, var(--cz-danger) 12%, transparent);
     color: var(--cz-danger);
 }
 

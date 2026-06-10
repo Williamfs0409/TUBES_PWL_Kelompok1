@@ -48,6 +48,7 @@ class DashboardController extends Controller
 
             $placesQuery->select([
                 'places.id',
+                'places.user_id',
                 'places.name',
                 'places.short_description',
                 'places.description',
@@ -67,7 +68,7 @@ class DashboardController extends Controller
                 ->orderByDesc('places.created_at')
                 ->limit(15)
                 ->get()
-                ->map(function ($place) use ($compactNumber, $initials, $likedPlaceIds, $bookmarkedPlaceIds) {
+                ->map(function ($place) use ($compactNumber, $initials, $likedPlaceIds, $bookmarkedPlaceIds, $userId) {
                     $author = $place->user_name ?: 'CityZen Citizen';
                     $location = collect([$place->city, $place->province])->filter()->implode(', ');
                     $description = $place->short_description ?: $place->description;
@@ -90,6 +91,7 @@ class DashboardController extends Controller
                         'rating' => number_format((float) $place->average_rating, 1),
                         'liked' => $likedPlaceIds->contains($place->id),
                         'bookmarked' => $bookmarkedPlaceIds->contains($place->id),
+                        'owned' => (int) $place->user_id === (int) $userId,
                     ];
                 });
 

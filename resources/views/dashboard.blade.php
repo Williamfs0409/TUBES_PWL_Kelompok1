@@ -111,6 +111,16 @@
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 10.8 8-4.6" /><path d="m8.6 13.2 8 4.6" /></svg>
                                     <span class="sr-only">Share</span>
                                 </button>
+                                @if ($post['owned'])
+                                    <form method="POST" action="{{ route('places.destroy', $post['id']) }}" data-confirm-delete>
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="is-danger" aria-label="Delete post">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M6 7l1 14h10l1-14" /><path d="M9 7V4h6v3" /></svg>
+                                            <span class="sr-only">Delete</span>
+                                        </button>
+                                    </form>
+                                @endif
                             </footer>
                             <form method="POST" action="{{ route('places.review', $post['id']) }}" class="cz-dash-review-form">
                                 @csrf

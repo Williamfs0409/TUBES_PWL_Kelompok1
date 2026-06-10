@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Place;
 use App\Models\PlacePhoto;
+use App\Support\CityZenAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -167,14 +168,21 @@ class PlaceController extends Controller
         return redirect('/places')->with('status', 'Place berhasil diperbarui.');
     }
 
-    public function destroy(Place $place)
+    public function destroy(Request $request, Place $place)
     {
-        if (! session()->has('cityzen_user')) {
+        if (! $request->session()->has('cityzen_user')) {
             return redirect('/login')->with('notice', 'Please login to delete a place.');
+        }
+
+        $cityzenUser = $request->session()->get('cityzen_user');
+        $isOwner = (int) $place->user_id === (int) ($cityzenUser['id'] ?? 0);
+
+        if (! $isOwner && ! CityZenAccess::isAdmin($cityzenUser)) {
+            abort(403, 'Kamu hanya bisa menghapus post yang kamu buat sendiri.');
         }
 
         $place->delete();
 
-        return redirect('/places')->with('status', 'Place berhasil dihapus.');
+        return redirect('/dashboard')->with('status', 'Post berhasil dihapus dari feed CityZen.');
     }
 }
