@@ -33,6 +33,12 @@
                 <div class="cz-verification-notice">{{ session('notice') }}</div>
             @endif
 
+            @if (session('mail_error'))
+                <div class="cz-verification-notice">
+                    <strong>SMTP detail:</strong> {{ session('mail_error') }}
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
                 <button type="submit">Kirim ulang email</button>

@@ -39,6 +39,10 @@ class CityZenEmailVerification
 
             return true;
         } catch (Throwable $exception) {
+            if (app()->bound('session')) {
+                session()->flash('mail_error', $exception::class.': '.$exception->getMessage());
+            }
+
             Log::warning('CityZen email verification failed to send.', [
                 'user_id' => $user->id,
                 'email' => $user->email,
