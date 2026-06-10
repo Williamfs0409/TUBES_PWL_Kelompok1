@@ -1,12 +1,29 @@
 # CityZen Email Verification via Mailtrap
 
-CityZen uses Laravel SMTP mail for email verification. The application code works with Mailtrap because it only needs SMTP variables.
+CityZen uses Mailtrap for email verification. On Railway, prefer the Mailtrap Sandbox API because outbound SMTP ports can time out on some deployments.
 
 ## Option A: Mailtrap Sandbox
 
 Use this for demo and development. Emails appear inside the Mailtrap inbox, not in Gmail/Yahoo.
 
+### Recommended for Railway: Sandbox API
+
 Set these Railway variables:
+
+```env
+APP_URL=https://cityzen-usu.up.railway.app
+MAIL_FROM_ADDRESS=noreply@cityzen.test
+MAIL_FROM_NAME=CityZen
+MAILTRAP_API_TOKEN=your_mailtrap_api_token
+MAILTRAP_INBOX_ID=your_mailtrap_inbox_id
+MAILTRAP_API_ENDPOINT=https://sandbox.api.mailtrap.io/api/send/your_mailtrap_inbox_id
+```
+
+Get `MAILTRAP_API_TOKEN` from **API Tokens** in Mailtrap. Get `MAILTRAP_INBOX_ID` from the sandbox inbox URL or API settings.
+
+### SMTP fallback
+
+Use SMTP only when your hosting allows outbound SMTP ports.
 
 ```env
 APP_URL=https://cityzen-usu.up.railway.app
