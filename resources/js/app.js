@@ -173,10 +173,14 @@ if (dashboardAwal) {
 
 if (explorePage) {
     const searchInput = explorePage.querySelector('[data-explore-search]');
+    const tabs = explorePage.querySelector('.cz-explore-tabs');
     const items = [...explorePage.querySelectorAll('[data-explore-item]')];
     const chips = [...explorePage.querySelectorAll('[data-explore-chip]')];
     const toast = explorePage.querySelector('[data-dashboard-toast]');
     let toastTimer;
+    let isDraggingTabs = false;
+    let dragStartX = 0;
+    let dragStartScroll = 0;
 
     const showToast = (message) => {
         if (!toast) return;
@@ -196,6 +200,48 @@ if (explorePage) {
     };
 
     searchInput?.addEventListener('input', filterExplore);
+
+    tabs?.addEventListener(
+        'wheel',
+        (event) => {
+            if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+
+            event.preventDefault();
+            tabs.scrollLeft += event.deltaY;
+        },
+        { passive: false },
+    );
+
+    tabs?.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+
+        isDraggingTabs = true;
+        dragStartX = event.clientX;
+        dragStartScroll = tabs.scrollLeft;
+        tabs.classList.add('is-dragging');
+        tabs.setPointerCapture(event.pointerId);
+    });
+
+    tabs?.addEventListener('pointermove', (event) => {
+        if (!isDraggingTabs) return;
+
+        tabs.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+    });
+
+    const stopDraggingTabs = (event) => {
+        if (!isDraggingTabs) return;
+
+        isDraggingTabs = false;
+        tabs?.classList.remove('is-dragging');
+
+        if (event.pointerId && tabs?.hasPointerCapture(event.pointerId)) {
+            tabs.releasePointerCapture(event.pointerId);
+        }
+    };
+
+    tabs?.addEventListener('pointerup', stopDraggingTabs);
+    tabs?.addEventListener('pointercancel', stopDraggingTabs);
+    tabs?.addEventListener('pointerleave', stopDraggingTabs);
 
     chips.forEach((chip) => {
         chip.addEventListener('click', () => {

@@ -11,6 +11,7 @@
 }
 
 html {
+    overflow-y: scroll;
     scrollbar-gutter: stable;
 }
 
@@ -1254,11 +1255,28 @@ html {
     padding: 10px 22px 12px;
     scroll-padding-inline: 22px;
     scroll-snap-type: inline proximity;
-    scrollbar-width: none;
+    scrollbar-color: color-mix(in srgb, var(--cz-accent) 40%, transparent) transparent;
+    scrollbar-width: thin;
+    touch-action: pan-x;
+    user-select: none;
 }
 
 .cz-explore-tabs::-webkit-scrollbar {
-    display: none;
+    height: 7px;
+}
+
+.cz-explore-tabs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.cz-explore-tabs::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--cz-accent) 34%, transparent);
+    border-radius: 999px;
+}
+
+.cz-explore-tabs.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
 }
 
 .cz-explore-tabs button {
@@ -2742,6 +2760,12 @@ html {
 }
 
 .cz-dash-shell {
+    grid-template-columns: 260px minmax(0, 650px) 350px;
+    max-width: 1260px;
+}
+
+.cz-list-page .cz-dash-shell {
+    grid-template-columns: 260px minmax(0, 750px) 250px;
     max-width: 1260px;
 }
 
