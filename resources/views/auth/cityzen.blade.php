@@ -318,9 +318,7 @@
         }
 
         .page {
-            background:
-                linear-gradient(90deg, rgba(224, 240, 214, 0.46), transparent 42%),
-                #f6f8f2;
+            background: #f6f8f2;
         }
 
         .brand {
@@ -346,8 +344,8 @@
         .signal {
             background: rgba(255, 255, 250, 0.78);
             border-width: 1px;
-            border-radius: 12px;
-            box-shadow: 3px 4px 0 rgba(25, 28, 29, 0.06);
+            border-radius: 10px;
+            box-shadow: 2px 3px 0 rgba(25, 28, 29, 0.045);
         }
 
         .signal strong {
@@ -357,8 +355,8 @@
         .panel {
             background: #fffef9;
             border-width: 1px;
-            border-radius: 14px;
-            box-shadow: 5px 6px 0 rgba(25, 28, 29, 0.08);
+            border-radius: 12px;
+            box-shadow: 3px 4px 0 rgba(25, 28, 29, 0.06);
         }
 
         .panel h2 {
@@ -403,8 +401,23 @@
 
         .button:hover,
         .button:focus-visible {
-            box-shadow: 0 8px 18px rgba(25, 28, 29, 0.1);
+            box-shadow: 0 6px 14px rgba(25, 28, 29, 0.08);
             transform: translateY(-1px);
+        }
+
+        label {
+            letter-spacing: 0.075em;
+        }
+
+        .field {
+            gap: 7px;
+            margin-bottom: 16px;
+        }
+
+        .error-list,
+        .notice {
+            border-width: 1px;
+            border-radius: 10px;
         }
 
         .home-link {

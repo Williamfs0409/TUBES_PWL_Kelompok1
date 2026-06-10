@@ -28,6 +28,11 @@ class Place extends Model
         'google_maps_url',
         'image',
         'status',
+        'average_rating',
+        'reviews_count',
+        'likes_count',
+        'bookmarks_count',
+        'reports_count',
     ];
 
     public function category()

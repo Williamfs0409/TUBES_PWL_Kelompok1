@@ -9,6 +9,7 @@ use App\Support\CityZenAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -74,7 +75,117 @@ class PlaceController extends Controller
 
     public function show(Place $place)
     {
-        return redirect('/dashboard')->with('status', $place->name.' dibuka dari feed CityZen.');
+        $cityzenUser = session('cityzen_user');
+        $userId = $cityzenUser['id'] ?? null;
+
+        if ($place->status !== 'active' && (int) $place->user_id !== (int) $userId && ! CityZenAccess::isAdmin($cityzenUser)) {
+            abort(404);
+        }
+
+        $place->load(['category', 'user', 'coverPhoto']);
+
+        $compactNumber = function (int $number): string {
+            if ($number >= 1000) {
+                return rtrim(rtrim(number_format($number / 1000, 1), '0'), '.').'k';
+            }
+
+            return (string) $number;
+        };
+
+        $initials = function (?string $name): string {
+            $parts = collect(explode(' ', trim($name ?: 'CityZen User')))->filter()->values();
+
+            return $parts->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode('') ?: 'CZ';
+        };
+
+        $reviewColumn = Schema::hasColumn('reviews', 'review_text') ? 'review_text' : 'review';
+        $likesCount = Schema::hasTable('likes') ? DB::table('likes')->where('place_id', $place->id)->count() : (int) $place->likes_count;
+        $bookmarksCount = Schema::hasTable('bookmarks') ? DB::table('bookmarks')->where('place_id', $place->id)->count() : (int) $place->bookmarks_count;
+        $repostsCount = Schema::hasTable('reposts') ? DB::table('reposts')->where('place_id', $place->id)->count() : 0;
+        $reportsCount = Schema::hasTable('reports') ? DB::table('reports')->where('place_id', $place->id)->count() : (int) $place->reports_count;
+        $reviewStats = Schema::hasTable('reviews')
+            ? DB::table('reviews')->where('place_id', $place->id)->selectRaw('COUNT(*) as total, AVG(rating) as average')->first()
+            : null;
+
+        $author = $place->user?->name ?: 'CityZen Citizen';
+        $avatarPath = Schema::hasTable('profiles')
+            ? DB::table('profiles')->where('user_id', $place->user_id)->value('avatar_path')
+            : null;
+        $location = collect([$place->city, $place->province])->filter()->implode(', ');
+        $description = $place->short_description ?: $place->description;
+        $liked = Schema::hasTable('likes') && $userId ? DB::table('likes')->where('user_id', $userId)->where('place_id', $place->id)->exists() : false;
+        $bookmarked = Schema::hasTable('bookmarks') && $userId ? DB::table('bookmarks')->where('user_id', $userId)->where('place_id', $place->id)->exists() : false;
+        $reposted = Schema::hasTable('reposts') && $userId ? DB::table('reposts')->where('user_id', $userId)->where('place_id', $place->id)->exists() : false;
+
+        $post = [
+            'id' => $place->id,
+            'author' => $author,
+            'handle' => '@'.str($author)->slug('_'),
+            'time' => $place->created_at ? Carbon::parse($place->created_at)->diffForHumans(null, true).' ago' : 'baru',
+            'timestamp' => $place->created_at ? Carbon::parse($place->created_at)->format('g:i A - M j, Y') : null,
+            'avatar' => $initials($author),
+            'avatar_image' => $avatarPath,
+            'lead' => $place->name,
+            'text' => trim($description.' '.($location ? 'Lokasi: '.$location.'.' : '')),
+            'image' => $place->coverPhoto || $place->image,
+            'image_alt' => $place->name,
+            'badge' => str($place->category?->name ?: 'Public Space')->studly()->toString(),
+            'category' => $place->category?->name ?: 'Public Space',
+            'comments' => $compactNumber((int) ($reviewStats->total ?? 0)),
+            'reposts' => $compactNumber((int) $repostsCount),
+            'likes' => $compactNumber((int) $likesCount),
+            'bookmarks' => $compactNumber((int) $bookmarksCount),
+            'reports' => $compactNumber((int) $reportsCount),
+            'rating' => number_format((float) ($reviewStats->average ?? $place->average_rating), 1),
+            'liked' => $liked,
+            'bookmarked' => $bookmarked,
+            'reposted' => $reposted,
+            'owned' => (int) $place->user_id === (int) $userId,
+        ];
+
+        $reviews = Schema::hasTable('reviews')
+            ? DB::table('reviews')
+                ->leftJoin('users', 'users.id', '=', 'reviews.user_id')
+                ->leftJoin('profiles', 'profiles.user_id', '=', 'users.id')
+                ->where('reviews.place_id', $place->id)
+                ->orderByDesc('reviews.updated_at')
+                ->limit(25)
+                ->get([
+                    'reviews.id',
+                    'reviews.rating',
+                    "reviews.$reviewColumn as review_text",
+                    'reviews.updated_at',
+                    'users.name as user_name',
+                    'profiles.avatar_path',
+                ])
+                ->map(fn ($review) => [
+                    'author' => $review->user_name ?: 'CityZen Citizen',
+                    'handle' => '@'.str($review->user_name ?: 'cityzen_citizen')->slug('_'),
+                    'avatar' => $initials($review->user_name),
+                    'avatar_image' => $review->avatar_path,
+                    'rating' => (int) $review->rating,
+                    'text' => $review->review_text ?: 'Memberikan rating untuk tempat ini.',
+                    'time' => $review->updated_at ? Carbon::parse($review->updated_at)->diffForHumans(null, true).' ago' : 'baru',
+                ])
+            : collect();
+
+        $related = Schema::hasTable('places')
+            ? DB::table('places')
+                ->leftJoin('categories', 'categories.id', '=', 'places.category_id')
+                ->where('places.status', 'active')
+                ->whereNull('places.deleted_at')
+                ->where('places.id', '!=', $place->id)
+                ->orderByRaw('(places.likes_count + places.reviews_count + places.reports_count) DESC')
+                ->limit(4)
+                ->get(['places.id', 'places.name', 'places.likes_count', 'places.reviews_count', 'categories.name as category_name'])
+            : collect();
+
+        return view('places.show', [
+            'post' => $post,
+            'reviews' => $reviews,
+            'related' => $related,
+            'isAdmin' => CityZenAccess::isAdmin($cityzenUser),
+        ]);
     }
 
     public function image(Place $place)

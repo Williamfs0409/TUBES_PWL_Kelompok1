@@ -89,19 +89,21 @@
                                 <span>{{ $post['handle'] }}</span>
                                 <span>{{ $post['time'] }}</span>
                             </header>
-                            <p><strong>{{ $post['lead'] }}</strong> {{ $post['text'] }} <a href="#explore">#{{ $post['badge'] }}</a></p>
+                            <a class="cz-dash-post-link" href="{{ route('places.show', $post['id']) }}" aria-label="Buka detail {{ $post['lead'] }}">
+                                <p><strong>{{ $post['lead'] }}</strong> {{ $post['text'] }} <span class="cz-dash-hashtag">#{{ $post['badge'] }}</span></p>
 
-                            @if ($post['image'])
-                                <figure class="cz-dash-post-image">
-                                    <img src="{{ route('places.image', $post['id']) }}" alt="{{ $post['image_alt'] }}">
-                                </figure>
-                            @endif
+                                @if ($post['image'])
+                                    <figure class="cz-dash-post-image">
+                                        <img src="{{ route('places.image', $post['id']) }}" alt="{{ $post['image_alt'] }}">
+                                    </figure>
+                                @endif
+                            </a>
 
                             <footer class="cz-dash-post-actions">
-                                <button type="button" data-action-toast="Comment thread opened.">
+                                <a href="{{ route('places.show', $post['id']) }}" aria-label="Buka komentar {{ $post['lead'] }}">
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4V5Z" /></svg>
                                     <span>{{ $post['comments'] }}</span>
-                                </button>
+                                </a>
                                 <form method="POST" action="{{ route('places.repost', $post['id']) }}" data-async-interaction>
                                     @csrf
                                     <button type="submit" data-repost-post aria-pressed="{{ $post['reposted'] ? 'true' : 'false' }}" class="{{ $post['reposted'] ? 'is-active' : '' }}">

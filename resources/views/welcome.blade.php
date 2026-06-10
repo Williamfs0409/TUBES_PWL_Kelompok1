@@ -1301,12 +1301,12 @@
         }
 
         .hero {
-            background: linear-gradient(180deg, #f6f8f3 0%, #f9faf7 100%);
+            background: #f7f9f3;
         }
 
         .hero::before {
             animation: none;
-            opacity: 0.28;
+            opacity: 0.16;
         }
 
         .hero::after {
@@ -1339,7 +1339,7 @@
 
         .button:hover,
         .button:focus-visible {
-            box-shadow: 0 8px 18px rgba(25, 28, 29, 0.1);
+            box-shadow: 0 6px 14px rgba(25, 28, 29, 0.08);
             transform: translateY(-1px);
         }
 
@@ -1357,8 +1357,8 @@
         .gallery-card,
         .member-detail__card {
             border-width: 1px;
-            border-radius: 14px;
-            box-shadow: 4px 5px 0 rgba(25, 28, 29, 0.08);
+            border-radius: 12px;
+            box-shadow: 3px 4px 0 rgba(25, 28, 29, 0.06);
         }
 
         .floating-card:first-child,
@@ -1387,7 +1387,7 @@
         .card:hover,
         .launch-card:hover,
         .gallery-card:hover {
-            box-shadow: 5px 6px 0 rgba(25, 28, 29, 0.09);
+            box-shadow: 4px 5px 0 rgba(25, 28, 29, 0.07);
             transform: translateY(-2px);
         }
 
@@ -1409,7 +1409,7 @@
         .team-card:hover,
         .team-card:focus-visible {
             background: #fffffb;
-            box-shadow: 5px 6px 0 rgba(25, 28, 29, 0.09);
+            box-shadow: 4px 5px 0 rgba(25, 28, 29, 0.07);
             transform: translateY(-2px);
         }
 
@@ -1447,6 +1447,31 @@
         .footer {
             background: #f3f6ef;
             border-top-color: rgba(31, 44, 33, 0.14);
+        }
+
+        .section {
+            padding-block: clamp(54px, 8vw, 92px);
+        }
+
+        .section-head {
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            letter-spacing: 0.11em;
+        }
+
+        .card h3,
+        .team-card h3,
+        .launch-card strong {
+            letter-spacing: -0.01em;
+        }
+
+        .card p,
+        .team-card p,
+        .launch-card p {
+            color: #566153;
+            line-height: 1.54;
         }
 
         @media (max-width: 980px) {
