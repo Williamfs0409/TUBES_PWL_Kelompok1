@@ -10,6 +10,8 @@ class PlacePhoto extends Model
         'place_id',
         'user_id',
         'image_path',
+        'image_mime',
+        'image_data',
         'caption',
         'sort_order',
         'is_cover',

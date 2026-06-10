@@ -79,7 +79,16 @@ class PlaceController extends Controller
 
     public function image(Place $place)
     {
-        $imagePath = $place->coverPhoto()->value('image_path') ?: $place->image;
+        $coverPhoto = $place->coverPhoto()->first();
+
+        if ($coverPhoto?->image_data && $coverPhoto?->image_mime) {
+            return response(base64_decode($coverPhoto->image_data), 200, [
+                'Content-Type' => $coverPhoto->image_mime,
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+
+        $imagePath = $coverPhoto?->image_path ?: $place->image;
         $relativePath = $imagePath ? str($imagePath)->after('storage/')->toString() : null;
 
         if ($relativePath && Storage::disk('public')->exists($relativePath)) {
@@ -162,11 +171,15 @@ SVG;
 
             foreach ($photos as $index => $photo) {
                 $imagePath = 'storage/'.$photo->store('places', 'public');
+                $imageData = base64_encode(file_get_contents($photo->getRealPath()));
+                $imageMime = $photo->getMimeType();
 
                 PlacePhoto::create([
                     'place_id' => $place->id,
                     'user_id' => $cityzenUser['id'] ?? null,
                     'image_path' => $imagePath,
+                    'image_mime' => $imageMime,
+                    'image_data' => $imageData,
                     'caption' => $place->name,
                     'sort_order' => $index + 1,
                     'is_cover' => $index === 0,

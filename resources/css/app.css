@@ -111,6 +111,34 @@ html {
     width: 100%;
 }
 
+@media (min-width: 901px) {
+    .cz-dashboard-page[data-dashboard-awal] {
+        height: 100vh;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .cz-dashboard-page[data-dashboard-awal] .cz-dash-shell {
+        height: 100vh;
+        min-height: 0;
+    }
+
+    .cz-dashboard-page[data-dashboard-awal] .cz-dash-sidebar,
+    .cz-dashboard-page[data-dashboard-awal] .cz-dash-right-rail {
+        height: 100vh;
+        overflow: hidden;
+        position: sticky;
+        top: 0;
+    }
+
+    .cz-dashboard-page[data-dashboard-awal] .cz-dash-feed {
+        height: 100vh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+    }
+}
+
 .cz-dash-sidebar,
 .cz-dash-feed,
 .cz-dash-right-rail {
