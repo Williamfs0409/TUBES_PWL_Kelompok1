@@ -37,10 +37,12 @@ Artisan::command('cityzen:test-mail {to=debug@cityzen.test}', function (string $
 })->purpose('Send a CityZen SMTP diagnostic email.');
 
 Artisan::command('cityzen:test-verification-mail {email=debug@cityzen.test}', function (string $email) {
-    $user = User::firstOrCreate(
-        ['email' => $email],
-        ['name' => 'Mail Diagnostic', 'password' => bcrypt('password')]
-    );
+    $user = new User([
+        'name' => 'Mail Diagnostic',
+        'email' => $email,
+        'password' => bcrypt('password'),
+    ]);
+    $user->id = 1;
 
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
