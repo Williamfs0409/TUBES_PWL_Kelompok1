@@ -15,6 +15,12 @@ html {
     scrollbar-gutter: stable;
 }
 
+html:has(body.cz-dashboard-page[data-dashboard-awal]) {
+    height: 100%;
+    overflow: hidden;
+    scrollbar-gutter: auto;
+}
+
 .cz-dashboard-page {
     --cz-bg: #dff7d8;
     --cz-surface: #fbfff7;
@@ -135,7 +141,14 @@ html {
         height: 100vh;
         overflow-y: auto;
         overscroll-behavior: contain;
-        scrollbar-gutter: stable;
+        -ms-overflow-style: none;
+        scrollbar-gutter: auto;
+        scrollbar-width: none;
+    }
+
+    .cz-dashboard-page[data-dashboard-awal] .cz-dash-feed::-webkit-scrollbar {
+        height: 0;
+        width: 0;
     }
 }
 
