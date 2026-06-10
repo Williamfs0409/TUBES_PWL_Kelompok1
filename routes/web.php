@@ -17,6 +17,8 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/healthz', fn () => response('ok', 200)->header('Content-Type', 'text/plain'));
+
 Route::view('/', 'welcome');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
