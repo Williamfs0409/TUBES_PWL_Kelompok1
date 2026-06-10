@@ -11,7 +11,7 @@ Set these Railway variables:
 ```env
 APP_URL=https://cityzen-usu.up.railway.app
 MAIL_MAILER=smtp
-MAIL_SCHEME=null
+MAIL_SCHEME=smtp
 MAIL_HOST=sandbox.smtp.mailtrap.io
 MAIL_PORT=2525
 MAIL_USERNAME=your_mailtrap_sandbox_username
@@ -29,7 +29,7 @@ Set these Railway variables using the SMTP credentials shown in your Mailtrap Em
 ```env
 APP_URL=https://cityzen-usu.up.railway.app
 MAIL_MAILER=smtp
-MAIL_SCHEME=tls
+MAIL_SCHEME=smtp
 MAIL_HOST=live.smtp.mailtrap.io
 MAIL_PORT=587
 MAIL_USERNAME=your_mailtrap_smtp_username
