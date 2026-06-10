@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Project Manager avatar</title>
+  <desc id="desc">Black and white student character with glasses, shirt, and tie.</desc>
+  <rect width="512" height="512" rx="42" fill="#fff"/>
+  <path d="M124 222c-14-66 20-134 86-160 70-28 159-4 193 61 15 28 18 62 7 98 20 5 31 23 27 44-5 26-26 43-51 46-18 38-61 65-129 65-67 0-111-26-130-65-25-3-46-20-51-46-4-21 8-40 28-43Z" fill="#fff" stroke="#050505" stroke-width="13" stroke-linejoin="round"/>
+  <path d="M96 221c-2-54 10-104 40-141 38-47 96-68 160-58 70 10 116 52 130 111 6 27 4 57-6 88-5-28-17-54-38-74-1 26-13 52-34 72 2-26-4-49-19-70-8 31-22 59-45 84 3-31-4-61-21-88-5 34-21 66-47 95 2-33-7-61-26-84-15 28-39 53-72 74Z" fill="#050505"/>
+  <path d="M124 246c18-8 47-9 80-3" fill="none" stroke="#050505" stroke-width="12" stroke-linecap="round"/>
+  <path d="M303 243c31-6 61-5 84 4" fill="none" stroke="#050505" stroke-width="12" stroke-linecap="round"/>
+  <path d="M151 263c19 17 50 16 67-2" fill="none" stroke="#050505" stroke-width="7" stroke-linecap="round"/>
+  <path d="M296 263c18 17 50 16 68-2" fill="none" stroke="#050505" stroke-width="7" stroke-linecap="round"/>
+  <path d="M218 263c17 18 48 18 63 0" fill="none" stroke="#050505" stroke-width="7" stroke-linecap="round"/>
+  <path d="M249 309h22" fill="none" stroke="#050505" stroke-width="9" stroke-linecap="round"/>
+  <path d="M157 384c30 28 66 42 103 42 38 0 73-14 103-42l50 108H106Z" fill="#fff" stroke="#050505" stroke-width="13" stroke-linejoin="round"/>
+  <path d="M214 386l43 42 43-42" fill="#fff" stroke="#050505" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M247 425h25l24 80h-72Z" fill="#050505"/>
+  <circle cx="346" cy="430" r="31" fill="#fff" stroke="#050505" stroke-width="7"/>
+  <path d="M328 430h36M346 412v36" stroke="#050505" stroke-width="5" stroke-linecap="round"/>
+</svg>

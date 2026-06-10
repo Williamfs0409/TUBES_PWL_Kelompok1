@@ -1703,11 +1703,12 @@
             <div class="team-grid">
                 <article class="team-card reveal" tabindex="0" role="button" data-reveal data-team-card
                     data-member-card="project-manager" data-member-avatar="WFS"
+                    data-member-photo="{{ asset('photo/project-manager-avatar.svg') }}"
                     data-member-name="William Fransisco Sihotang" data-member-role="Project Manager"
                     data-member-summary="Mahasiswa yang suka mengubah ide acak menjadi rencana yang rapi, senang berdiskusi, dan punya ketertarikan besar pada presentasi, visual, serta koordinasi tim."
                     aria-controls="member-detail-profile" aria-expanded="false" aria-haspopup="dialog"
                     aria-label="Buka detail William Fransisco Sihotang, Project Manager">
-                    <span class="avatar">WFS</span>
+                    <img src="{{ asset('photo/project-manager-avatar.svg') }}" alt="William Fransisco Sihotang" class="avatar" style="object-fit: cover;">
                     <h3>William Fransisco Sihotang</h3>
                     <p>Project Manager</p>
                 </article>
