@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust all proxies (Railway runs behind a load balancer that terminates SSL)
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'cityzen.auth' => \App\Http\Middleware\CityZenAuthenticate::class,
             'cityzen.admin' => \App\Http\Middleware\CityZenAdmin::class,
