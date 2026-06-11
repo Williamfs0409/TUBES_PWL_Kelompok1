@@ -4768,6 +4768,257 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     }
 }
 
+/* Green sun/moon theme switch inspired by the requested reference. */
+.cz-dashboard-page .cz-dash-theme-toggle.switch {
+    --switch-track-light: #dfeedd;
+    --switch-track-dark: #14351f;
+    --switch-knob-light: #fbfff7;
+    --switch-knob-dark: #07120d;
+    --switch-sun: #2f8b4a;
+    --switch-moon: #b7efc6;
+    --switch-ease: cubic-bezier(0.65, 0, 0.35, 1);
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    box-shadow: none;
+    color: inherit;
+    cursor: pointer;
+    display: inline-block;
+    flex: 0 0 auto;
+    font-size: 18px;
+    height: 1.5em;
+    justify-self: end;
+    min-height: 0;
+    overflow: visible;
+    padding: 0;
+    position: relative;
+    width: 3em;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cz-dashboard-page .cz-dash-theme-toggle.switch:hover {
+    background: transparent;
+    box-shadow: none;
+    transform: translateY(-1px);
+}
+
+.cz-dashboard-page .cz-dash-theme-toggle.switch:active {
+    box-shadow: none;
+    transform: translateY(0) scale(0.98);
+}
+
+.cz-dashboard-page .switch__input,
+.cz-dashboard-page .switch__input::before {
+    background-color: var(--switch-track-light);
+}
+
+.cz-dashboard-page .switch__input {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid color-mix(in srgb, var(--cz-accent) 42%, var(--cz-line));
+    border-radius: 0.75em;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 6px 14px rgba(21, 92, 43, 0.12);
+    cursor: pointer;
+    display: block;
+    height: 1.5em;
+    margin: 0;
+    outline: none;
+    position: relative;
+    transition:
+        background-color 0.4s var(--switch-ease),
+        border-color 0.4s var(--switch-ease),
+        box-shadow 0.25s ease;
+    width: 3em;
+}
+
+.cz-dashboard-page .switch__input::before {
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 1.25em;
+    left: 0.125em;
+    position: absolute;
+    top: 0.125em;
+    transition:
+        background-color 0.4s var(--switch-ease),
+        transform 0.4s var(--switch-ease);
+    width: 1.25em;
+}
+
+.cz-dashboard-page .switch__input:focus-visible {
+    box-shadow: 0 0 0 3px var(--cz-accent-glow), 0 6px 14px rgba(21, 92, 43, 0.12);
+}
+
+.cz-dashboard-page .switch__icon,
+.cz-dashboard-page .switch__icon-part {
+    display: block;
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+
+.cz-dashboard-page .switch__icon {
+    background-color: var(--switch-knob-light);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(21, 92, 43, 0.16);
+    height: 1.25em;
+    left: 0.125em;
+    overflow: hidden;
+    pointer-events: none;
+    top: 0.125em;
+    transition:
+        background-color 0.4s var(--switch-ease),
+        transform 0.4s var(--switch-ease);
+    width: 1.25em;
+}
+
+.cz-dashboard-page .switch__icon-part {
+    transition:
+        background-color 0.4s var(--switch-ease),
+        box-shadow 0.4s var(--switch-ease),
+        transform 0.4s var(--switch-ease);
+}
+
+.cz-dashboard-page .switch__icon-part--1,
+.cz-dashboard-page .switch__icon-part--2,
+.cz-dashboard-page .switch__icon-part--3 {
+    border-radius: 50%;
+}
+
+.cz-dashboard-page .switch__icon-part--1 {
+    background-color: var(--switch-sun);
+    height: 0.72em;
+    left: calc(50% - 0.36em);
+    top: calc(50% - 0.36em);
+    width: 0.72em;
+}
+
+.cz-dashboard-page .switch__icon-part--2 {
+    background-color: var(--switch-knob-light);
+    height: 0.5em;
+    left: calc(50% - 0.0625em);
+    top: calc(50% - 0.4375em);
+    transform: translate(-0.1875em, 0.1875em) scale(0.2);
+    width: 0.5em;
+}
+
+.cz-dashboard-page .switch__icon-part--3 {
+    box-shadow: 0 0 0 0.625em var(--switch-sun) inset;
+    height: 1.25em;
+    transform: scale(0.25);
+    width: 1.25em;
+}
+
+.cz-dashboard-page .switch__icon-part--3 ~ .switch__icon-part {
+    background-color: var(--switch-sun);
+    border-radius: 0.0625em;
+    height: 0.1875em;
+    left: 50%;
+    top: 50%;
+    transform-origin: 50% 0;
+    width: 0.125em;
+}
+
+.cz-dashboard-page .switch__icon-part--4 {
+    transform: translateX(-50%) rotate(0) translateY(0.25em);
+}
+
+.cz-dashboard-page .switch__icon-part--5 {
+    transform: translateX(-50%) rotate(45deg) translateY(0.25em);
+}
+
+.cz-dashboard-page .switch__icon-part--6 {
+    transform: translateX(-50%) rotate(90deg) translateY(0.25em);
+}
+
+.cz-dashboard-page .switch__icon-part--7 {
+    transform: translateX(-50%) rotate(135deg) translateY(0.25em);
+}
+
+.cz-dashboard-page .switch__icon-part--8 {
+    transform: translateX(-50%) rotate(180deg) translateY(0.25em);
+}
+
+.cz-dashboard-page .switch__icon-part--9 {
+    transform: translateX(-50%) rotate(225deg) translateY(0.25em);
+}
+
+.cz-dashboard-page .switch__icon-part--10 {
+    transform: translateX(-50%) rotate(270deg) translateY(0.25em);
+}
+
+.cz-dashboard-page .switch__icon-part--11 {
+    transform: translateX(-50%) rotate(315deg) translateY(0.25em);
+}
+
+.cz-dashboard-page .switch__sr {
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+}
+
+.cz-dashboard-page .switch__input:checked {
+    background-color: var(--switch-track-dark);
+    border-color: color-mix(in srgb, var(--cz-accent) 55%, #07120d);
+}
+
+.cz-dashboard-page .switch__input:checked::before,
+.cz-dashboard-page .switch__input:checked ~ .switch__icon {
+    transform: translateX(1.5em);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon {
+    background-color: var(--switch-knob-dark);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--1 {
+    background-color: transparent;
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--2 {
+    background-color: var(--switch-knob-dark);
+    transform: translate(0, 0) scale(1);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--3 {
+    box-shadow: 0 0 0 0.25em var(--switch-moon) inset;
+    transform: scale(1);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--4 {
+    transform: translateX(-50%) rotate(0) translateY(0.625em) scale(0);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--5 {
+    transform: translateX(-50%) rotate(45deg) translateY(0.625em) scale(0);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--6 {
+    transform: translateX(-50%) rotate(90deg) translateY(0.625em) scale(0);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--7 {
+    transform: translateX(-50%) rotate(135deg) translateY(0.625em) scale(0);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--8 {
+    transform: translateX(-50%) rotate(180deg) translateY(0.625em) scale(0);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--9 {
+    transform: translateX(-50%) rotate(225deg) translateY(0.625em) scale(0);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--10 {
+    transform: translateX(-50%) rotate(270deg) translateY(0.625em) scale(0);
+}
+
+.cz-dashboard-page .switch__input:checked ~ .switch__icon .switch__icon-part--11 {
+    transform: translateX(-50%) rotate(315deg) translateY(0.625em) scale(0);
+}
+
 @media (max-width: 900px) {
     .cz-dash-shell,
     .cz-profile-page .cz-dash-shell,

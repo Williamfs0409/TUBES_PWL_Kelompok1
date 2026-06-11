@@ -22,10 +22,23 @@
         <main class="cz-list-main cz-list-main--focused">
             <header class="cz-list-topbar">
                 <h1>Bookmarks</h1>
-                <button class="cz-dash-theme-toggle" type="button" data-theme-toggle aria-pressed="false">
-                    <span class="cz-theme-sun" aria-hidden="true"></span>
-                    <span data-theme-label>Dark mode</span>
-                </button>
+                <label class="cz-dash-theme-toggle switch" aria-label="Toggle dark mode">
+                    <input class="switch__input" type="checkbox" role="switch" data-theme-toggle aria-pressed="false">
+                    <span class="switch__icon" aria-hidden="true">
+                        <span class="switch__icon-part switch__icon-part--1"></span>
+                        <span class="switch__icon-part switch__icon-part--2"></span>
+                        <span class="switch__icon-part switch__icon-part--3"></span>
+                        <span class="switch__icon-part switch__icon-part--4"></span>
+                        <span class="switch__icon-part switch__icon-part--5"></span>
+                        <span class="switch__icon-part switch__icon-part--6"></span>
+                        <span class="switch__icon-part switch__icon-part--7"></span>
+                        <span class="switch__icon-part switch__icon-part--8"></span>
+                        <span class="switch__icon-part switch__icon-part--9"></span>
+                        <span class="switch__icon-part switch__icon-part--10"></span>
+                        <span class="switch__icon-part switch__icon-part--11"></span>
+                    </span>
+                    <span class="switch__sr" data-theme-label>Dark Mode</span>
+                </label>
             </header>
 
             <form class="cz-bookmark-search" action="{{ url('/bookmarks') }}" method="GET">

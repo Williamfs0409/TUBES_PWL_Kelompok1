@@ -31,10 +31,23 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5" /><path d="m12 19-7-7 7-7" /></svg>
                 </a>
                 <h1>Post</h1>
-                <button class="cz-dash-theme-toggle" type="button" data-theme-toggle aria-pressed="false">
-                    <span class="cz-theme-sun" aria-hidden="true"></span>
-                    <span data-theme-label>Dark mode</span>
-                </button>
+                <label class="cz-dash-theme-toggle switch" aria-label="Toggle dark mode">
+                    <input class="switch__input" type="checkbox" role="switch" data-theme-toggle aria-pressed="false">
+                    <span class="switch__icon" aria-hidden="true">
+                        <span class="switch__icon-part switch__icon-part--1"></span>
+                        <span class="switch__icon-part switch__icon-part--2"></span>
+                        <span class="switch__icon-part switch__icon-part--3"></span>
+                        <span class="switch__icon-part switch__icon-part--4"></span>
+                        <span class="switch__icon-part switch__icon-part--5"></span>
+                        <span class="switch__icon-part switch__icon-part--6"></span>
+                        <span class="switch__icon-part switch__icon-part--7"></span>
+                        <span class="switch__icon-part switch__icon-part--8"></span>
+                        <span class="switch__icon-part switch__icon-part--9"></span>
+                        <span class="switch__icon-part switch__icon-part--10"></span>
+                        <span class="switch__icon-part switch__icon-part--11"></span>
+                    </span>
+                    <span class="switch__sr" data-theme-label>Dark Mode</span>
+                </label>
             </header>
 
             <article class="cz-dash-post cz-post-detail-card">

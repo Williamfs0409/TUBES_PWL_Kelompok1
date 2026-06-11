@@ -37,6 +37,10 @@ dashboardPages.forEach((page) => {
 
         if (themeToggle) {
             themeToggle.setAttribute('aria-pressed', String(isDark));
+
+            if ('checked' in themeToggle) {
+                themeToggle.checked = isDark;
+            }
         }
 
         if (themeLabel) {
@@ -47,8 +51,8 @@ dashboardPages.forEach((page) => {
     const storedTheme = window.localStorage?.getItem(themeStorageKey);
     setTheme(storedTheme === 'dark' ? 'dark' : 'light');
 
-    themeToggle?.addEventListener('click', () => {
-        const nextTheme = page.dataset.theme === 'dark' ? 'light' : 'dark';
+    themeToggle?.addEventListener('change', () => {
+        const nextTheme = themeToggle.checked ? 'dark' : 'light';
         setTheme(nextTheme);
         window.localStorage?.setItem(themeStorageKey, nextTheme);
         showPageToast(nextTheme === 'dark' ? 'Dark mode aktif.' : 'Light mode aktif.');
