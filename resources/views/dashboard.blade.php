@@ -139,10 +139,6 @@
                                         <span data-count="bookmarks">{{ $post['bookmarks'] }}</span>
                                     </button>
                                 </form>
-                                <button type="button" data-action-toast="Share sheet prepared.">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 10.8 8-4.6" /><path d="m8.6 13.2 8 4.6" /></svg>
-                                    <span class="sr-only">Share</span>
-                                </button>
                                 @unless ($post['owned'])
                                     <a href="{{ route('reports.create', $post['id']) }}" class="is-report" aria-label="Report post">
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16" /><path d="M5 5h12l-1.5 4L17 13H5" /></svg>
