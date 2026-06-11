@@ -5068,6 +5068,160 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     transform: translateX(-50%) rotate(315deg) translateY(0.625em) scale(0);
 }
 
+.cz-admin-report-filters {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 18px;
+}
+
+.cz-admin-report-filters a {
+    align-items: center;
+    background: color-mix(in srgb, var(--cz-surface) 90%, transparent);
+    border: 1px solid var(--cz-line);
+    border-radius: 999px;
+    color: var(--cz-muted);
+    display: inline-flex;
+    gap: 10px;
+    min-height: 42px;
+    padding: 8px 14px;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.cz-admin-report-filters a:hover,
+.cz-admin-report-filters a.is-active {
+    background: color-mix(in srgb, var(--cz-accent) 92%, #111);
+    border-color: color-mix(in srgb, var(--cz-accent) 82%, #fff);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.cz-admin-report-filters span,
+.cz-admin-report-filters strong {
+    color: inherit;
+    font-weight: 900;
+}
+
+.cz-admin-report-filters strong {
+    align-items: center;
+    background: color-mix(in srgb, #fff 16%, transparent);
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 12px;
+    justify-content: center;
+    min-width: 28px;
+    padding: 4px 8px;
+}
+
+.cz-admin-report-description {
+    background: color-mix(in srgb, var(--cz-raised) 78%, transparent);
+    border-left: 4px solid var(--cz-accent);
+    border-radius: 14px;
+    display: grid;
+    gap: 6px;
+    margin: 10px 0;
+    padding: 12px 14px;
+}
+
+.cz-admin-report-description span {
+    color: var(--cz-accent);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.cz-admin-report-description p {
+    color: var(--cz-ink);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+.cz-admin-report-context {
+    align-items: center;
+    border-block: 1px solid var(--cz-line);
+    color: var(--cz-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    padding: 12px 0;
+}
+
+.cz-admin-report-context span,
+.cz-admin-report-context strong {
+    color: inherit;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.cz-admin-report-context strong {
+    color: var(--cz-ink);
+}
+
+.cz-admin-status-pill {
+    align-items: center;
+    display: inline-flex;
+    gap: 8px;
+    min-height: 36px;
+    padding: 8px 13px;
+}
+
+.cz-admin-status-pill i {
+    background: var(--cz-muted);
+    border-radius: 999px;
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--cz-muted) 14%, transparent);
+    display: inline-block;
+    height: 9px;
+    width: 9px;
+}
+
+.cz-admin-status-pill.is-pending {
+    background: color-mix(in srgb, #f2c94c 15%, var(--cz-surface));
+    border-color: color-mix(in srgb, #f2c94c 48%, var(--cz-line));
+    color: #8a6400;
+}
+
+.cz-admin-status-pill.is-pending i {
+    background: #f2c94c;
+    box-shadow: 0 0 0 5px rgba(242, 201, 76, 0.16), 0 0 14px rgba(242, 201, 76, 0.55);
+}
+
+.cz-admin-status-pill.is-verified {
+    background: color-mix(in srgb, var(--cz-accent-soft) 76%, var(--cz-surface));
+    border-color: color-mix(in srgb, var(--cz-accent) 52%, var(--cz-line));
+    color: var(--cz-accent);
+}
+
+.cz-admin-status-pill.is-verified i {
+    background: var(--cz-accent);
+    box-shadow: 0 0 0 5px var(--cz-accent-glow), 0 0 14px color-mix(in srgb, var(--cz-accent) 50%, transparent);
+}
+
+.cz-admin-status-pill.is-rejected {
+    background: color-mix(in srgb, #ff6b6b 13%, var(--cz-surface));
+    border-color: color-mix(in srgb, #ff6b6b 50%, var(--cz-line));
+    color: #d94b4b;
+}
+
+.cz-admin-status-pill.is-rejected i {
+    background: #ff6b6b;
+    box-shadow: 0 0 0 5px rgba(255, 107, 107, 0.16), 0 0 14px rgba(255, 107, 107, 0.55);
+}
+
+.cz-dashboard-page[data-theme='dark'] .cz-admin-status-pill.is-pending {
+    color: #ffd66f;
+}
+
+.cz-dashboard-page[data-theme='dark'] .cz-admin-status-pill.is-rejected {
+    color: #ff8c8c;
+}
+
+.cz-dashboard-page[data-theme='dark'] .cz-admin-report-description p,
+.cz-dashboard-page[data-theme='dark'] .cz-admin-report-context strong {
+    color: var(--cz-ink);
+}
+
 /* Desktop app shell behavior: keep side columns fixed and scroll only the center column. */
 @media (min-width: 901px) {
     html:has(body.cz-dashboard-page .cz-dash-shell) {

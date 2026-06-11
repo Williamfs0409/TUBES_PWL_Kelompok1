@@ -45,36 +45,44 @@
                 <div class="cz-form-alert cz-form-alert--success">{{ session('status') }}</div>
             @endif
 
+            <nav class="cz-admin-report-filters" aria-label="Filter laporan">
+                @foreach (['all' => 'Semua', 'pending' => 'Pending', 'verified' => 'Verified', 'rejected' => 'Rejected'] as $filterKey => $filterLabel)
+                    <a class="{{ $statusFilter === $filterKey ? 'is-active' : '' }}" href="{{ route('admin.reports', $filterKey === 'all' ? [] : ['status' => $filterKey]) }}">
+                        <span>{{ $filterLabel }}</span>
+                        <strong>{{ $statusCounts[$filterKey] ?? 0 }}</strong>
+                    </a>
+                @endforeach
+            </nav>
+
             <section class="cz-admin-report-list">
                 @forelse ($reports as $report)
+                    @php
+                        $statusKey = \Illuminate\Support\Str::slug($report->status->slug ?: ($report->status->name ?? 'pending'));
+                        $statusName = $report->status->name ?? 'Pending';
+                        $placeName = $report->place->name ?? 'Unknown place';
+                        $uploader = $report->place?->user;
+                    @endphp
                     <article class="cz-admin-report-card">
                         <div class="cz-admin-report-topline">
                             <div>
-                                <span>{{ $report->category->name ?? 'Report' }} &middot; {{ $report->status->name ?? 'Pending' }}</span>
-                                <h2>{{ $report->place->name ?? 'Unknown place' }}</h2>
-                                <p>{{ $report->description }}</p>
+                                <span>{{ $report->category->name ?? 'Report' }} &middot; {{ $statusName }}</span>
+                                <h2>{{ $placeName }}</h2>
+                                <div class="cz-admin-report-description">
+                                    <span>Deskripsi laporan</span>
+                                    <p>{{ $report->description }}</p>
+                                </div>
                                 <small>Submitted by {{ $report->user->name ?? 'CityZen user' }} &middot; {{ optional($report->created_at)->diffForHumans() }}</small>
                             </div>
-                            <span class="cz-admin-status-pill {{ str($report->status->name ?? 'pending')->lower()->contains('verified') ? 'is-valid' : '' }}">
-                                {{ $report->status->name ?? 'Pending' }}
+                            <span class="cz-admin-status-pill is-{{ $statusKey }}">
+                                <i aria-hidden="true"></i>
+                                {{ $statusName }}
                             </span>
                         </div>
 
-                        <div class="cz-admin-moderation-grid">
-                            <section>
-                                <span>Reported post</span>
-                                <strong>{{ $report->place->name ?? 'Unknown place' }}</strong>
-                                <small>{{ $report->place->category->name ?? 'Public Space' }} &middot; {{ $report->place->status ?? 'active' }}</small>
-                            </section>
-                            <section>
-                                <span>Uploader account</span>
-                                <strong>{{ $report->place->user->name ?? 'Unknown user' }}</strong>
-                                <small>
-                                    {{ $report->place->user->email ?? 'No email' }}
-                                    &middot;
-                                    {{ $report->place?->user?->is_suspended ? 'Suspended' : 'Active' }}
-                                </small>
-                            </section>
+                        <div class="cz-admin-report-context">
+                            <span>Post: <strong>{{ $placeName }}</strong></span>
+                            <span>{{ $report->place->category->name ?? 'Public Space' }} &middot; {{ $report->place->status ?? 'active' }}</span>
+                            <span>Uploader: <strong>{{ $uploader->name ?? 'Unknown user' }}</strong> &middot; {{ $uploader->email ?? 'No email' }} &middot; {{ $uploader?->is_suspended ? 'Suspended' : 'Active' }}</span>
                         </div>
 
                         <form method="POST" action="{{ route('admin.reports.status', $report) }}">

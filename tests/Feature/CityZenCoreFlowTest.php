@@ -237,6 +237,15 @@ class CityZenCoreFlowTest extends TestCase
             'report_status_id' => $verifiedStatusId,
             'verified_by' => $admin->id,
         ]);
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $user->id,
+            'actor_id' => $admin->id,
+            'related_table' => 'reports',
+            'related_id' => $reportId,
+            'title' => 'Status laporan diperbarui',
+            'message' => 'Laporan kamu untuk '.$place->name.' sekarang berstatus Verified. Catatan admin: Valid report.',
+        ]);
     }
 
     public function test_user_cannot_open_admin_panel(): void

@@ -14,9 +14,46 @@ class AdminReportController extends Controller
 {
     public function index(Request $request)
     {
+        $allowedStatuses = ['pending', 'verified', 'rejected'];
+        $statusFilter = Str::slug((string) $request->query('status', 'all'));
+        $reportsQuery = Report::with(['place.user', 'place.category', 'category', 'status', 'user'])->latest();
+
+        $reportsQuery->whereHas('status', function ($query) use ($allowedStatuses) {
+            $query->whereIn('slug', $allowedStatuses)
+                ->orWhereIn(DB::raw('LOWER(name)'), $allowedStatuses);
+        });
+
+        if (in_array($statusFilter, $allowedStatuses, true)) {
+            $reportsQuery->whereHas('status', function ($query) use ($statusFilter) {
+                $query->where('slug', $statusFilter)
+                    ->orWhereRaw('LOWER(name) = ?', [$statusFilter]);
+            });
+        }
+
+        $statusCounts = [
+            'all' => Report::whereHas('status', function ($query) use ($allowedStatuses) {
+                $query->whereIn('slug', $allowedStatuses)
+                    ->orWhereIn(DB::raw('LOWER(name)'), $allowedStatuses);
+            })->count(),
+        ];
+        foreach ($allowedStatuses as $statusSlug) {
+            $statusCounts[$statusSlug] = Report::whereHas('status', function ($query) use ($statusSlug) {
+                $query->where('slug', $statusSlug)
+                    ->orWhereRaw('LOWER(name) = ?', [$statusSlug]);
+            })->count();
+        }
+
+        $statuses = ReportStatus::query()
+            ->get()
+            ->filter(fn (ReportStatus $status) => in_array(Str::slug($status->slug ?: $status->name), $allowedStatuses, true))
+            ->sortBy(fn (ReportStatus $status) => array_search(Str::slug($status->slug ?: $status->name), $allowedStatuses, true))
+            ->values();
+
         return view('admin.reports.index', [
-            'reports' => Report::with(['place.user', 'place.category', 'category', 'status', 'user'])->latest()->get(),
-            'statuses' => ReportStatus::orderBy('name')->get(),
+            'reports' => $reportsQuery->get(),
+            'statuses' => $statuses,
+            'statusFilter' => in_array($statusFilter, $allowedStatuses, true) ? $statusFilter : 'all',
+            'statusCounts' => $statusCounts,
             'isSuperAdmin' => CityZenAccess::isSuperAdmin($request->session()->get('cityzen_user')),
         ]);
     }
@@ -28,6 +65,8 @@ class AdminReportController extends Controller
             'admin_note' => ['nullable', 'string', 'max:500'],
         ]);
 
+        $oldStatusId = $report->report_status_id;
+
         $report->update([
             'report_status_id' => $data['report_status_id'],
             'admin_note' => $data['admin_note'] ?? null,
@@ -35,7 +74,11 @@ class AdminReportController extends Controller
             'verified_at' => now(),
         ]);
 
-        $this->notifyReporter($report);
+        $report->refresh()->loadMissing('status', 'place');
+
+        if ((int) $oldStatusId !== (int) $report->report_status_id || filled($report->admin_note)) {
+            $this->notifyReporter($report);
+        }
 
         return back()->with('status', 'Status laporan berhasil diperbarui.');
     }
@@ -75,7 +118,7 @@ class AdminReportController extends Controller
 
     private function notifyReporter(Report $report): void
     {
-        if (! Schema::hasTable('notifications') || ! Schema::hasTable('notification_types')) {
+        if (! $report->user_id || ! Schema::hasTable('notifications') || ! Schema::hasTable('notification_types')) {
             return;
         }
 
@@ -100,13 +143,20 @@ class AdminReportController extends Controller
         }
 
         $statusName = $report->status?->name ?: 'Updated';
+        $placeName = $report->place?->name ?: 'postingan yang kamu laporkan';
+        $note = trim((string) $report->admin_note);
+        $message = 'Laporan kamu untuk '.$placeName.' sekarang berstatus '.$statusName.'.';
+
+        if ($note !== '') {
+            $message .= ' Catatan admin: '.$note;
+        }
 
         DB::table('notifications')->insert([
             'user_id' => $report->user_id,
             'actor_id' => $report->verified_by,
             'notification_type_id' => $typeId,
             'title' => 'Status laporan diperbarui',
-            'message' => 'Laporan kamu sekarang berstatus '.$statusName.'.',
+            'message' => $message,
             'related_table' => 'reports',
             'related_id' => $report->id,
             'created_at' => now(),
