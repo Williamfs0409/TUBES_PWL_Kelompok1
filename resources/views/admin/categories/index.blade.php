@@ -61,14 +61,10 @@
                         <input name="name" placeholder="Contoh: Taman Kota" required>
                     </label>
                     <label>
-                        <span>Icon label</span>
-                        <input name="icon" placeholder="Leaf / Map / Bike">
-                    </label>
-                    <label>
                         <span>Deskripsi singkat</span>
                         <input name="description" placeholder="Ringkasan fungsi kategori">
                     </label>
-                    <button type="submit">Add</button>
+                    <button type="submit">Tambah Kategori</button>
                 </form>
             </section>
 
@@ -84,10 +80,6 @@
                             <div class="cz-admin-category-meta">
                                 <small>Slug</small>
                                 <strong>{{ $category->slug }}</strong>
-                                @if ($category->icon)
-                                    <small>Icon</small>
-                                    <strong>{{ $category->icon }}</strong>
-                                @endif
                             </div>
                         </div>
 
@@ -103,10 +95,6 @@
                                 <input name="description" value="{{ $category->description }}" placeholder="Deskripsi">
                             </label>
                             <label>
-                                <span>Icon</span>
-                                <input name="icon" value="{{ $category->icon }}" placeholder="Icon">
-                            </label>
-                            <label>
                                 <span>Sort</span>
                                 <input name="sort_order" type="number" value="{{ $category->sort_order }}" min="0">
                             </label>
@@ -117,7 +105,7 @@
                         <form class="cz-admin-category-delete-form" method="POST" action="{{ route('admin.categories.destroy', $category) }}">
                             @csrf
                             @method('DELETE')
-                            <button class="cz-list-danger" type="submit" onclick="return confirm('Hapus kategori ini?')">Delete</button>
+                            <button class="cz-admin-danger-button cz-admin-delete-small" type="submit" onclick="return confirm('Hapus kategori ini?')">Delete</button>
                         </form>
                     </article>
                 @endforeach

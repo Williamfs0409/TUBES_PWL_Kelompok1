@@ -5222,6 +5222,206 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     color: var(--cz-ink);
 }
 
+.cz-admin-report-card .cz-admin-danger-button {
+    align-items: center;
+    background: color-mix(in srgb, var(--cz-danger) 13%, var(--cz-surface));
+    border: 1px solid color-mix(in srgb, var(--cz-danger) 56%, var(--cz-line));
+    border-radius: 999px;
+    color: var(--cz-danger);
+    display: inline-flex;
+    font-weight: 900;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 18px;
+    transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.cz-admin-report-card .cz-admin-danger-button:hover {
+    background: color-mix(in srgb, var(--cz-danger) 20%, var(--cz-surface));
+    border-color: var(--cz-danger);
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--cz-danger) 18%, transparent);
+    transform: translateY(-1px);
+}
+
+.cz-admin-report-card .cz-admin-delete-small {
+    font-size: 14px;
+    min-height: 36px;
+    min-width: 118px;
+    padding-inline: 16px;
+}
+
+.cz-admin-place-delete-form,
+.cz-admin-category-delete-form {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.cz-admin-place-delete-form .cz-admin-delete-small,
+.cz-admin-category-delete-form .cz-admin-delete-small {
+    width: auto;
+}
+
+.cz-admin-category-create {
+    gap: 16px;
+}
+
+.cz-admin-category-create-form {
+    grid-template-columns: minmax(180px, 0.8fr) minmax(260px, 1.15fr) auto;
+}
+
+.cz-admin-category-create-form button {
+    min-width: 170px;
+    padding-inline: 22px;
+}
+
+.cz-admin-category-edit-form {
+    grid-template-columns:
+        minmax(150px, 0.85fr)
+        minmax(220px, 1.3fr)
+        minmax(80px, 0.38fr)
+        minmax(105px, 0.48fr)
+        auto;
+}
+
+.cz-admin-user-card {
+    gap: 12px;
+    padding: 18px 20px;
+}
+
+.cz-admin-user-card.is-role-admin,
+.cz-admin-user-card.is-role-superadmin {
+    border-color: color-mix(in srgb, var(--cz-accent) 48%, var(--cz-line));
+    box-shadow: inset 4px 0 0 var(--cz-accent), var(--cz-card-shadow);
+}
+
+.cz-admin-user-card.is-role-superadmin {
+    border-color: color-mix(in srgb, #74f7a2 52%, var(--cz-line));
+    box-shadow: inset 4px 0 0 #74f7a2, var(--cz-card-shadow);
+}
+
+.cz-admin-user-summary {
+    display: grid;
+    gap: 4px;
+    grid-template-columns: auto auto 1fr;
+}
+
+.cz-admin-user-summary h2,
+.cz-admin-user-summary p,
+.cz-admin-user-summary small {
+    grid-column: 1 / -1;
+}
+
+.cz-admin-user-summary h2 {
+    font-size: 22px;
+    line-height: 1.05;
+}
+
+.cz-admin-user-summary p {
+    font-size: 17px;
+}
+
+.cz-admin-user-summary small {
+    font-size: 13px;
+}
+
+.cz-admin-role-badge,
+.cz-admin-user-state {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 900;
+    justify-content: center;
+    min-height: 26px;
+    padding: 4px 10px;
+    width: max-content;
+}
+
+.cz-admin-role-badge {
+    background: color-mix(in srgb, var(--cz-raised) 86%, transparent);
+    border: 1px solid var(--cz-line);
+    color: var(--cz-muted);
+    text-transform: capitalize;
+}
+
+.cz-admin-role-badge.is-admin {
+    background: color-mix(in srgb, var(--cz-accent) 16%, var(--cz-surface));
+    border-color: color-mix(in srgb, var(--cz-accent) 52%, var(--cz-line));
+    color: var(--cz-accent);
+}
+
+.cz-admin-role-badge.is-superadmin {
+    background: color-mix(in srgb, #74f7a2 18%, var(--cz-surface));
+    border-color: color-mix(in srgb, #74f7a2 58%, var(--cz-line));
+    color: #60ec92;
+}
+
+.cz-admin-user-state {
+    background: color-mix(in srgb, var(--cz-accent-soft) 68%, var(--cz-surface));
+    color: var(--cz-accent);
+}
+
+.cz-admin-user-state.is-warning {
+    background: color-mix(in srgb, var(--cz-danger) 14%, var(--cz-surface));
+    color: var(--cz-danger);
+}
+
+.cz-admin-user-form {
+    align-items: end;
+    grid-template-columns: minmax(150px, 0.85fr) minmax(145px, 0.7fr) minmax(160px, 0.8fr);
+}
+
+.cz-admin-user-form select,
+.cz-admin-user-form .cz-admin-check,
+.cz-admin-user-form button {
+    min-height: 42px;
+}
+
+.cz-admin-suspend-check {
+    border-color: color-mix(in srgb, var(--cz-danger) 34%, var(--cz-line));
+    color: var(--cz-danger);
+}
+
+.cz-admin-suspend-check input {
+    accent-color: var(--cz-danger);
+}
+
+.cz-admin-confirm-bar {
+    align-items: center;
+    background: color-mix(in srgb, #f2c94c 10%, var(--cz-surface));
+    border: 1px solid color-mix(in srgb, #f2c94c 46%, var(--cz-line));
+    border-radius: 14px;
+    color: var(--cz-ink);
+    display: grid;
+    gap: 6px;
+    grid-column: 1 / -1;
+    margin-top: 2px;
+    padding: 12px 14px;
+}
+
+.cz-admin-confirm-bar[hidden] {
+    display: none;
+}
+
+.cz-admin-confirm-bar strong {
+    color: #d59b00;
+    font-size: 13px;
+}
+
+.cz-admin-confirm-bar span {
+    color: var(--cz-muted);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.cz-admin-confirm-bar label {
+    align-items: center;
+    color: var(--cz-ink);
+    display: inline-flex;
+    font-weight: 900;
+    gap: 8px;
+}
+
 /* Desktop app shell behavior: keep side columns fixed and scroll only the center column. */
 @media (min-width: 901px) {
     html:has(body.cz-dashboard-page .cz-dash-shell) {

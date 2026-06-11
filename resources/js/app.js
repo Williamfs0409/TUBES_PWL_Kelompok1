@@ -62,6 +62,58 @@ dashboardPages.forEach((page) => {
         control.addEventListener('click', () => showPageToast(control.dataset.actionToast));
     });
 
+    page.querySelectorAll('[data-admin-user-form]').forEach((form) => {
+        const roleSelect = form.querySelector('[data-admin-role-select]');
+        const suspendCheck = form.querySelector('[data-admin-suspend-check]');
+        const confirmBar = form.querySelector('[data-admin-confirm-bar]');
+        const confirmCheckbox = form.querySelector('[data-admin-confirm-checkbox]');
+        const confirmCopy = form.querySelector('[data-admin-confirm-copy]');
+
+        const hasSensitiveChange = () => {
+            const roleChanged = roleSelect ? String(roleSelect.value) !== String(form.dataset.originalRole || '') : false;
+            const suspendChanged = suspendCheck ? String(suspendCheck.checked ? '1' : '0') !== String(form.dataset.originalSuspended || '0') : false;
+
+            return roleChanged || suspendChanged;
+        };
+
+        const updateConfirmBar = () => {
+            if (!confirmBar) return;
+
+            const isChanged = hasSensitiveChange();
+            confirmBar.hidden = !isChanged;
+
+            if (!isChanged && confirmCheckbox) {
+                confirmCheckbox.checked = false;
+            }
+
+            if (isChanged && confirmCopy) {
+                const messages = [];
+
+                if (roleSelect && String(roleSelect.value) !== String(form.dataset.originalRole || '')) {
+                    messages.push(`Role akan diganti menjadi ${roleSelect.options[roleSelect.selectedIndex]?.text || 'role baru'}.`);
+                }
+
+                if (suspendCheck && String(suspendCheck.checked ? '1' : '0') !== String(form.dataset.originalSuspended || '0')) {
+                    messages.push(suspendCheck.checked ? 'Akun akan disuspend dan aksesnya dibatasi.' : 'Suspend akun akan dicabut.');
+                }
+
+                confirmCopy.textContent = messages.join(' ');
+            }
+        };
+
+        roleSelect?.addEventListener('change', updateConfirmBar);
+        suspendCheck?.addEventListener('change', updateConfirmBar);
+
+        form.addEventListener('submit', (event) => {
+            if (!hasSensitiveChange() || confirmCheckbox?.checked) return;
+
+            event.preventDefault();
+            updateConfirmBar();
+            confirmCheckbox?.focus();
+            showPageToast('Centang konfirmasi dulu sebelum menyimpan perubahan user.');
+        });
+    });
+
     userMenuToggle?.addEventListener('click', (event) => {
         event.stopPropagation();
         const isOpen = userMenu?.classList.toggle('is-open') ?? false;

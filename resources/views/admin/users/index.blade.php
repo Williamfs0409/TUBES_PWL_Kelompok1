@@ -47,9 +47,14 @@
 
             <section class="cz-admin-report-list">
                 @foreach ($users as $account)
-                    <article class="cz-admin-report-card">
-                        <div>
-                            <span>{{ $account->role_name ?? 'user' }} &middot; {{ $account->is_suspended ? 'Suspended' : 'Active' }}</span>
+                    @php
+                        $roleName = $account->role_name ?? 'user';
+                        $roleSlug = \Illuminate\Support\Str::slug($roleName);
+                    @endphp
+                    <article class="cz-admin-report-card cz-admin-user-card is-role-{{ $roleSlug }} {{ $account->is_suspended ? 'is-suspended' : '' }}">
+                        <div class="cz-admin-user-summary">
+                            <span class="cz-admin-role-badge is-{{ $roleSlug }}">{{ $roleName }}</span>
+                            <span class="cz-admin-user-state {{ $account->is_suspended ? 'is-warning' : '' }}">{{ $account->is_suspended ? 'Suspended' : 'Active' }}</span>
                             <h2>{{ $account->name }}</h2>
                             <p>{{ $account->email }}</p>
                             <small>
@@ -60,23 +65,32 @@
                             </small>
                         </div>
 
-                        <form method="POST" action="{{ route('admin.users.update', $account->id) }}">
+                        <form class="cz-admin-user-form" method="POST" action="{{ route('admin.users.update', $account->id) }}" data-admin-user-form data-original-role="{{ $account->role_id }}" data-original-suspended="{{ $account->is_suspended ? '1' : '0' }}">
                             @csrf
                             @method('PATCH')
 
                             @if ($isSuperAdmin)
-                                <select name="role_id" required>
+                                <select name="role_id" required data-admin-role-select>
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}" @selected($account->role_id === $role->id)>{{ $role->name }}</option>
                                     @endforeach
                                 </select>
                             @endif
 
-                            <label class="cz-admin-check">
-                                <input name="is_suspended" type="checkbox" value="1" @checked($account->is_suspended) @disabled($currentUserId === $account->id)>
+                            <label class="cz-admin-check cz-admin-suspend-check">
+                                <input name="is_suspended" type="checkbox" value="1" @checked($account->is_suspended) @disabled($currentUserId === $account->id) data-admin-suspend-check>
                                 Suspended
                             </label>
                             <button type="submit" @disabled($currentUserId === $account->id && ! $isSuperAdmin)>Save User</button>
+
+                            <div class="cz-admin-confirm-bar" hidden data-admin-confirm-bar>
+                                <strong>Konfirmasi perubahan akun</strong>
+                                <span data-admin-confirm-copy>Perubahan role atau suspend akan mempengaruhi akses user.</span>
+                                <label>
+                                    <input type="checkbox" data-admin-confirm-checkbox>
+                                    Saya yakin dengan perubahan ini.
+                                </label>
+                            </div>
                         </form>
                     </article>
                 @endforeach

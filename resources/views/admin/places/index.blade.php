@@ -66,10 +66,10 @@
                             <button type="submit">Update Status</button>
                         </form>
 
-                        <form method="POST" action="{{ route('admin.places.destroy', $place) }}">
+                        <form class="cz-admin-place-delete-form" method="POST" action="{{ route('admin.places.destroy', $place) }}">
                             @csrf
                             @method('DELETE')
-                            <button class="cz-list-danger" type="submit" onclick="return confirm('Hapus postingan place ini?')">Delete Post</button>
+                            <button class="cz-admin-danger-button cz-admin-delete-small" type="submit" onclick="return confirm('Hapus postingan place ini?')">Delete Post</button>
                         </form>
                     </article>
                 @empty
