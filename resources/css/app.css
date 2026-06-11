@@ -5019,6 +5019,60 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     transform: translateX(-50%) rotate(315deg) translateY(0.625em) scale(0);
 }
 
+/* Desktop app shell behavior: keep side columns fixed and scroll only the center column. */
+@media (min-width: 901px) {
+    html:has(body.cz-dashboard-page .cz-dash-shell) {
+        height: 100%;
+        overflow: hidden;
+        scrollbar-gutter: auto;
+    }
+
+    .cz-dashboard-page:has(.cz-dash-shell) {
+        height: 100vh;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-dash-shell {
+        align-items: stretch;
+        height: 100vh;
+        min-height: 0;
+    }
+
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-dash-sidebar,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-dash-right-rail,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-explore-rail {
+        height: 100vh;
+        min-height: 0;
+        overflow: hidden;
+        position: sticky;
+        top: 0;
+    }
+
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-dash-feed,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-explore-main,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-list-main,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-profile-main,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-admin-main {
+        height: 100vh;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-gutter: auto;
+        scrollbar-width: none;
+    }
+
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-dash-feed::-webkit-scrollbar,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-explore-main::-webkit-scrollbar,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-list-main::-webkit-scrollbar,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-profile-main::-webkit-scrollbar,
+    .cz-dashboard-page:has(.cz-dash-shell) .cz-admin-main::-webkit-scrollbar {
+        height: 0;
+        width: 0;
+    }
+}
+
 @media (max-width: 900px) {
     .cz-dash-shell,
     .cz-profile-page .cz-dash-shell,
