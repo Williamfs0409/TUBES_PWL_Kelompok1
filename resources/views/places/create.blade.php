@@ -9,6 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Add Place | CityZen</title>
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=hanken-grotesk:700,800|inter:400,500,600,700,800,900" rel="stylesheet" />
     <style>
@@ -228,6 +229,143 @@
             text-align: center;
         }
 
+        .photo-uploader {
+            background: #fbfdfb;
+            border: 1px dashed color-mix(in srgb, var(--green) 32%, var(--line));
+            border-radius: 14px;
+            display: grid;
+            gap: 12px;
+            padding: 14px;
+        }
+
+        .photo-uploader__input {
+            height: 1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            width: 1px;
+        }
+
+        .photo-uploader__bar {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .photo-uploader__button,
+        .photo-uploader__add {
+            align-items: center;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-flex;
+            font-weight: 900;
+            justify-content: center;
+            min-height: 40px;
+            transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        }
+
+        .photo-uploader__button {
+            background: var(--green);
+            color: #ffffff;
+            padding: 0 16px;
+        }
+
+        .photo-uploader__add {
+            background: var(--mint);
+            color: var(--green);
+            font-size: 24px;
+            line-height: 1;
+            width: 42px;
+        }
+
+        .photo-uploader__button:hover,
+        .photo-uploader__add:hover {
+            border-color: var(--green);
+            box-shadow: 0 7px 16px rgba(23, 77, 46, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .photo-uploader__add[disabled] {
+            cursor: not-allowed;
+            opacity: 0.46;
+            transform: none;
+        }
+
+        .photo-uploader__status {
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .photo-uploader__list {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+        }
+
+        .photo-uploader__item {
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid color-mix(in srgb, var(--line) 84%, transparent);
+            border-radius: 12px;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: 56px minmax(0, 1fr) auto;
+            min-width: 0;
+            padding: 8px;
+        }
+
+        .photo-uploader__thumb {
+            aspect-ratio: 1;
+            background: var(--mint);
+            border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .photo-uploader__thumb img {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .photo-uploader__meta {
+            min-width: 0;
+        }
+
+        .photo-uploader__meta strong,
+        .photo-uploader__meta small {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .photo-uploader__meta strong {
+            font-size: 14px;
+            text-transform: none;
+        }
+
+        .photo-uploader__meta small {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .photo-uploader__remove {
+            background: color-mix(in srgb, #b42318 9%, #ffffff);
+            border: 1px solid color-mix(in srgb, #b42318 34%, var(--line));
+            border-radius: 999px;
+            color: #9f2018;
+            cursor: pointer;
+            font-weight: 900;
+            height: 32px;
+            width: 32px;
+        }
+
         .side-stack {
             display: grid;
             gap: 20px;
@@ -405,7 +543,15 @@
 
             <div class="field">
                 <label for="photos">Foto tempat</label>
-                <input id="photos" name="photos[]" type="file" accept="image/*" multiple>
+                <div class="photo-uploader" data-photo-uploader>
+                    <input id="photos" class="photo-uploader__input" name="photos[]" type="file" accept="image/*" multiple data-photo-input>
+                    <div class="photo-uploader__bar">
+                        <label class="photo-uploader__button" for="photos">Pilih foto</label>
+                        <button class="photo-uploader__add" type="button" data-photo-add aria-label="Tambah foto" hidden>+</button>
+                        <span class="photo-uploader__status" data-photo-status>Belum ada foto dipilih. Maksimal 6 foto.</span>
+                    </div>
+                    <div class="photo-uploader__list" data-photo-list aria-live="polite"></div>
+                </div>
                 <small>Upload sampai 6 foto. Foto pertama otomatis menjadi cover feed.</small>
                 @error('photos')
                     <span class="error">{{ $message }}</span>
@@ -437,5 +583,81 @@
             </article>
         </section>
     </main>
+    <script>
+        (() => {
+            const uploader = document.querySelector('[data-photo-uploader]');
+            if (!uploader || typeof DataTransfer === 'undefined') return;
+
+            const input = uploader.querySelector('[data-photo-input]');
+            const addButton = uploader.querySelector('[data-photo-add]');
+            const list = uploader.querySelector('[data-photo-list]');
+            const status = uploader.querySelector('[data-photo-status]');
+            const maxPhotos = 6;
+            let selectedPhotos = [];
+
+            const formatSize = (bytes) => {
+                if (bytes >= 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+                return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+            };
+
+            const syncInput = () => {
+                const transfer = new DataTransfer();
+                selectedPhotos.forEach((file) => transfer.items.add(file));
+                input.files = transfer.files;
+            };
+
+            const render = () => {
+                syncInput();
+                list.innerHTML = '';
+                addButton.hidden = selectedPhotos.length === 0;
+                addButton.disabled = selectedPhotos.length >= maxPhotos;
+                status.textContent = selectedPhotos.length
+                    ? `${selectedPhotos.length} dari ${maxPhotos} foto siap diupload.`
+                    : 'Belum ada foto dipilih. Maksimal 6 foto.';
+
+                selectedPhotos.forEach((file, index) => {
+                    const item = document.createElement('article');
+                    item.className = 'photo-uploader__item';
+
+                    const thumb = document.createElement('div');
+                    thumb.className = 'photo-uploader__thumb';
+                    const image = document.createElement('img');
+                    image.alt = file.name;
+                    image.src = URL.createObjectURL(file);
+                    image.addEventListener('load', () => URL.revokeObjectURL(image.src), { once: true });
+                    thumb.append(image);
+
+                    const meta = document.createElement('div');
+                    meta.className = 'photo-uploader__meta';
+                    const name = document.createElement('strong');
+                    name.textContent = file.name;
+                    const detail = document.createElement('small');
+                    detail.textContent = `${index === 0 ? 'Cover feed' : 'Foto tambahan'} · ${formatSize(file.size)}`;
+                    meta.append(name, detail);
+
+                    const remove = document.createElement('button');
+                    remove.className = 'photo-uploader__remove';
+                    remove.type = 'button';
+                    remove.setAttribute('aria-label', `Hapus ${file.name}`);
+                    remove.textContent = '×';
+                    remove.addEventListener('click', () => {
+                        selectedPhotos = selectedPhotos.filter((_, photoIndex) => photoIndex !== index);
+                        render();
+                    });
+
+                    item.append(thumb, meta, remove);
+                    list.append(item);
+                });
+            };
+
+            input.addEventListener('change', () => {
+                const nextPhotos = Array.from(input.files || []).filter((file) => file.type.startsWith('image/'));
+                selectedPhotos = [...selectedPhotos, ...nextPhotos].slice(0, maxPhotos);
+                render();
+            });
+
+            addButton.addEventListener('click', () => input.click());
+        })();
+    </script>
 </body>
 </html>
