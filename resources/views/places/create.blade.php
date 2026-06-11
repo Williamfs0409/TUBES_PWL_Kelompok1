@@ -16,12 +16,12 @@
             --surface: #f7faf6;
             --ink: #17201a;
             --muted: #5d6c61;
-            --line: #17201a;
+            --line: #c4d3c2;
             --green: #174d2e;
-            --lime: #c9f27f;
+            --lime: #1f6b38;
             --mint: #e8f5ee;
             --coral: #ffe0d2;
-            --shadow: 10px 10px 0 rgba(23, 32, 26, 0.1);
+            --shadow: 0 10px 22px rgba(23, 32, 26, 0.08);
         }
 
         * {
@@ -30,7 +30,7 @@
 
         body {
             background:
-                linear-gradient(135deg, rgba(201, 242, 127, 0.2), transparent 28rem),
+                linear-gradient(135deg, rgba(201, 242, 127, 0.12), transparent 28rem),
                 var(--surface);
             color: var(--ink);
             font-family: Inter, ui-sans-serif, system-ui, sans-serif;
@@ -47,7 +47,7 @@
             align-items: center;
             background: rgba(247, 250, 246, 0.92);
             backdrop-filter: blur(12px);
-            border-bottom: 1.5px solid var(--line);
+            border-bottom: 1px solid var(--line);
             display: flex;
             gap: 18px;
             justify-content: space-between;
@@ -71,10 +71,10 @@
         }
 
         .button,
-        .topbar nav a {
+            .topbar nav a {
             align-items: center;
-            border: 1.5px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
             cursor: pointer;
             display: inline-flex;
             font: inherit;
@@ -87,7 +87,7 @@
         .button--primary {
             background: var(--lime);
             color: #ffffff;
-            box-shadow: 6px 6px 0 rgba(23, 32, 26, 0.12);
+            box-shadow: none;
         }
 
         .button--secondary,
@@ -107,8 +107,8 @@
         .map-card,
         .preview-card {
             background: #ffffff;
-            border: 1.5px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
             box-shadow: var(--shadow);
         }
 
@@ -161,8 +161,8 @@
 
         .steps li {
             background: var(--mint);
-            border: 1.5px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
             font-weight: 900;
             padding: 14px;
         }
@@ -193,8 +193,8 @@
         select,
         textarea {
             background: #fbfdfb;
-            border: 1.5px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
             color: var(--ink);
             font: inherit;
             outline: 0;
@@ -210,7 +210,8 @@
         input:focus,
         select:focus,
         textarea:focus {
-            box-shadow: 0 0 0 4px rgba(201, 242, 127, 0.45);
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(31, 107, 56, 0.12);
         }
 
         .error {

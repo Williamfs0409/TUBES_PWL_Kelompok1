@@ -4232,3 +4232,579 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     }
 
 }
+
+/* CityZen MVP visual refinement.
+   Keep the existing layout and behavior, but tune the surface so it feels less template-like. */
+.cz-dashboard-page {
+    --cz-bg: #edf6e9;
+    --cz-surface: #fbfcf7;
+    --cz-raised: #f4f7ef;
+    --cz-soft: #e4efdc;
+    --cz-line: #c5d4bf;
+    --cz-muted: #637068;
+    --cz-accent: #155c2b;
+    --cz-accent-2: #2e7441;
+    --cz-accent-soft: #e1efd9;
+    --cz-accent-glow: rgba(21, 92, 43, 0.11);
+    --cz-shadow: 0 8px 18px rgba(24, 39, 27, 0.07);
+    --cz-card-shadow: 2px 3px 0 rgba(24, 39, 27, 0.045);
+    --cz-button-glow: 0 7px 16px rgba(21, 92, 43, 0.12);
+    background: var(--cz-bg);
+}
+
+.cz-dashboard-page[data-theme='dark'] {
+    --cz-bg: #07120d;
+    --cz-surface: #0b1510;
+    --cz-raised: #111b15;
+    --cz-soft: #17241c;
+    --cz-line: #2d3e33;
+    --cz-muted: #9da89f;
+    --cz-accent: #53d47f;
+    --cz-accent-2: #36b769;
+    --cz-accent-soft: rgba(83, 212, 127, 0.12);
+    --cz-accent-glow: rgba(83, 212, 127, 0.12);
+    --cz-shadow: 0 9px 22px rgba(0, 0, 0, 0.24);
+    --cz-card-shadow: 0 1px 0 rgba(255, 255, 255, 0.025);
+    --cz-button-glow: 0 7px 18px rgba(83, 212, 127, 0.13);
+    background: var(--cz-bg);
+}
+
+.cz-dash-shell {
+    grid-template-columns: 260px minmax(0, 650px) 340px;
+    max-width: 1250px;
+}
+
+.cz-dash-sidebar {
+    background: color-mix(in srgb, var(--cz-surface) 96%, var(--cz-bg));
+    padding: 17px;
+}
+
+.cz-dash-brand strong {
+    font-size: 28px;
+    line-height: 0.95;
+}
+
+.cz-dash-brand small {
+    letter-spacing: 0.075em;
+}
+
+.cz-dash-brand-mark {
+    border-width: 1px;
+    box-shadow: 0 8px 18px var(--cz-accent-glow);
+}
+
+.cz-dash-brand:hover .cz-dash-brand-mark {
+    box-shadow: 0 10px 22px var(--cz-accent-glow);
+    transform: rotate(-3deg) scale(1.02);
+}
+
+.cz-dash-nav {
+    gap: 6px;
+}
+
+.cz-dash-nav-link {
+    border-radius: 11px;
+    font-size: 17px;
+    gap: 15px;
+    min-height: 45px;
+    padding-inline: 13px;
+}
+
+.cz-dash-nav-link:hover,
+.cz-dash-nav-link.is-active {
+    background: color-mix(in srgb, var(--cz-soft) 64%, transparent);
+    border-color: color-mix(in srgb, var(--cz-line) 60%, transparent);
+    transform: translateX(1px);
+}
+
+.cz-dash-user-card {
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+.cz-dash-feed-header {
+    background: color-mix(in srgb, var(--cz-bg) 72%, var(--cz-surface));
+    min-height: 58px;
+}
+
+.cz-dash-feed-header h1,
+.cz-list-topbar h1 {
+    letter-spacing: -0.018em;
+}
+
+.cz-dash-tabs {
+    min-height: 56px;
+}
+
+.cz-dash-composer {
+    background: transparent;
+    border-bottom-color: color-mix(in srgb, var(--cz-line) 84%, transparent);
+    padding-block: 15px;
+}
+
+.cz-dash-compose-prompt {
+    color: color-mix(in srgb, var(--cz-muted) 86%, var(--cz-ink));
+    font-size: 17px;
+}
+
+.cz-dash-composer-tools {
+    padding-top: 12px;
+}
+
+.cz-dash-composer-tools button,
+.cz-dash-composer-tools a:not(.cz-dash-post-button) {
+    border-radius: 10px;
+    min-height: 36px;
+}
+
+.cz-dash-post {
+    background: transparent;
+    border-bottom-color: color-mix(in srgb, var(--cz-line) 78%, transparent);
+    padding: 16px 20px 17px;
+}
+
+.cz-dash-post:hover {
+    background: color-mix(in srgb, var(--cz-surface) 42%, transparent);
+}
+
+.cz-dash-post-avatar,
+.cz-dash-avatar {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cz-line) 70%, transparent);
+}
+
+.cz-dash-post-meta {
+    row-gap: 2px;
+}
+
+.cz-dash-post-meta strong {
+    font-size: 15px;
+}
+
+.cz-dash-post-body p {
+    font-size: 15px;
+    line-height: 1.48;
+}
+
+.cz-dash-hashtag {
+    color: var(--cz-accent);
+    font-weight: 750;
+}
+
+.cz-dash-post-link {
+    border-radius: 10px;
+    color: inherit;
+    display: grid;
+    gap: 10px;
+    margin: -2px;
+    padding: 2px;
+    text-decoration: none;
+}
+
+.cz-dash-post-link:hover {
+    color: inherit;
+}
+
+.cz-dash-post-link:focus-visible {
+    box-shadow: 0 0 0 3px var(--cz-accent-glow);
+    outline: none;
+}
+
+.cz-dash-post-image,
+.cz-post-photo-strip a {
+    border-color: color-mix(in srgb, var(--cz-line) 80%, transparent);
+    border-radius: 10px;
+}
+
+.cz-dash-post-image img {
+    background: color-mix(in srgb, var(--cz-raised) 74%, var(--cz-bg));
+}
+
+.cz-dash-post-actions {
+    gap: 6px;
+    max-width: 430px;
+}
+
+.cz-dash-post-actions button,
+.cz-dash-post-actions a {
+    border-radius: 9px;
+    min-height: 31px;
+    padding-inline: 7px;
+}
+
+.cz-dash-post-actions button:hover,
+.cz-dash-post-actions a:hover,
+.cz-dash-post-actions button.is-active {
+    transform: none;
+}
+
+.cz-dash-review-form {
+    align-items: center;
+    gap: 10px;
+}
+
+.cz-dash-review-form input,
+.cz-dash-rating,
+.cz-dash-search,
+.cz-bookmark-search,
+.cz-dash-theme-toggle {
+    background: color-mix(in srgb, var(--cz-surface) 78%, transparent);
+    border-color: color-mix(in srgb, var(--cz-line) 82%, transparent);
+}
+
+.cz-dash-rating {
+    min-width: 132px;
+    padding-inline: 10px;
+}
+
+.cz-dash-rating label {
+    min-width: 22px;
+}
+
+.cz-dash-review-form button {
+    min-width: 88px;
+}
+
+.cz-dash-post-button,
+.cz-dash-report-button,
+.cz-form-grid button,
+.cz-admin-report-card button,
+.cz-profile-button--primary,
+.cz-list-action,
+.cz-list-empty a,
+.cz-list-side-card a,
+.cz-notification-empty a,
+.cz-bookmark-body footer a {
+    box-shadow: none;
+    letter-spacing: 0;
+}
+
+.cz-dash-post-button:hover,
+.cz-dash-report-button:hover,
+.cz-form-grid button:hover,
+.cz-admin-report-card button:hover,
+.cz-profile-button--primary:hover,
+.cz-list-action:hover,
+.cz-list-empty a:hover,
+.cz-list-side-card a:hover,
+.cz-notification-empty a:hover,
+.cz-bookmark-body footer a:hover {
+    box-shadow: var(--cz-button-glow);
+    transform: translateY(-1px);
+}
+
+.cz-dash-right-rail {
+    gap: 14px;
+    padding: 10px 18px 24px 22px;
+}
+
+.cz-dash-trending-card,
+.cz-explore-card,
+.cz-list-side-card,
+.cz-list-header,
+.cz-profile-hero,
+.cz-profile-grid article,
+.cz-profile-report-card,
+.cz-profile-activity article,
+.cz-form-card,
+.cz-admin-report-card,
+.cz-admin-stat-grid article,
+.cz-admin-panel,
+.cz-notification-card,
+.cz-notification-empty,
+.cz-list-card,
+.cz-list-empty,
+.cz-list-overview article {
+    background: color-mix(in srgb, var(--cz-surface) 90%, var(--cz-bg));
+    border-color: color-mix(in srgb, var(--cz-line) 82%, transparent);
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.cz-dash-trending-card h2,
+.cz-explore-card h2,
+.cz-admin-panel h2,
+.cz-list-side-card h2 {
+    font-size: 22px;
+    letter-spacing: -0.01em;
+}
+
+.cz-dash-trend-list button {
+    padding: 15px 18px;
+}
+
+.cz-dash-trend-list button:hover,
+.cz-dash-show-more:hover {
+    background: color-mix(in srgb, var(--cz-raised) 68%, transparent);
+    transform: none;
+}
+
+.cz-list-header {
+    padding: 20px;
+}
+
+.cz-list-header::before,
+.cz-list-card::before,
+.cz-list-empty::after,
+.cz-notification-card::before {
+    opacity: 0.35;
+}
+
+.cz-list-header h1 {
+    font-size: clamp(34px, 4.5vw, 52px);
+    line-height: 1;
+}
+
+.cz-list-header p,
+.cz-profile-hero p,
+.cz-form-heading p,
+.cz-admin-header p,
+.cz-list-empty p,
+.cz-notification-empty p {
+    color: color-mix(in srgb, var(--cz-muted) 92%, var(--cz-ink));
+    line-height: 1.55;
+}
+
+.cz-notification-filters {
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.cz-notification-filters a {
+    border-radius: 12px;
+    min-height: 36px;
+    padding-inline: 15px;
+}
+
+.cz-notification-filters a:hover,
+.cz-notification-filters a.is-active {
+    box-shadow: none;
+    transform: none;
+}
+
+.cz-notification-card {
+    gap: 12px;
+    grid-template-columns: 46px minmax(0, 1fr) auto auto;
+    min-height: 96px;
+    padding: 16px;
+}
+
+.cz-social-notification-card {
+    grid-template-columns: 38px minmax(0, 1fr) 76px auto auto;
+}
+
+.cz-notification-card:hover,
+.cz-list-card:hover {
+    box-shadow: 0 0 0 2px var(--cz-accent-glow);
+    transform: translateY(-1px);
+}
+
+.cz-notification-icon {
+    border-color: var(--cz-line);
+    border-radius: 10px;
+    height: 40px;
+    width: 40px;
+}
+
+.cz-social-notification-icon {
+    height: 32px;
+    width: 32px;
+}
+
+.cz-social-notification-avatar {
+    height: 42px;
+    width: 42px;
+}
+
+.cz-social-notification-thumb {
+    border-radius: 12px;
+    height: 66px;
+    width: 76px;
+}
+
+.cz-notification-empty {
+    padding: 28px;
+}
+
+.cz-notification-empty h2 {
+    font-size: 30px;
+}
+
+.cz-bookmark-post {
+    gap: 12px;
+    padding: 16px 0;
+}
+
+.cz-bookmark-body strong {
+    font-size: 17px;
+}
+
+.cz-bookmark-body p {
+    color: color-mix(in srgb, var(--cz-ink) 90%, var(--cz-muted));
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.cz-bookmark-place-meta span {
+    border-radius: 10px;
+    padding: 5px 9px;
+}
+
+.cz-profile-main,
+.cz-list-main,
+.cz-admin-main {
+    gap: 18px;
+}
+
+.cz-profile-hero {
+    gap: 22px;
+    padding: clamp(22px, 4vw, 36px);
+}
+
+.cz-profile-hero h1 {
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 0.96;
+}
+
+.cz-profile-avatar,
+.cz-bookmark-avatar {
+    background: var(--cz-accent-soft);
+    border-color: var(--cz-line);
+    color: var(--cz-accent);
+}
+
+.cz-profile-grid {
+    gap: 14px;
+}
+
+.cz-profile-grid article,
+.cz-profile-report-card,
+.cz-profile-activity article,
+.cz-list-side-card {
+    padding: 20px;
+}
+
+.cz-profile-grid strong {
+    font-size: 42px;
+}
+
+.cz-profile-report-card,
+.cz-profile-report-card.is-empty {
+    background: color-mix(in srgb, var(--cz-surface) 88%, var(--cz-raised));
+}
+
+.cz-form-page,
+.cz-admin-page {
+    padding-block: clamp(24px, 5vw, 56px);
+}
+
+.cz-form-card {
+    gap: 22px;
+    padding: clamp(22px, 4vw, 34px);
+}
+
+.cz-form-heading h1,
+.cz-admin-header h1 {
+    font-size: clamp(32px, 4.5vw, 50px);
+    line-height: 1;
+}
+
+.cz-form-grid label span,
+.cz-admin-category-create-form label span,
+.cz-admin-category-edit-form label span {
+    letter-spacing: 0.02em;
+}
+
+.cz-form-grid select,
+.cz-form-grid textarea,
+.cz-form-grid input,
+.cz-admin-report-card select,
+.cz-admin-report-card input {
+    border-radius: 10px;
+    padding: 12px 13px;
+}
+
+.cz-form-alert {
+    border-radius: 10px;
+}
+
+.cz-admin-nav {
+    border-radius: 12px;
+    padding: 3px;
+}
+
+.cz-admin-nav a {
+    border-radius: 9px;
+    min-height: 38px;
+    padding-inline: 14px;
+}
+
+.cz-admin-moderation-grid section,
+.cz-admin-check,
+.cz-admin-category-meta {
+    border-radius: 10px;
+}
+
+.cz-admin-category-card {
+    gap: 16px;
+}
+
+.cz-admin-category-card-header {
+    align-items: start;
+}
+
+.cz-admin-category-edit-form,
+.cz-admin-category-create-form {
+    gap: 12px;
+}
+
+.cz-admin-category-delete-form .cz-list-danger {
+    width: auto;
+}
+
+@media (max-width: 1240px) {
+    .cz-dash-shell {
+        grid-template-columns: 235px minmax(0, 600px);
+        max-width: 900px;
+    }
+}
+
+@media (max-width: 900px) {
+    .cz-dash-shell,
+    .cz-profile-page .cz-dash-shell,
+    .cz-list-page .cz-dash-shell,
+    .cz-admin-shell-page .cz-dash-shell {
+        display: block;
+        max-width: none;
+    }
+
+    .cz-dash-sidebar {
+        padding-inline: 16px;
+    }
+
+    .cz-dash-right-rail,
+    .cz-explore-rail {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .cz-dash-post,
+    .cz-dash-composer {
+        padding-inline: 16px;
+    }
+
+    .cz-dash-review-form {
+        gap: 9px;
+    }
+
+    .cz-social-notification-card,
+    .cz-notification-card {
+        grid-template-columns: 38px minmax(0, 1fr);
+    }
+
+    .cz-social-notification-thumb,
+    .cz-notification-badge,
+    .cz-icon-dots {
+        display: none;
+    }
+}

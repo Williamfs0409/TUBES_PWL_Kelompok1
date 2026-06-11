@@ -16,13 +16,13 @@
             --surface-low: #eef4f0;
             --ink: #191c1d;
             --muted: #566154;
-            --line: #191c1d;
+            --line: #c5d2c4;
             --primary: #154212;
             --primary-2: #2d6429;
             --mint: #bcf0ae;
             --peach: #ffdbca;
             --danger: #b42318;
-            --shadow: 12px 12px 0 rgba(25, 28, 29, 0.1);
+            --shadow: 0 10px 24px rgba(25, 28, 29, 0.08);
         }
 
         * {
@@ -31,8 +31,8 @@
 
         body {
             background:
-                radial-gradient(circle at top left, rgba(188, 240, 174, 0.5), transparent 34rem),
-                linear-gradient(135deg, var(--surface), #eef4f0);
+                radial-gradient(circle at top left, rgba(188, 240, 174, 0.24), transparent 32rem),
+                linear-gradient(135deg, var(--surface), #f1f6f0);
             color: var(--ink);
             font-family: Inter, ui-sans-serif, system-ui, sans-serif;
             margin: 0;
@@ -52,7 +52,7 @@
 
         .intro {
             align-content: center;
-            border-right: 1.5px solid var(--line);
+            border-right: 1px solid var(--line);
             display: grid;
             gap: 28px;
             padding: clamp(32px, 7vw, 88px);
@@ -96,8 +96,8 @@
 
         .signal {
             background: rgba(255, 255, 255, 0.68);
-            border: 1.5px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
             padding: 18px;
         }
 
@@ -125,8 +125,8 @@
 
         .panel {
             background: #ffffff;
-            border: 1.5px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
             box-shadow: var(--shadow);
             padding: clamp(24px, 5vw, 38px);
         }
@@ -159,8 +159,8 @@
 
         input {
             background: var(--surface);
-            border: 1.5px solid var(--line);
-            border-radius: 8px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
             color: var(--ink);
             font: inherit;
             min-height: 48px;
@@ -169,7 +169,8 @@
         }
 
         input:focus {
-            box-shadow: 0 0 0 4px rgba(188, 240, 174, 0.55);
+            border-color: var(--primary-2);
+            box-shadow: 0 0 0 4px rgba(188, 240, 174, 0.36);
         }
 
         .password-wrap {

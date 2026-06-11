@@ -15,13 +15,13 @@
             --surface-low: #f0f3f1;
             --ink: #191c1d;
             --muted: #4b5548;
-            --line: #191c1d;
+            --line: #c5d2c4;
             --primary: #154212;
             --primary-2: #2d6429;
             --mint: #bcf0ae;
             --sage: #d1e8dd;
             --peach: #ffdbca;
-            --shadow: 12px 12px 0 rgba(25, 28, 29, 0.1);
+            --shadow: 0 10px 22px rgba(25, 28, 29, 0.08);
         }
 
         * {
@@ -56,7 +56,7 @@
             animation: topbar-drop 620ms ease both;
             background: rgba(248, 249, 250, 0.92);
             backdrop-filter: blur(12px);
-            border-bottom: 1.5px solid var(--line);
+            border-bottom: 1px solid var(--line);
             display: flex;
             gap: 24px;
             height: var(--topbar-height);
@@ -144,7 +144,7 @@
 
         .button:hover,
         .button:focus-visible {
-            box-shadow: 0 8px 20px rgba(25, 28, 29, 0.14);
+            box-shadow: 0 7px 18px rgba(25, 28, 29, 0.1);
             outline: none;
             transform: translateY(-1px);
         }
@@ -168,7 +168,7 @@
 
         .hero {
             align-items: center;
-            background: linear-gradient(180deg, rgba(188, 240, 174, 0.32), rgba(248, 249, 250, 1));
+            background: linear-gradient(180deg, rgba(188, 240, 174, 0.18), rgba(248, 249, 250, 1));
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(300px, 0.8fr);
             isolation: isolate;
@@ -204,6 +204,7 @@
             transform: translateX(-40%) rotate(8deg);
             width: 42%;
             z-index: 0;
+            opacity: 0.45;
         }
 
         .hero-copy {
@@ -255,7 +256,7 @@
 
         h1 span {
             background: rgba(188, 240, 174, 0.62);
-            background-image: linear-gradient(90deg, rgba(188, 240, 174, 0.72), rgba(255, 219, 202, 0.8), rgba(188, 240, 174, 0.72));
+            background-image: linear-gradient(90deg, rgba(188, 240, 174, 0.66), rgba(255, 219, 202, 0.62), rgba(188, 240, 174, 0.66));
             background-size: 220% 100%;
             border-radius: 12px;
             color: var(--primary);
@@ -289,8 +290,8 @@
 
         .floating-card {
             background: #ffffff;
-            border: 1.5px solid var(--line);
-            border-radius: 24px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
             box-shadow: var(--shadow);
             display: grid;
             gap: 10px;
@@ -425,8 +426,8 @@
         .launch-card,
         .gallery-card {
             background: #ffffff;
-            border: 1.5px solid var(--line);
-            border-radius: 24px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
             box-shadow: var(--shadow);
         }
 
@@ -435,7 +436,7 @@
             display: block;
             background-color: #ffffff;
             padding: 16px;
-            border-radius: 24px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
             position: relative;
         }
