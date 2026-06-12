@@ -62,12 +62,52 @@ dashboardPages.forEach((page) => {
         control.addEventListener('click', () => showPageToast(control.dataset.actionToast));
     });
 
+    const adminConfirmModal = page.querySelector('[data-admin-confirm-modal]');
+    const adminConfirmCopy = page.querySelector('[data-admin-confirm-modal-copy]');
+    const adminConfirmSubmit = page.querySelector('[data-admin-confirm-submit]');
+    const adminConfirmCancelButtons = [...page.querySelectorAll('[data-admin-confirm-cancel]')];
+    let pendingAdminUserForm = null;
+
+    const closeAdminConfirmModal = () => {
+        if (!adminConfirmModal) return;
+
+        adminConfirmModal.hidden = true;
+        adminConfirmModal.classList.remove('is-open');
+        pendingAdminUserForm = null;
+    };
+
+    const openAdminConfirmModal = (form, message) => {
+        if (!adminConfirmModal) return false;
+
+        pendingAdminUserForm = form;
+
+        if (adminConfirmCopy) {
+            adminConfirmCopy.textContent = message || 'Perubahan ini akan mempengaruhi akses user.';
+        }
+
+        adminConfirmModal.hidden = false;
+        window.requestAnimationFrame(() => adminConfirmModal.classList.add('is-open'));
+        adminConfirmSubmit?.focus();
+
+        return true;
+    };
+
+    adminConfirmCancelButtons.forEach((button) => {
+        button.addEventListener('click', closeAdminConfirmModal);
+    });
+
+    adminConfirmSubmit?.addEventListener('click', () => {
+        if (!pendingAdminUserForm) return;
+
+        const form = pendingAdminUserForm;
+        form.dataset.adminConfirmed = '1';
+        closeAdminConfirmModal();
+        form.requestSubmit();
+    });
+
     page.querySelectorAll('[data-admin-user-form]').forEach((form) => {
         const roleSelect = form.querySelector('[data-admin-role-select]');
         const suspendCheck = form.querySelector('[data-admin-suspend-check]');
-        const confirmBar = form.querySelector('[data-admin-confirm-bar]');
-        const confirmCheckbox = form.querySelector('[data-admin-confirm-checkbox]');
-        const confirmCopy = form.querySelector('[data-admin-confirm-copy]');
 
         const hasSensitiveChange = () => {
             const roleChanged = roleSelect ? String(roleSelect.value) !== String(form.dataset.originalRole || '') : false;
@@ -76,41 +116,38 @@ dashboardPages.forEach((page) => {
             return roleChanged || suspendChanged;
         };
 
-        const updateConfirmBar = () => {
-            if (!confirmBar) return;
+        const getSensitiveChangeMessage = () => {
+            const messages = [];
 
-            const isChanged = hasSensitiveChange();
-            confirmBar.hidden = !isChanged;
-
-            if (!isChanged && confirmCheckbox) {
-                confirmCheckbox.checked = false;
+            if (roleSelect && String(roleSelect.value) !== String(form.dataset.originalRole || '')) {
+                messages.push(`Role ${form.dataset.adminUserName || 'user'} akan diganti menjadi ${roleSelect.options[roleSelect.selectedIndex]?.text || 'role baru'}.`);
             }
 
-            if (isChanged && confirmCopy) {
-                const messages = [];
-
-                if (roleSelect && String(roleSelect.value) !== String(form.dataset.originalRole || '')) {
-                    messages.push(`Role akan diganti menjadi ${roleSelect.options[roleSelect.selectedIndex]?.text || 'role baru'}.`);
-                }
-
-                if (suspendCheck && String(suspendCheck.checked ? '1' : '0') !== String(form.dataset.originalSuspended || '0')) {
-                    messages.push(suspendCheck.checked ? 'Akun akan disuspend dan aksesnya dibatasi.' : 'Suspend akun akan dicabut.');
-                }
-
-                confirmCopy.textContent = messages.join(' ');
+            if (suspendCheck && String(suspendCheck.checked ? '1' : '0') !== String(form.dataset.originalSuspended || '0')) {
+                messages.push(
+                    suspendCheck.checked
+                        ? `Apakah kamu yakin ingin menangguhkan ${form.dataset.adminUserName || 'user'}? Tindakan ini akan membatasi akses mereka ke platform CityZen.`
+                        : `Suspend ${form.dataset.adminUserName || 'user'} akan dicabut dan aksesnya dibuka kembali.`,
+                );
             }
+
+            return messages.join(' ');
         };
 
-        roleSelect?.addEventListener('change', updateConfirmBar);
-        suspendCheck?.addEventListener('change', updateConfirmBar);
+        roleSelect?.addEventListener('change', () => {
+            delete form.dataset.adminConfirmed;
+        });
+        suspendCheck?.addEventListener('change', () => {
+            delete form.dataset.adminConfirmed;
+        });
 
         form.addEventListener('submit', (event) => {
-            if (!hasSensitiveChange() || confirmCheckbox?.checked) return;
+            if (!hasSensitiveChange() || form.dataset.adminConfirmed === '1') return;
 
             event.preventDefault();
-            updateConfirmBar();
-            confirmCheckbox?.focus();
-            showPageToast('Centang konfirmasi dulu sebelum menyimpan perubahan user.');
+            if (!openAdminConfirmModal(form, getSensitiveChangeMessage())) {
+                showPageToast('Konfirmasi perubahan user dulu sebelum menyimpan.');
+            }
         });
     });
 
@@ -130,6 +167,7 @@ dashboardPages.forEach((page) => {
     document.addEventListener('keydown', (event) => {
         if (event.key !== 'Escape') return;
 
+        closeAdminConfirmModal();
         userMenu?.classList.remove('is-open');
         userMenuToggle?.setAttribute('aria-expanded', 'false');
     });

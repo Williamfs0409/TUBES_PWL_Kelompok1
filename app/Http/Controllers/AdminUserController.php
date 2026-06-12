@@ -14,7 +14,8 @@ class AdminUserController extends Controller
     {
         $users = User::query()
             ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
-            ->select('users.*', 'roles.name as role_name')
+            ->leftJoin('profiles', 'profiles.user_id', '=', 'users.id')
+            ->select('users.*', 'roles.name as role_name', 'profiles.avatar_path as avatar_path')
             ->orderBy('users.name')
             ->get();
 

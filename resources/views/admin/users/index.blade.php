@@ -53,49 +53,72 @@
                     @endphp
                     <article class="cz-admin-report-card cz-admin-user-card is-role-{{ $roleSlug }} {{ $account->is_suspended ? 'is-suspended' : '' }}">
                         <div class="cz-admin-user-summary">
-                            <span class="cz-admin-role-badge is-{{ $roleSlug }}">{{ $roleName }}</span>
-                            <span class="cz-admin-user-state {{ $account->is_suspended ? 'is-warning' : '' }}">{{ $account->is_suspended ? 'Suspended' : 'Active' }}</span>
-                            <h2>{{ $account->name }}</h2>
-                            <p>{{ $account->email }}</p>
-                            <small>
-                                Joined {{ $account->created_at ? \Illuminate\Support\Carbon::parse($account->created_at)->diffForHumans() : 'recently' }}
-                                @if ($account->suspended_at)
-                                    &middot; Suspended {{ \Illuminate\Support\Carbon::parse($account->suspended_at)->diffForHumans() }}
+                            <span class="cz-admin-user-avatar" aria-hidden="true">
+                                @if ($account->avatar_path)
+                                    <img src="{{ route('users.avatar', $account->id) }}" alt="">
+                                @else
+                                    {{ strtoupper(substr($account->name, 0, 1)) }}
                                 @endif
-                            </small>
+                            </span>
+                            <div class="cz-admin-user-identity">
+                                <div class="cz-admin-user-badges">
+                                    <span class="cz-admin-role-badge is-{{ $roleSlug }}">{{ $roleName }}</span>
+                                    <span class="cz-admin-user-state {{ $account->is_suspended ? 'is-warning' : '' }}">{{ $account->is_suspended ? 'Suspended' : 'Active' }}</span>
+                                </div>
+                                <h2>{{ $account->name }}</h2>
+                                <p>{{ $account->email }}</p>
+                                <small>
+                                    Joined {{ $account->created_at ? \Illuminate\Support\Carbon::parse($account->created_at)->diffForHumans() : 'recently' }}
+                                    @if ($account->suspended_at)
+                                        &middot; Suspended {{ \Illuminate\Support\Carbon::parse($account->suspended_at)->diffForHumans() }}
+                                    @endif
+                                </small>
+                            </div>
                         </div>
 
-                        <form class="cz-admin-user-form" method="POST" action="{{ route('admin.users.update', $account->id) }}" data-admin-user-form data-original-role="{{ $account->role_id }}" data-original-suspended="{{ $account->is_suspended ? '1' : '0' }}">
+                        <form class="cz-admin-user-form" method="POST" action="{{ route('admin.users.update', $account->id) }}" data-admin-user-form data-original-role="{{ $account->role_id }}" data-original-suspended="{{ $account->is_suspended ? '1' : '0' }}" data-admin-user-name="{{ $account->name }}">
                             @csrf
                             @method('PATCH')
 
                             @if ($isSuperAdmin)
-                                <select name="role_id" required data-admin-role-select>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}" @selected($account->role_id === $role->id)>{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
+                                <label class="cz-admin-user-field">
+                                    <span>Role</span>
+                                    <select name="role_id" required data-admin-role-select>
+                                        @foreach ($roles as $role)
+                                            <option value="{{ $role->id }}" @selected($account->role_id === $role->id)>{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
                             @endif
 
-                            <label class="cz-admin-check cz-admin-suspend-check">
+                            <label class="cz-admin-check cz-admin-suspend-check" data-admin-suspend-control>
                                 <input name="is_suspended" type="checkbox" value="1" @checked($account->is_suspended) @disabled($currentUserId === $account->id) data-admin-suspend-check>
                                 Suspended
                             </label>
                             <button type="submit" @disabled($currentUserId === $account->id && ! $isSuperAdmin)>Save User</button>
-
-                            <div class="cz-admin-confirm-bar" hidden data-admin-confirm-bar>
-                                <strong>Konfirmasi perubahan akun</strong>
-                                <span data-admin-confirm-copy>Perubahan role atau suspend akan mempengaruhi akses user.</span>
-                                <label>
-                                    <input type="checkbox" data-admin-confirm-checkbox>
-                                    Saya yakin dengan perubahan ini.
-                                </label>
-                            </div>
                         </form>
                     </article>
                 @endforeach
             </section>
         </main>
+    </div>
+
+    <div class="cz-admin-modal" hidden data-admin-confirm-modal>
+        <div class="cz-admin-modal__backdrop" data-admin-confirm-cancel></div>
+        <section class="cz-admin-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="admin-confirm-title">
+            <div class="cz-admin-modal__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 9v4" /><path d="M12 17h.01" /><path d="M10.3 4.6 2.8 17.5A2 2 0 0 0 4.5 20h15a2 2 0 0 0 1.7-2.5L13.7 4.6a2 2 0 0 0-3.4 0Z" /></svg>
+            </div>
+            <div>
+                <p class="cz-admin-modal__eyebrow">Konfirmasi Akun</p>
+                <h2 id="admin-confirm-title">Konfirmasi penangguhan</h2>
+                <p data-admin-confirm-modal-copy>Perubahan ini akan membatasi akses user ke platform CityZen.</p>
+            </div>
+            <div class="cz-admin-modal__actions">
+                <button class="cz-admin-modal__cancel" type="button" data-admin-confirm-cancel>Batal</button>
+                <button class="cz-admin-modal__confirm" type="button" data-admin-confirm-submit>Ya, simpan</button>
+            </div>
+        </section>
     </div>
 </body>
 </html>

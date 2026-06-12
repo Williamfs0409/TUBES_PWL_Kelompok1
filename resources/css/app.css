@@ -5284,7 +5284,10 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 }
 
 .cz-admin-user-card {
-    gap: 12px;
+    align-items: center;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: minmax(320px, 1fr) minmax(520px, 1.25fr);
     padding: 18px 20px;
 }
 
@@ -5301,23 +5304,59 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 
 .cz-admin-user-summary {
     display: grid;
-    gap: 4px;
-    grid-template-columns: auto auto 1fr;
+    gap: 14px;
+    grid-template-columns: 62px minmax(0, 1fr);
+    min-width: 0;
 }
 
-.cz-admin-user-summary h2,
-.cz-admin-user-summary p,
-.cz-admin-user-summary small {
-    grid-column: 1 / -1;
+.cz-admin-user-avatar {
+    align-items: center;
+    background: color-mix(in srgb, var(--cz-accent) 18%, var(--cz-surface));
+    border: 1px solid color-mix(in srgb, var(--cz-accent) 36%, var(--cz-line));
+    border-radius: 18px;
+    color: var(--cz-accent);
+    display: inline-flex;
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    height: 58px;
+    justify-content: center;
+    overflow: hidden;
+    width: 58px;
+}
+
+.cz-admin-user-avatar img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.cz-admin-user-identity {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+}
+
+.cz-admin-user-badges {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .cz-admin-user-summary h2 {
     font-size: 22px;
     line-height: 1.05;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .cz-admin-user-summary p {
     font-size: 17px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .cz-admin-user-summary small {
@@ -5368,7 +5407,10 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 
 .cz-admin-user-form {
     align-items: end;
-    grid-template-columns: minmax(150px, 0.85fr) minmax(145px, 0.7fr) minmax(160px, 0.8fr);
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(150px, 0.85fr) minmax(150px, 0.75fr) minmax(150px, 0.7fr);
+    margin: 0;
 }
 
 .cz-admin-user-form select,
@@ -5377,13 +5419,39 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     min-height: 42px;
 }
 
+.cz-admin-user-field {
+    display: grid;
+    gap: 6px;
+}
+
+.cz-admin-user-field span {
+    color: var(--cz-muted);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
 .cz-admin-suspend-check {
+    align-items: center;
+    background: color-mix(in srgb, var(--cz-danger) 7%, var(--cz-surface));
     border-color: color-mix(in srgb, var(--cz-danger) 34%, var(--cz-line));
     color: var(--cz-danger);
+    justify-content: space-between;
+    padding-inline: 14px;
 }
 
 .cz-admin-suspend-check input {
     accent-color: var(--cz-danger);
+    cursor: pointer;
+    height: 18px;
+    order: 2;
+    width: 18px;
+}
+
+.cz-admin-user-form button {
+    box-shadow: 0 10px 22px color-mix(in srgb, var(--cz-accent) 22%, transparent);
+    white-space: nowrap;
 }
 
 .cz-admin-confirm-bar {
@@ -5420,6 +5488,139 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     display: inline-flex;
     font-weight: 900;
     gap: 8px;
+}
+
+.cz-admin-modal {
+    align-items: center;
+    display: grid;
+    inset: 0;
+    justify-items: center;
+    padding: 24px;
+    position: fixed;
+    z-index: 80;
+}
+
+.cz-admin-modal[hidden] {
+    display: none;
+}
+
+.cz-admin-modal__backdrop {
+    background:
+        radial-gradient(circle at 55% 45%, color-mix(in srgb, var(--cz-accent) 18%, transparent), transparent 34%),
+        rgba(4, 18, 34, 0.74);
+    backdrop-filter: blur(7px);
+    inset: 0;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 180ms ease;
+}
+
+.cz-admin-modal__dialog {
+    background: color-mix(in srgb, #263044 88%, var(--cz-surface));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+    color: #f7fbf6;
+    display: grid;
+    gap: 16px;
+    max-width: 390px;
+    opacity: 0;
+    padding: 22px;
+    position: relative;
+    transform: translateY(12px) scale(0.97);
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+    width: min(100%, 390px);
+}
+
+.cz-admin-modal.is-open .cz-admin-modal__backdrop,
+.cz-admin-modal.is-open .cz-admin-modal__dialog {
+    opacity: 1;
+}
+
+.cz-admin-modal.is-open .cz-admin-modal__dialog {
+    transform: translateY(0) scale(1);
+}
+
+.cz-admin-modal__icon {
+    align-items: center;
+    background: rgba(255, 138, 128, 0.16);
+    border: 1px solid rgba(255, 138, 128, 0.24);
+    border-radius: 999px;
+    color: #ffb5ae;
+    display: inline-flex;
+    height: 42px;
+    justify-content: center;
+    width: 42px;
+}
+
+.cz-admin-modal__icon svg {
+    fill: none;
+    height: 22px;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    width: 22px;
+}
+
+.cz-admin-modal__eyebrow {
+    color: #dfe8d8;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    margin: 0 0 7px;
+}
+
+.cz-admin-modal__dialog h2 {
+    color: #ffffff;
+    font-size: 22px;
+    line-height: 1.1;
+    margin: 0 0 10px;
+}
+
+.cz-admin-modal__dialog p {
+    color: #cbd5d2;
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.cz-admin-modal__actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.cz-admin-modal__actions button {
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 900;
+    min-height: 40px;
+    padding: 0 17px;
+    transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
+}
+
+.cz-admin-modal__actions button:hover {
+    transform: translateY(-1px);
+}
+
+.cz-admin-modal__cancel {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #dfe8d8;
+}
+
+.cz-admin-modal__confirm {
+    background: #ffd4cf;
+    border: 1px solid #ffd4cf;
+    color: #6f1b11;
 }
 
 /* Desktop app shell behavior: keep side columns fixed and scroll only the center column. */
@@ -5477,6 +5678,15 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 }
 
 @media (max-width: 900px) {
+    .cz-admin-user-card,
+    .cz-admin-user-form {
+        grid-template-columns: 1fr;
+    }
+
+    .cz-admin-user-form button {
+        width: 100%;
+    }
+
     .cz-dash-shell,
     .cz-profile-page .cz-dash-shell,
     .cz-list-page .cz-dash-shell,
