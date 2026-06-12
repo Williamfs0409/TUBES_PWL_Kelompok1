@@ -1830,72 +1830,21 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     margin-bottom: 18px;
 }
 
-.cz-admin-shell-page .cz-dash-sidebar {
-    background: #0c1729;
-    border-right-color: color-mix(in srgb, var(--cz-accent) 24%, #314055);
-    padding: 28px 20px 20px;
-}
-
-.cz-admin-shell-page .cz-dash-brand-mark {
-    border-color: color-mix(in srgb, var(--cz-accent) 70%, #ffffff);
-    border-radius: 12px;
-    height: 48px;
-    width: 48px;
-}
-
-.cz-admin-shell-page .cz-dash-brand strong {
-    color: var(--cz-accent);
-    font-size: 30px;
-}
-
-.cz-admin-shell-page .cz-dash-nav {
-    gap: 18px;
-    margin-top: 26px;
-}
-
 .cz-admin-shell-page .cz-dash-nav-kicker {
     color: color-mix(in srgb, var(--cz-muted) 82%, var(--cz-accent));
     display: block;
     font-size: 13px;
     font-weight: 900;
     letter-spacing: 0.06em;
-    margin: 14px 2px -4px;
+    margin: 10px 2px 0;
     text-transform: uppercase;
 }
 
-.cz-admin-shell-page .cz-dash-nav-link {
-    border-radius: 14px;
-    color: #d6e3d6;
-    font-size: 19px;
-    font-weight: 650;
-    gap: 20px;
-    min-height: 50px;
-    padding: 0 18px;
-}
-
-.cz-admin-shell-page .cz-dash-nav-link svg {
-    color: #cfe7cf;
-    height: 25px;
-    width: 25px;
-}
-
-.cz-admin-shell-page .cz-dash-nav-link:hover {
-    background: rgba(83, 212, 127, 0.08);
-    border-color: color-mix(in srgb, var(--cz-accent) 18%, transparent);
-    color: #ffffff;
-    transform: translateX(2px);
-}
-
 .cz-admin-shell-page .cz-dash-nav-link.is-active {
-    background: #31394e;
-    border-color: color-mix(in srgb, var(--cz-accent) 30%, #566078);
+    background: color-mix(in srgb, var(--cz-soft) 72%, transparent);
+    border-color: color-mix(in srgb, var(--cz-accent) 22%, var(--cz-line));
     color: var(--cz-accent);
     font-weight: 900;
-    transform: none;
-}
-
-.cz-admin-shell-page .cz-dash-nav-link.is-active svg {
-    color: var(--cz-accent);
 }
 
 .cz-admin-nav {
