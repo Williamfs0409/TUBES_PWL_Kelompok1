@@ -2,9 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use App\Models\User;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\URL;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -35,43 +33,3 @@ Artisan::command('cityzen:test-mail {to=debug@cityzen.test}', function (string $
         return self::FAILURE;
     }
 })->purpose('Send a CityZen SMTP diagnostic email.');
-
-Artisan::command('cityzen:test-verification-mail {email=debug@cityzen.test}', function (string $email) {
-    $user = new User([
-        'name' => 'Mail Diagnostic',
-        'email' => $email,
-        'password' => bcrypt('password'),
-    ]);
-    $user->id = 1;
-
-    $verificationUrl = URL::temporarySignedRoute(
-        'verification.verify',
-        now()->addMinutes(60),
-        [
-            'id' => $user->id,
-            'hash' => sha1($user->email),
-        ]
-    );
-
-    try {
-        Mail::send('emails.verify-email', [
-            'user' => $user,
-            'verificationUrl' => $verificationUrl,
-            'expiresMinutes' => 60,
-        ], function ($message) use ($user) {
-            $message
-                ->to($user->email, $user->name)
-                ->subject('Verify your CityZen email');
-        });
-
-        $this->info('send=ok');
-
-        return self::SUCCESS;
-    } catch (Throwable $exception) {
-        $this->error('send=fail');
-        $this->error($exception::class);
-        $this->error($exception->getMessage());
-
-        return self::FAILURE;
-    }
-})->purpose('Send a CityZen verification email diagnostic.');

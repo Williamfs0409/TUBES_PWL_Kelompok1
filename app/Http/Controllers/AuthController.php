@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Support\CityZenAccess;
-use App\Support\CityZenEmailVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -38,16 +38,12 @@ class AuthController extends Controller
 
         if (Schema::hasColumn('users', 'is_suspended') && $user->is_suspended) {
             return back()
-                ->withErrors(['email' => 'Akun CityZen ini sedang disuspend oleh admin.'])
+                ->with('suspended_warning', 'Akses Anda telah dibatasi oleh administrator. Silakan hubungi dukungan jika Anda merasa ini adalah kesalahan.')
                 ->onlyInput('email');
         }
 
         $request->session()->put('cityzen_user', CityZenAccess::sessionPayload($user));
         $request->session()->regenerate();
-
-        if (! $user->email_verified_at) {
-            return redirect()->route('verification.notice');
-        }
 
         return redirect('/dashboard');
     }
@@ -66,28 +62,44 @@ class AuthController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:80'],
             'email' => ['required', 'email', 'unique:users,email'],
+            'username' => [
+                'required',
+                'string',
+                'max:40',
+                'alpha_dash',
+                Rule::unique('profiles', 'username'),
+            ],
             'password' => ['required', 'min:4'],
         ]);
+
+        $profileUsername = $data['username'];
+        unset($data['username']);
 
         if (Schema::hasTable('roles') && Schema::hasColumn('users', 'role_id')) {
             $data['role_id'] = DB::table('roles')->where('slug', 'user')->value('id');
         }
 
+        if (Schema::hasColumn('users', 'email_verified_at')) {
+            $data['email_verified_at'] = now();
+        }
+
         $user = User::create($data);
+
+        if (Schema::hasTable('profiles')) {
+            DB::table('profiles')->updateOrInsert(
+                ['user_id' => $user->id],
+                [
+                    'username' => $profileUsername,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
 
         $request->session()->put('cityzen_user', CityZenAccess::sessionPayload($user));
         $request->session()->regenerate();
 
-        $sent = CityZenEmailVerification::send($user);
-
-        return redirect()
-            ->route('verification.notice')
-            ->with(
-                $sent ? 'status' : 'notice',
-                $sent
-                    ? 'Kami sudah mengirim link verifikasi ke email kamu.'
-                    : 'Akun dibuat, tapi email verifikasi belum terkirim. Cek konfigurasi SMTP lalu kirim ulang.'
-            );
+        return redirect('/dashboard')->with('status', 'Akun CityZen berhasil dibuat.');
     }
 
     public function logout(Request $request)

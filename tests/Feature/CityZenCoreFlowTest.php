@@ -11,9 +11,7 @@ use Database\Seeders\CityZenFoundationSeeder;
 use Database\Seeders\CityZenSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
@@ -90,38 +88,38 @@ class CityZenCoreFlowTest extends TestCase
         $this->assertSame(2, DB::table('place_photos')->where('place_id', $place->id)->count());
     }
 
-    public function test_new_user_must_verify_email_before_dashboard(): void
+    public function test_new_user_can_register_with_unique_username_and_open_dashboard(): void
     {
         $this->seed(CityZenFoundationSeeder::class);
-        Mail::fake();
 
         $this->post('/register', [
-            'name' => 'Verification User',
-            'email' => 'verify-user@cityzen.test',
+            'name' => 'Fresh User',
+            'username' => 'fresh_user',
+            'email' => 'fresh-user@cityzen.test',
             'password' => 'password',
-        ])->assertRedirect(route('verification.notice'));
+        ])->assertRedirect('/dashboard');
 
-        $user = User::where('email', 'verify-user@cityzen.test')->firstOrFail();
+        $user = User::where('email', 'fresh-user@cityzen.test')->firstOrFail();
         $session = ['cityzen_user' => CityZenAccess::sessionPayload($user)];
 
         $this->withSession($session)
             ->get('/dashboard')
-            ->assertRedirect(route('verification.notice'));
+            ->assertOk()
+            ->assertSee('CityZen', false);
 
-        $verificationUrl = URL::temporarySignedRoute(
-            'verification.verify',
-            now()->addMinutes(60),
-            [
-                'id' => $user->id,
-                'hash' => sha1($user->email),
-            ]
-        );
-
-        $this->withSession($session)
-            ->get($verificationUrl)
-            ->assertRedirect('/dashboard');
+        $this->assertDatabaseHas('profiles', [
+            'user_id' => $user->id,
+            'username' => 'fresh_user',
+        ]);
 
         $this->assertNotNull($user->fresh()->email_verified_at);
+
+        $this->post('/register', [
+            'name' => 'Duplicate User',
+            'username' => 'fresh_user',
+            'email' => 'fresh-user@cityzen.test',
+            'password' => 'password',
+        ])->assertSessionHasErrors(['username', 'email']);
     }
 
     public function test_user_can_delete_only_their_own_place(): void

@@ -261,6 +261,42 @@
             padding: 14px 16px;
         }
 
+        .suspended-warning {
+            align-items: flex-start;
+            background: #ffe0df;
+            border: 1.5px solid #e23b3b;
+            border-radius: 8px;
+            box-shadow: 0 7px 0 rgba(120, 25, 25, 0.12);
+            color: #9b1717;
+            display: grid;
+            gap: 12px;
+            grid-template-columns: auto minmax(0, 1fr);
+            line-height: 1.35;
+            margin: 0 0 20px;
+            padding: 15px 16px;
+        }
+
+        .suspended-warning svg {
+            color: #b31217;
+            height: 24px;
+            margin-top: 2px;
+            width: 24px;
+        }
+
+        .suspended-warning strong {
+            color: #a31313;
+            display: block;
+            font-size: 17px;
+            line-height: 1.15;
+        }
+
+        .suspended-warning span {
+            color: #9b1717;
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
         .button {
             align-items: center;
             border: 1.5px solid var(--line);
@@ -417,7 +453,8 @@
         }
 
         .error-list,
-        .notice {
+        .notice,
+        .suspended-warning {
             border-width: 1px;
             border-radius: 10px;
         }
@@ -474,10 +511,24 @@
         <section class="panel-wrap" aria-label="{{ $isRegister ? 'Register' : 'Login' }} form">
             <div class="panel">
                 <h2>{{ $isRegister ? 'Create account' : 'Login' }}</h2>
-                <p>{{ $isRegister ? 'Start your CityZen profile with a name, email, and password.' : 'Use your email and password to enter CityZen.' }}</p>
+                <p>{{ $isRegister ? 'Start your CityZen profile with a name, username, email, and password.' : 'Use your email and password to enter CityZen.' }}</p>
 
                 @if (session('notice'))
                     <div class="notice">{{ session('notice') }}</div>
+                @endif
+
+                @if (session('suspended_warning'))
+                    <div class="suspended-warning" role="alert">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3 2.8 20h18.4L12 3Z" />
+                            <path d="M12 8v6" />
+                            <path d="M12 17.5h.01" />
+                        </svg>
+                        <div>
+                            <strong>Akun Ditangguhkan</strong>
+                            <span>{{ session('suspended_warning') }}</span>
+                        </div>
+                    </div>
                 @endif
 
                 @if ($errors->any())
@@ -494,6 +545,14 @@
                             <label for="name">Name</label>
                             <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" required>
                             @error('name')
+                                <span class="error">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="field">
+                            <label for="username">Username</label>
+                            <input id="username" name="username" type="text" value="{{ old('username') }}" autocomplete="username" required maxlength="40">
+                            @error('username')
                                 <span class="error">{{ $message }}</span>
                             @enderror
                         </div>

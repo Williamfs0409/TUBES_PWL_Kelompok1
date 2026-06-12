@@ -28,7 +28,8 @@ class CityZenAuthenticate
         if (Schema::hasColumn('users', 'is_suspended') && $user->is_suspended) {
             $request->session()->forget('cityzen_user');
 
-            return redirect('/login')->withErrors(['email' => 'Akun CityZen ini sedang disuspend oleh admin.']);
+            return redirect('/login')
+                ->with('suspended_warning', 'Akses Anda telah dibatasi oleh administrator. Silakan hubungi dukungan jika Anda merasa ini adalah kesalahan.');
         }
 
         return $next($request);
