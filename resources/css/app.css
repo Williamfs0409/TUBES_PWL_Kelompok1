@@ -6097,6 +6097,155 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     padding-inline: 24px;
 }
 
+.cz-profile-current-badge {
+    align-items: center;
+    background: color-mix(in srgb, var(--cz-accent-soft) 78%, var(--cz-surface));
+    border: 1px solid color-mix(in srgb, var(--cz-accent) 24%, var(--cz-line));
+    border-radius: 999px;
+    color: var(--cz-accent);
+    display: inline-flex;
+    font-size: 14px;
+    font-weight: 900;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 8px 12px;
+}
+
+.cz-profile-current-badge svg,
+.cz-profile-badge-icon svg {
+    height: 18px;
+    width: 18px;
+}
+
+.cz-profile-badges {
+    background: color-mix(in srgb, var(--cz-surface) 95%, transparent);
+    border: 1px solid var(--cz-line);
+    border-radius: 14px;
+    display: grid;
+    gap: 18px;
+    padding: 22px;
+}
+
+.cz-profile-section-heading {
+    display: grid;
+    gap: 6px;
+}
+
+.cz-profile-section-heading h2 {
+    font-family: "Hanken Grotesk", Inter, sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+    margin: 0;
+}
+
+.cz-profile-section-heading p {
+    color: var(--cz-muted);
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 760px;
+}
+
+.cz-profile-badge-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.cz-profile-badge-card {
+    align-items: start;
+    background: color-mix(in srgb, var(--cz-raised) 78%, var(--cz-surface));
+    border: 1px solid var(--cz-line);
+    border-radius: 12px;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 16px;
+}
+
+.cz-profile-badge-card.is-earned {
+    border-color: color-mix(in srgb, var(--cz-accent) 26%, var(--cz-line));
+}
+
+.cz-profile-badge-card.is-empty {
+    grid-column: 1 / -1;
+}
+
+.cz-profile-badge-icon {
+    align-items: center;
+    background: color-mix(in srgb, var(--cz-accent) 18%, var(--cz-surface));
+    border: 1px solid color-mix(in srgb, var(--cz-accent) 24%, var(--cz-line));
+    border-radius: 12px;
+    color: var(--cz-accent);
+    display: grid;
+    height: 42px;
+    justify-items: center;
+    width: 42px;
+}
+
+.cz-profile-badge-card span {
+    color: color-mix(in srgb, var(--cz-muted) 76%, var(--cz-accent));
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.cz-profile-badge-card h3 {
+    font-size: 20px;
+    margin: 2px 0 4px;
+}
+
+.cz-profile-badge-card p,
+.cz-profile-badge-card small {
+    color: var(--cz-muted);
+    line-height: 1.45;
+    margin: 0;
+}
+
+.cz-profile-next-badges {
+    border-top: 1px solid color-mix(in srgb, var(--cz-line) 74%, transparent);
+    display: grid;
+    gap: 12px;
+    padding-top: 16px;
+}
+
+.cz-profile-next-badges h3 {
+    font-size: 17px;
+    margin: 0;
+}
+
+.cz-profile-next-badges article {
+    align-items: center;
+    display: grid;
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) minmax(120px, 220px);
+}
+
+.cz-profile-next-badges strong,
+.cz-profile-next-badges span {
+    display: block;
+}
+
+.cz-profile-next-badges span {
+    color: var(--cz-muted);
+    font-size: 14px;
+}
+
+.cz-profile-badge-progress {
+    background: color-mix(in srgb, var(--cz-line) 42%, transparent);
+    border-radius: 999px;
+    height: 9px;
+    overflow: hidden;
+}
+
+.cz-profile-badge-progress span {
+    background: var(--cz-accent);
+    border-radius: inherit;
+    height: 100%;
+}
+
 @media (max-width: 900px) {
     .cz-admin-user-card,
     .cz-admin-user-form {

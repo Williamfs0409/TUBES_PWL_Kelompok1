@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Support\CityZenBadges;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -135,26 +136,7 @@ class CityZenFoundationSeeder extends Seeder
             return;
         }
 
-        $badges = [
-            ['Explorer', 'Mulai aktif menjelajah dan membagikan ruang publik.', '5 posting'],
-            ['Contributor', 'Kontributor konsisten untuk data ruang publik.', '20 kontribusi'],
-            ['Guardian', 'Aktif menjaga fasilitas publik melalui laporan valid.', '10 laporan valid'],
-            ['City Hero', 'Kontributor unggulan komunitas CityZen.', 'Top contributor bulanan'],
-        ];
-
-        foreach ($badges as [$name, $description, $requirement]) {
-            DB::table('badges')->updateOrInsert(
-                ['slug' => Str::slug($name)],
-                [
-                    'name' => $name,
-                    'slug' => Str::slug($name),
-                    'description' => $description,
-                    'requirement_text' => $requirement,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
-        }
+        CityZenBadges::seedDefinitions();
     }
 
     private function seedCategories(): void

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Place;
 use App\Models\PlacePhoto;
 use App\Support\CityZenAccess;
+use App\Support\CityZenBadges;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -311,7 +312,7 @@ SVG;
         $photos = $request->file('photos', []);
         unset($data['photos']);
 
-        DB::transaction(function () use ($data, $photos, $cityzenUser) {
+        $createdPlace = DB::transaction(function () use ($data, $photos, $cityzenUser) {
             $place = Place::create($data);
 
             foreach ($photos as $index => $photo) {
@@ -334,7 +335,11 @@ SVG;
                     $place->update(['image' => $imagePath]);
                 }
             }
+
+            return $place;
         });
+
+        CityZenBadges::evaluateForUser((int) ($cityzenUser['id'] ?? 0), 'places', (int) $createdPlace->id);
 
         return redirect('/dashboard')->with('status', 'Tempat publik berhasil ditambahkan.');
     }

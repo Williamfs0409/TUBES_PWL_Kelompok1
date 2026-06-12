@@ -55,6 +55,7 @@
                         $title = $notification->title ?? 'CityZen notification';
                         $isRepost = str($title)->lower()->contains('reposted');
                         $isLike = str($title)->lower()->contains('liked');
+                        $isBadge = str($title)->lower()->contains('badge unlocked');
                         $actorName = $notification->actor_name ?: 'CityZen';
                         $actorInitial = strtoupper(substr($actorName, 0, 1));
                         $placeUrl = ($notification->related_table === 'places' && $notification->related_id) ? route('places.show', $notification->related_id) : null;
@@ -66,6 +67,8 @@
                                 <svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
                             @elseif ($isLike)
                                 <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" /></svg>
+                            @elseif ($isBadge)
+                                <svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></svg>
                             @else
                                 <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z" /><path d="M8 9h8" /><path d="M8 13h5" /></svg>
                             @endif

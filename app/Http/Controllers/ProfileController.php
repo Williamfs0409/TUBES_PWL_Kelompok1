@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\CityZenAccess;
+use App\Support\CityZenBadges;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -12,6 +13,8 @@ class ProfileController extends Controller
     public function __invoke(Request $request)
     {
         $userId = (int) $request->session()->get('cityzen_user.id');
+        CityZenBadges::evaluateForUser($userId, 'profiles', $userId);
+
         $profile = Schema::hasTable('profiles')
             ? DB::table('profiles')->where('user_id', $userId)->first()
             : null;
@@ -20,6 +23,8 @@ class ProfileController extends Controller
             'isAdmin' => CityZenAccess::isAdmin($request->session()->get('cityzen_user')),
             'stats' => CityZenAccess::profileStats($userId),
             'profile' => $profile,
+            'badges' => CityZenBadges::earnedForUser($userId),
+            'nextBadges' => CityZenBadges::nextForUser($userId),
         ]);
     }
 }

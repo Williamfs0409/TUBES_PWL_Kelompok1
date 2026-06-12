@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Place;
+use App\Support\CityZenBadges;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -88,6 +89,7 @@ class InteractionController extends Controller
             ]);
 
             $this->notifyPostOwner($place, (int) $userId, 'like');
+            CityZenBadges::evaluateForUser((int) $place->user_id, 'places', (int) $place->id);
         }
 
         $count = DB::table('likes')->where('place_id', $place->id)->count();
@@ -122,6 +124,8 @@ class InteractionController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
+            CityZenBadges::evaluateForUser((int) $place->user_id, 'places', (int) $place->id);
         }
 
         $count = DB::table('bookmarks')->where('place_id', $place->id)->count();
@@ -204,6 +208,8 @@ class InteractionController extends Controller
             'reviews_count' => (int) $ratingStats->total,
             'average_rating' => round((float) $ratingStats->average, 2),
         ]);
+
+        CityZenBadges::evaluateForUser((int) $userId, 'reviews', (int) $place->id);
 
         return back()->with('status', 'Review submitted.');
     }

@@ -41,6 +41,12 @@
                     @else
                         <p>Verified CityZen contributor. Bio bisa diisi dari menu Settings pada kartu akun.</p>
                     @endif
+                    @if (! empty($profile->current_badge))
+                        <span class="cz-profile-current-badge">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></svg>
+                            {{ $profile->current_badge }}
+                        </span>
+                    @endif
                     <div class="cz-profile-actions">
                         <a class="cz-profile-button cz-profile-button--secondary" href="{{ url('/dashboard') }}">Explore Dashboard</a>
                         <a class="cz-profile-button cz-profile-button--primary" href="{{ url('/settings') }}">Edit Profile</a>
@@ -64,6 +70,58 @@
                     <strong>{{ ($stats['reviews_count'] ?? 0) + ($stats['likes_count'] ?? 0) }}</strong>
                     <p>Total review dan like yang kamu berikan.</p>
                 </article>
+            </section>
+
+            <section class="cz-profile-badges" aria-label="Gamification badges">
+                <div class="cz-profile-section-heading">
+                    <span class="cz-profile-eyebrow">Gamification</span>
+                    <h2>CityZen Badges</h2>
+                    <p>Badge diberikan otomatis dari kontribusi nyata: tempat publik, review, laporan valid, dan engagement warga lain.</p>
+                </div>
+
+                <div class="cz-profile-badge-grid">
+                    @forelse (($badges ?? collect()) as $badge)
+                        <article class="cz-profile-badge-card is-earned">
+                            <span class="cz-profile-badge-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></svg>
+                            </span>
+                            <div>
+                                <span>Unlocked</span>
+                                <h3>{{ $badge->name }}</h3>
+                                <p>{{ $badge->description }}</p>
+                                <small>{{ $badge->earned_at ? \Illuminate\Support\Carbon::parse($badge->earned_at)->diffForHumans() : 'baru saja' }}</small>
+                            </div>
+                        </article>
+                    @empty
+                        <article class="cz-profile-badge-card is-empty">
+                            <span class="cz-profile-badge-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></svg>
+                            </span>
+                            <div>
+                                <span>Belum ada badge</span>
+                                <h3>Mulai dari kontribusi pertama.</h3>
+                                <p>Tambahkan tempat publik, beri review, atau kirim laporan valid untuk membuka badge CityZen.</p>
+                            </div>
+                        </article>
+                    @endforelse
+                </div>
+
+                @if (($nextBadges ?? collect())->isNotEmpty())
+                    <div class="cz-profile-next-badges">
+                        <h3>Target berikutnya</h3>
+                        @foreach ($nextBadges as $badge)
+                            <article>
+                                <div>
+                                    <strong>{{ $badge->name }}</strong>
+                                    <span>{{ $badge->current }} / {{ $badge->target }} &middot; {{ $badge->requirement_text }}</span>
+                                </div>
+                                <span class="cz-profile-badge-progress" aria-label="{{ $badge->percent }} percent complete">
+                                    <span style="width: {{ $badge->percent }}%"></span>
+                                </span>
+                            </article>
+                        @endforeach
+                    </div>
+                @endif
             </section>
 
             <section class="cz-profile-report-card {{ ($stats['reports_drafted'] ?? 0) > 0 ? '' : 'is-empty' }}">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use App\Models\ReportStatus;
 use App\Support\CityZenAccess;
+use App\Support\CityZenBadges;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -78,6 +79,12 @@ class AdminReportController extends Controller
 
         if ((int) $oldStatusId !== (int) $report->report_status_id || filled($report->admin_note)) {
             $this->notifyReporter($report);
+        }
+
+        $statusSlug = Str::slug((string) ($report->status?->slug ?: $report->status?->name));
+
+        if (in_array($statusSlug, ['verified', 'resolved'], true)) {
+            CityZenBadges::evaluateForUser((int) $report->user_id, 'reports', (int) $report->id);
         }
 
         return back()->with('status', 'Status laporan berhasil diperbarui.');
