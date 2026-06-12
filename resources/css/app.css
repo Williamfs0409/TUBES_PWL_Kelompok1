@@ -5283,13 +5283,71 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
         auto;
 }
 
+.cz-admin-user-filters {
+    align-items: center;
+    background: color-mix(in srgb, var(--cz-surface) 84%, transparent);
+    border: 1px solid var(--cz-line);
+    border-radius: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: space-between;
+    padding: 12px 14px;
+}
+
+.cz-admin-user-filters div {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cz-admin-user-filters span {
+    color: var(--cz-muted);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    margin-right: 2px;
+    text-transform: uppercase;
+}
+
+.cz-admin-user-filters a {
+    align-items: center;
+    border: 1px solid color-mix(in srgb, var(--cz-line) 82%, transparent);
+    border-radius: 999px;
+    color: var(--cz-muted);
+    display: inline-flex;
+    font-size: 13px;
+    font-weight: 900;
+    min-height: 34px;
+    padding: 0 13px;
+    text-decoration: none;
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease,
+        transform 160ms ease;
+}
+
+.cz-admin-user-filters a:hover {
+    border-color: color-mix(in srgb, var(--cz-accent) 42%, var(--cz-line));
+    color: var(--cz-ink);
+    transform: translateY(-1px);
+}
+
+.cz-admin-user-filters a.is-active {
+    background: var(--cz-accent);
+    border-color: var(--cz-accent);
+    color: #062313;
+}
+
 .cz-admin-user-card {
     align-items: center;
     background:
         linear-gradient(180deg, color-mix(in srgb, var(--cz-surface) 96%, var(--cz-accent) 4%), var(--cz-surface));
     display: grid;
     gap: 28px;
-    grid-template-columns: minmax(310px, 1.1fr) minmax(360px, 0.95fr);
+    grid-template-columns: minmax(310px, 1fr) minmax(430px, 0.95fr);
     padding: 18px 22px;
 }
 
@@ -5415,8 +5473,8 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 .cz-admin-user-form {
     align-items: end;
     display: grid;
-    gap: 12px;
-    grid-template-columns: minmax(150px, 1fr) minmax(190px, 1.2fr);
+    gap: 14px;
+    grid-template-columns: minmax(170px, 0.9fr) minmax(230px, 1.1fr);
     justify-self: stretch;
     margin: 0;
 }
@@ -5440,14 +5498,31 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 }
 
 .cz-admin-user-form select {
-    background:
-        linear-gradient(180deg, color-mix(in srgb, var(--cz-raised) 94%, transparent), var(--cz-surface));
+    appearance: auto;
+    background-color: var(--cz-surface);
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--cz-raised) 94%, transparent), var(--cz-surface));
     border: 1px solid color-mix(in srgb, var(--cz-accent) 18%, var(--cz-line));
     border-radius: 12px;
     color: var(--cz-ink);
     cursor: pointer;
     font-weight: 850;
     padding: 0 14px;
+}
+
+.cz-admin-user-form select option {
+    background: #f8fbf4;
+    color: #0d1a12;
+    font-weight: 800;
+}
+
+.cz-dashboard-page[data-theme='dark'] .cz-admin-user-form select {
+    background-color: #07170f;
+    color: #f4fbf0;
+}
+
+.cz-dashboard-page[data-theme='dark'] .cz-admin-user-form select option {
+    background: #07170f;
+    color: #f4fbf0;
 }
 
 .cz-admin-user-field--status {
@@ -5462,14 +5537,14 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     color: var(--cz-danger);
     display: grid;
     gap: 10px;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 22px minmax(92px, 1fr) 50px;
     min-width: 0;
     padding: 0 13px;
     position: relative;
 }
 
 .cz-admin-user-form:not(:has(select)) {
-    grid-template-columns: minmax(190px, 260px);
+    grid-template-columns: minmax(230px, 280px);
     justify-content: end;
 }
 
@@ -5504,6 +5579,7 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cz-line) 70%, transparent);
     display: inline-flex;
     height: 26px;
+    justify-self: end;
     position: relative;
     transition:
         background 160ms ease,
@@ -5614,8 +5690,8 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 
 .cz-admin-modal__backdrop {
     background:
-        radial-gradient(circle at 55% 45%, color-mix(in srgb, var(--cz-accent) 18%, transparent), transparent 34%),
-        rgba(4, 18, 34, 0.74);
+        radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--cz-accent) 24%, transparent), transparent 36%),
+        linear-gradient(135deg, rgba(2, 28, 17, 0.78), rgba(4, 18, 34, 0.82));
     backdrop-filter: blur(7px);
     inset: 0;
     opacity: 0;
@@ -5624,8 +5700,9 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 }
 
 .cz-admin-modal__dialog {
-    background: color-mix(in srgb, #263044 88%, var(--cz-surface));
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        linear-gradient(145deg, color-mix(in srgb, #223427 68%, #263044), color-mix(in srgb, #1b2535 76%, var(--cz-surface)));
+    border: 1px solid color-mix(in srgb, var(--cz-accent) 22%, rgba(255, 255, 255, 0.12));
     border-radius: 18px;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
     color: #f7fbf6;
@@ -5653,10 +5730,10 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 
 .cz-admin-modal__icon {
     align-items: center;
-    background: rgba(255, 138, 128, 0.16);
-    border: 1px solid rgba(255, 138, 128, 0.24);
+    background: color-mix(in srgb, var(--cz-accent) 16%, rgba(255, 138, 128, 0.1));
+    border: 1px solid color-mix(in srgb, var(--cz-accent) 26%, rgba(255, 138, 128, 0.24));
     border-radius: 999px;
-    color: #ffb5ae;
+    color: #d7f7cf;
     display: inline-flex;
     height: 42px;
     justify-content: center;
@@ -5674,7 +5751,7 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 }
 
 .cz-admin-modal__eyebrow {
-    color: #dfe8d8;
+    color: #b9efc8;
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 0.04em;

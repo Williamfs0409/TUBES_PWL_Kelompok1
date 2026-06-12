@@ -45,6 +45,22 @@
                 <div class="cz-form-alert cz-form-alert--success">{{ session('status') }}</div>
             @endif
 
+            <section class="cz-admin-user-filters" aria-label="Filter users">
+                <div>
+                    <span>Status</span>
+                    <a class="{{ ($statusFilter ?? 'all') === 'all' ? 'is-active' : '' }}" href="{{ route('admin.users', array_filter(['role' => ($roleFilter ?? 'all') !== 'all' ? $roleFilter : null])) }}">All</a>
+                    <a class="{{ ($statusFilter ?? 'all') === 'active' ? 'is-active' : '' }}" href="{{ route('admin.users', array_filter(['status' => 'active', 'role' => ($roleFilter ?? 'all') !== 'all' ? $roleFilter : null])) }}">Active</a>
+                    <a class="{{ ($statusFilter ?? 'all') === 'suspended' ? 'is-active' : '' }}" href="{{ route('admin.users', array_filter(['status' => 'suspended', 'role' => ($roleFilter ?? 'all') !== 'all' ? $roleFilter : null])) }}">Suspended</a>
+                </div>
+                <div>
+                    <span>Role</span>
+                    <a class="{{ ($roleFilter ?? 'all') === 'all' ? 'is-active' : '' }}" href="{{ route('admin.users', array_filter(['status' => ($statusFilter ?? 'all') !== 'all' ? $statusFilter : null])) }}">All roles</a>
+                    @foreach ($roles as $role)
+                        <a class="{{ ($roleFilter ?? 'all') === $role->slug ? 'is-active' : '' }}" href="{{ route('admin.users', array_filter(['status' => ($statusFilter ?? 'all') !== 'all' ? $statusFilter : null, 'role' => $role->slug])) }}">{{ $role->name }}</a>
+                    @endforeach
+                </div>
+            </section>
+
             <section class="cz-admin-report-list">
                 @foreach ($users as $account)
                     @php

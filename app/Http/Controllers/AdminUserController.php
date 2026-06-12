@@ -12,16 +12,33 @@ class AdminUserController extends Controller
 {
     public function index(Request $request)
     {
+        $statusFilter = in_array($request->query('status'), ['active', 'suspended'], true)
+            ? $request->query('status')
+            : 'all';
+        $roleFilter = $request->query('role', 'all');
+        $roles = Schema::hasTable('roles') ? DB::table('roles')->orderBy('id')->get() : collect();
+
+        if ($roleFilter !== 'all' && ! $roles->contains('slug', $roleFilter)) {
+            $roleFilter = 'all';
+        }
+
         $users = User::query()
             ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
             ->leftJoin('profiles', 'profiles.user_id', '=', 'users.id')
             ->select('users.*', 'roles.name as role_name', 'profiles.avatar_path as avatar_path')
+            ->when($statusFilter === 'active', fn ($query) => $query->where(function ($query) {
+                $query->whereNull('users.is_suspended')->orWhere('users.is_suspended', false);
+            }))
+            ->when($statusFilter === 'suspended', fn ($query) => $query->where('users.is_suspended', true))
+            ->when($roleFilter !== 'all', fn ($query) => $query->where('roles.slug', $roleFilter))
             ->orderBy('users.name')
             ->get();
 
         return view('admin.users.index', [
             'users' => $users,
-            'roles' => Schema::hasTable('roles') ? DB::table('roles')->orderBy('id')->get() : collect(),
+            'roles' => $roles,
+            'statusFilter' => $statusFilter,
+            'roleFilter' => $roleFilter,
             'isSuperAdmin' => CityZenAccess::isSuperAdmin($request->session()->get('cityzen_user')),
             'currentUserId' => $request->session()->get('cityzen_user.id'),
         ]);
