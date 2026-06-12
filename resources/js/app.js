@@ -63,10 +63,12 @@ dashboardPages.forEach((page) => {
     });
 
     const adminConfirmModal = page.querySelector('[data-admin-confirm-modal]');
+    const adminConfirmTitle = page.querySelector('[data-admin-confirm-modal-title]');
     const adminConfirmCopy = page.querySelector('[data-admin-confirm-modal-copy]');
     const adminConfirmSubmit = page.querySelector('[data-admin-confirm-submit]');
     const adminConfirmCancelButtons = [...page.querySelectorAll('[data-admin-confirm-cancel]')];
     let pendingAdminUserForm = null;
+    let pendingAdminRollback = null;
 
     const closeAdminConfirmModal = () => {
         if (!adminConfirmModal) return;
@@ -74,15 +76,31 @@ dashboardPages.forEach((page) => {
         adminConfirmModal.hidden = true;
         adminConfirmModal.classList.remove('is-open');
         pendingAdminUserForm = null;
+        pendingAdminRollback = null;
     };
 
-    const openAdminConfirmModal = (form, message) => {
+    const cancelAdminConfirmModal = () => {
+        pendingAdminRollback?.();
+        closeAdminConfirmModal();
+    };
+
+    const openAdminConfirmModal = (form, options = {}) => {
         if (!adminConfirmModal) return false;
 
         pendingAdminUserForm = form;
+        pendingAdminRollback = options.rollback || null;
+
+        if (adminConfirmTitle) {
+            adminConfirmTitle.textContent = options.title || 'Konfirmasi perubahan';
+        }
 
         if (adminConfirmCopy) {
-            adminConfirmCopy.textContent = message || 'Perubahan ini akan mempengaruhi akses user.';
+            adminConfirmCopy.textContent = options.message || 'Perubahan ini akan mempengaruhi akses user.';
+        }
+
+        if (adminConfirmSubmit) {
+            adminConfirmSubmit.textContent = options.action || 'Ya, simpan';
+            adminConfirmSubmit.classList.toggle('is-danger', Boolean(options.danger));
         }
 
         adminConfirmModal.hidden = false;
@@ -93,7 +111,7 @@ dashboardPages.forEach((page) => {
     };
 
     adminConfirmCancelButtons.forEach((button) => {
-        button.addEventListener('click', closeAdminConfirmModal);
+        button.addEventListener('click', cancelAdminConfirmModal);
     });
 
     adminConfirmSubmit?.addEventListener('click', () => {
@@ -116,28 +134,62 @@ dashboardPages.forEach((page) => {
             return roleChanged || suspendChanged;
         };
 
-        const getSensitiveChangeMessage = () => {
-            const messages = [];
+        const getChangePayload = () => {
+            const userName = form.dataset.adminUserName || 'user';
+            const roleChanged = roleSelect ? String(roleSelect.value) !== String(form.dataset.originalRole || '') : false;
+            const suspendChanged = suspendCheck ? String(suspendCheck.checked ? '1' : '0') !== String(form.dataset.originalSuspended || '0') : false;
 
-            if (roleSelect && String(roleSelect.value) !== String(form.dataset.originalRole || '')) {
-                messages.push(`Role ${form.dataset.adminUserName || 'user'} akan diganti menjadi ${roleSelect.options[roleSelect.selectedIndex]?.text || 'role baru'}.`);
+            if (suspendChanged) {
+                const willSuspend = Boolean(suspendCheck?.checked);
+
+                return {
+                    title: willSuspend ? 'Konfirmasi penangguhan' : 'Konfirmasi pemulihan',
+                    message: willSuspend
+                        ? `Apakah kamu yakin ingin menangguhkan ${userName}? Tindakan ini akan membatasi akses mereka ke platform CityZen.`
+                        : `Pulihkan akses ${userName}? Setelah dikonfirmasi, akun ini bisa login dan memakai fitur CityZen kembali.`,
+                    action: willSuspend ? 'Ya, Suspend' : 'Ya, Pulihkan',
+                    danger: willSuspend,
+                };
             }
 
-            if (suspendCheck && String(suspendCheck.checked ? '1' : '0') !== String(form.dataset.originalSuspended || '0')) {
-                messages.push(
-                    suspendCheck.checked
-                        ? `Apakah kamu yakin ingin menangguhkan ${form.dataset.adminUserName || 'user'}? Tindakan ini akan membatasi akses mereka ke platform CityZen.`
-                        : `Suspend ${form.dataset.adminUserName || 'user'} akan dicabut dan aksesnya dibuka kembali.`,
-                );
+            if (roleChanged) {
+                const nextRole = roleSelect.options[roleSelect.selectedIndex]?.text || 'role baru';
+
+                return {
+                    title: 'Konfirmasi perubahan role',
+                    message: `Ubah role ${userName} menjadi ${nextRole}? Perubahan role akan mempengaruhi akses menu dan izin administrasi.`,
+                    action: 'Ya, Ubah Role',
+                    danger: false,
+                };
             }
 
-            return messages.join(' ');
+            return {
+                title: 'Konfirmasi perubahan',
+                message: 'Perubahan ini akan mempengaruhi akses user.',
+                action: 'Ya, simpan',
+                danger: false,
+            };
+        };
+
+        const confirmImmediateChange = (rollback) => {
+            delete form.dataset.adminConfirmed;
+            openAdminConfirmModal(form, { ...getChangePayload(), rollback });
         };
 
         roleSelect?.addEventListener('change', () => {
-            delete form.dataset.adminConfirmed;
+            const previousValue = form.dataset.originalRole || '';
+            confirmImmediateChange(() => {
+                roleSelect.value = previousValue;
+            });
         });
         suspendCheck?.addEventListener('change', () => {
+            const previousChecked = String(form.dataset.originalSuspended || '0') === '1';
+            confirmImmediateChange(() => {
+                suspendCheck.checked = previousChecked;
+            });
+        });
+
+        form.addEventListener('reset', () => {
             delete form.dataset.adminConfirmed;
         });
 
@@ -145,7 +197,7 @@ dashboardPages.forEach((page) => {
             if (!hasSensitiveChange() || form.dataset.adminConfirmed === '1') return;
 
             event.preventDefault();
-            if (!openAdminConfirmModal(form, getSensitiveChangeMessage())) {
+            if (!openAdminConfirmModal(form, getChangePayload())) {
                 showPageToast('Konfirmasi perubahan user dulu sebelum menyimpan.');
             }
         });

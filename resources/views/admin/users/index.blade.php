@@ -91,11 +91,17 @@
                                 </label>
                             @endif
 
-                            <label class="cz-admin-check cz-admin-suspend-check" data-admin-suspend-control>
-                                <input name="is_suspended" type="checkbox" value="1" @checked($account->is_suspended) @disabled($currentUserId === $account->id) data-admin-suspend-check>
-                                Suspended
+                            <label class="cz-admin-user-field cz-admin-user-field--status" data-admin-suspend-control>
+                                <span>Status</span>
+                                <span class="cz-admin-suspend-toggle">
+                                    <span class="cz-admin-suspend-toggle__icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="m8.5 8.5 7 7" /></svg>
+                                    </span>
+                                    <strong>Suspended</strong>
+                                    <input name="is_suspended" type="checkbox" value="1" @checked($account->is_suspended) @disabled($currentUserId === $account->id) data-admin-suspend-check>
+                                    <i aria-hidden="true"></i>
+                                </span>
                             </label>
-                            <button type="submit" @disabled($currentUserId === $account->id && ! $isSuperAdmin)>Save User</button>
                         </form>
                     </article>
                 @endforeach
@@ -111,7 +117,7 @@
             </div>
             <div>
                 <p class="cz-admin-modal__eyebrow">Konfirmasi Akun</p>
-                <h2 id="admin-confirm-title">Konfirmasi penangguhan</h2>
+                <h2 id="admin-confirm-title" data-admin-confirm-modal-title>Konfirmasi perubahan</h2>
                 <p data-admin-confirm-modal-copy>Perubahan ini akan membatasi akses user ke platform CityZen.</p>
             </div>
             <div class="cz-admin-modal__actions">
