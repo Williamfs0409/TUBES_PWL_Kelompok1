@@ -1830,6 +1830,74 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     margin-bottom: 18px;
 }
 
+.cz-admin-shell-page .cz-dash-sidebar {
+    background: #0c1729;
+    border-right-color: color-mix(in srgb, var(--cz-accent) 24%, #314055);
+    padding: 28px 20px 20px;
+}
+
+.cz-admin-shell-page .cz-dash-brand-mark {
+    border-color: color-mix(in srgb, var(--cz-accent) 70%, #ffffff);
+    border-radius: 12px;
+    height: 48px;
+    width: 48px;
+}
+
+.cz-admin-shell-page .cz-dash-brand strong {
+    color: var(--cz-accent);
+    font-size: 30px;
+}
+
+.cz-admin-shell-page .cz-dash-nav {
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.cz-admin-shell-page .cz-dash-nav-kicker {
+    color: color-mix(in srgb, var(--cz-muted) 82%, var(--cz-accent));
+    display: block;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    margin: 14px 2px -4px;
+    text-transform: uppercase;
+}
+
+.cz-admin-shell-page .cz-dash-nav-link {
+    border-radius: 14px;
+    color: #d6e3d6;
+    font-size: 19px;
+    font-weight: 650;
+    gap: 20px;
+    min-height: 50px;
+    padding: 0 18px;
+}
+
+.cz-admin-shell-page .cz-dash-nav-link svg {
+    color: #cfe7cf;
+    height: 25px;
+    width: 25px;
+}
+
+.cz-admin-shell-page .cz-dash-nav-link:hover {
+    background: rgba(83, 212, 127, 0.08);
+    border-color: color-mix(in srgb, var(--cz-accent) 18%, transparent);
+    color: #ffffff;
+    transform: translateX(2px);
+}
+
+.cz-admin-shell-page .cz-dash-nav-link.is-active {
+    background: #31394e;
+    border-color: color-mix(in srgb, var(--cz-accent) 30%, #566078);
+    color: var(--cz-accent);
+    font-weight: 900;
+    transform: none;
+}
+
+.cz-admin-shell-page .cz-dash-nav-link.is-active svg {
+    color: var(--cz-accent);
+}
+
 .cz-admin-nav {
     background: color-mix(in srgb, var(--cz-surface) 92%, transparent);
     border: 1px solid var(--cz-line);
@@ -3938,7 +4006,8 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
         radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--cz-accent) 18%, transparent), transparent 32%),
         linear-gradient(135deg, color-mix(in srgb, var(--cz-surface) 88%, #183622), color-mix(in srgb, var(--cz-raised) 80%, var(--cz-surface)));
     grid-template-columns: minmax(0, 1fr) auto auto;
-    padding: 36px 38px;
+    gap: 22px;
+    padding: 34px 36px;
 }
 
 .cz-admin-category-hero h1 {
@@ -3953,28 +4022,28 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 .cz-admin-category-hero-actions {
     align-items: center;
     display: flex;
-    gap: 18px;
+    gap: 14px;
 }
 
 .cz-admin-category-total {
     align-items: center;
     background: color-mix(in srgb, var(--cz-accent) 14%, var(--cz-raised));
     border: 1px solid color-mix(in srgb, var(--cz-accent) 38%, var(--cz-line));
-    border-radius: 16px;
+    border-radius: 14px;
     display: inline-grid;
-    min-width: 86px;
-    padding: 9px 18px;
+    min-width: 74px;
+    padding: 8px 14px;
 }
 
 .cz-admin-category-total strong {
     color: var(--cz-accent);
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1;
 }
 
 .cz-admin-category-total small {
     color: color-mix(in srgb, var(--cz-accent) 72%, var(--cz-muted));
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 900;
 }
 
@@ -3982,26 +4051,26 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     align-items: center;
     background: var(--cz-accent);
     border: 1px solid color-mix(in srgb, var(--cz-accent) 88%, #ffffff);
-    border-radius: 14px;
-    box-shadow: 0 16px 28px color-mix(in srgb, var(--cz-accent) 24%, transparent);
+    border-radius: 13px;
+    box-shadow: 0 12px 22px color-mix(in srgb, var(--cz-accent) 20%, transparent);
     color: #062313;
     display: inline-flex;
     font-weight: 900;
-    gap: 10px;
-    min-height: 58px;
-    padding: 0 26px;
+    gap: 9px;
+    min-height: 46px;
+    padding: 0 20px;
     text-decoration: none;
     transition: transform 160ms ease, box-shadow 160ms ease;
     white-space: nowrap;
 }
 
 .cz-admin-category-add-link span {
-    font-size: 30px;
+    font-size: 24px;
     line-height: 1;
 }
 
 .cz-admin-category-add-link:hover {
-    box-shadow: 0 20px 34px color-mix(in srgb, var(--cz-accent) 30%, transparent);
+    box-shadow: 0 15px 28px color-mix(in srgb, var(--cz-accent) 26%, transparent);
     transform: translateY(-2px);
 }
 
@@ -4009,7 +4078,8 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     background:
         linear-gradient(135deg, color-mix(in srgb, var(--cz-surface) 92%, var(--cz-accent) 8%), var(--cz-surface));
     display: grid;
-    gap: 20px;
+    gap: 22px;
+    margin-bottom: 28px;
     scroll-margin-top: 24px;
 }
 
@@ -4072,8 +4142,8 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
         radial-gradient(circle at 94% 12%, color-mix(in srgb, var(--cz-accent) 9%, transparent), transparent 26%),
         linear-gradient(180deg, color-mix(in srgb, var(--cz-surface) 95%, var(--cz-accent) 5%), var(--cz-surface));
     border-color: color-mix(in srgb, var(--cz-accent) 28%, var(--cz-line));
-    gap: 24px;
-    padding: 28px 32px;
+    gap: 28px;
+    padding: 30px 34px;
 }
 
 .cz-admin-category-card-header {

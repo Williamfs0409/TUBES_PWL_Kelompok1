@@ -41,6 +41,7 @@
             <span>Bookmarks</span>
         </a>
         @if ($isAdmin ?? false)
+            <span class="cz-dash-nav-kicker">Management</span>
             <a class="cz-dash-nav-link {{ $activeNav === 'admin' ? 'is-active' : '' }}" href="{{ url('/admin') }}">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z" /><path d="M8 9h8" /><path d="M8 13h5" /><path d="M8 17h3" /></svg>
                 <span>Admin</span>
