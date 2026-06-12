@@ -6002,6 +6002,34 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     }
 }
 
+/* Keep the shared sidebar visually stable across dashboard, list, profile, and admin pages. */
+.cz-dash-sidebar {
+    box-sizing: border-box;
+    width: 260px;
+}
+
+.cz-dash-nav {
+    align-content: start;
+}
+
+.cz-dash-nav-kicker,
+.cz-admin-shell-page .cz-dash-nav-kicker {
+    color: color-mix(in srgb, var(--cz-muted) 82%, var(--cz-accent));
+    display: block;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    line-height: 18px;
+    margin: 14px 13px 4px;
+    min-height: 18px;
+    text-transform: uppercase;
+}
+
+.cz-dash-nav-link.is-active,
+.cz-admin-shell-page .cz-dash-nav-link.is-active {
+    transform: none;
+}
+
 @media (max-width: 900px) {
     .cz-admin-user-card,
     .cz-admin-user-form {
@@ -6022,6 +6050,7 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 
     .cz-dash-sidebar {
         padding-inline: 16px;
+        width: auto;
     }
 
     .cz-dash-right-rail,
