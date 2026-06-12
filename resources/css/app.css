@@ -6030,6 +6030,70 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
     transform: none;
 }
 
+/* Home composer polish: tighter rhythm and a calmer social-feed input surface. */
+.cz-dash-composer {
+    align-items: start;
+    gap: 14px;
+    padding: 18px 24px 16px;
+}
+
+.cz-dash-composer .cz-dash-avatar {
+    height: 44px;
+    margin-top: 2px;
+    width: 44px;
+}
+
+.cz-dash-composer-content {
+    gap: 10px;
+}
+
+.cz-dash-compose-prompt {
+    align-items: center;
+    border-radius: 12px;
+    color: color-mix(in srgb, var(--cz-ink) 76%, var(--cz-muted));
+    display: flex;
+    font-size: 17px;
+    font-weight: 650;
+    min-height: 42px;
+    padding: 0 2px;
+}
+
+.cz-dash-compose-prompt:hover {
+    color: var(--cz-accent);
+}
+
+.cz-dash-composer-tools {
+    border-top-color: color-mix(in srgb, var(--cz-line) 72%, transparent);
+    gap: 10px;
+    min-height: 50px;
+    padding-top: 10px;
+}
+
+.cz-dash-composer-tools a:not(.cz-dash-post-button) {
+    border: 1px solid transparent;
+    color: color-mix(in srgb, var(--cz-accent) 88%, var(--cz-ink));
+    height: 38px;
+    width: 38px;
+}
+
+.cz-dash-composer-tools a:not(.cz-dash-post-button):hover {
+    background: color-mix(in srgb, var(--cz-accent-soft) 72%, transparent);
+    border-color: color-mix(in srgb, var(--cz-accent) 18%, transparent);
+    transform: translateY(-1px);
+}
+
+.cz-dash-composer-tools svg {
+    height: 20px;
+    width: 20px;
+}
+
+.cz-dash-composer .cz-dash-post-button {
+    box-shadow: none;
+    min-height: 44px;
+    min-width: 102px;
+    padding-inline: 24px;
+}
+
 @media (max-width: 900px) {
     .cz-admin-user-card,
     .cz-admin-user-form {
