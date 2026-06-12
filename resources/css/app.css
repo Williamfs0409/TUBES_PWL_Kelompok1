@@ -6050,16 +6050,19 @@ html:has(body.cz-dashboard-page[data-dashboard-awal]) {
 .cz-dash-compose-prompt {
     align-items: center;
     border-radius: 12px;
-    color: color-mix(in srgb, var(--cz-ink) 76%, var(--cz-muted));
+    color: color-mix(in srgb, var(--cz-muted) 78%, var(--cz-ink));
     display: flex;
     font-size: 17px;
     font-weight: 650;
     min-height: 42px;
+    opacity: 0.82;
     padding: 0 2px;
+    transform: translateY(5px);
 }
 
 .cz-dash-compose-prompt:hover {
     color: var(--cz-accent);
+    opacity: 1;
 }
 
 .cz-dash-composer-tools {
