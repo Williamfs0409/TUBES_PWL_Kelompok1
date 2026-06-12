@@ -14,11 +14,18 @@
         @include('partials.dashboard-sidebar', ['activeNav' => 'admin', 'isAdmin' => true])
 
         <main class="cz-admin-main">
-            <header class="cz-list-header">
+            <header class="cz-list-header cz-admin-category-hero">
                 <div>
-                    <span class="cz-profile-eyebrow">Taxonomy</span>
+                    <span class="cz-profile-eyebrow">Administrasi data</span>
                     <h1>Categories</h1>
-                    <p>Kelola kategori ruang publik yang dipakai untuk feed, explore, dan form kontribusi.</p>
+                    <p>Kelola kategori fasilitas dan lokasi publik dalam ekosistem CityZen. Tambahkan, urutkan, atau nonaktifkan kategori sesuai kebutuhan tata kota.</p>
+                </div>
+                <div class="cz-admin-category-hero-actions">
+                    <span class="cz-admin-category-total"><strong>{{ str_pad((string) $categories->count(), 2, '0', STR_PAD_LEFT) }}</strong><small>Total</small></span>
+                    <a class="cz-admin-category-add-link" href="#add-category">
+                        <span aria-hidden="true">+</span>
+                        Tambah Kategori
+                    </a>
                 </div>
                 <label class="cz-dash-theme-toggle switch" aria-label="Toggle dark mode">
                     <input class="switch__input" type="checkbox" role="switch" data-theme-toggle aria-pressed="false">
@@ -48,11 +55,11 @@
                 <div class="cz-form-alert">{{ $errors->first() }}</div>
             @endif
 
-            <section class="cz-admin-panel cz-admin-category-create">
+            <section class="cz-admin-panel cz-admin-category-create" id="add-category">
                 <div class="cz-admin-category-heading">
                     <span>New taxonomy</span>
-                    <h2>Add Category</h2>
-                    <p>Buat kategori baru yang langsung bisa dipakai warga saat menambahkan tempat publik.</p>
+                    <h2>Tambah kategori baru</h2>
+                    <p>Buat kategori yang langsung bisa dipakai warga saat menambahkan tempat publik.</p>
                 </div>
                 <form class="cz-admin-category-create-form" method="POST" action="{{ route('admin.categories.store') }}">
                     @csrf
@@ -73,7 +80,7 @@
                     <article class="cz-admin-report-card cz-admin-category-card">
                         <div class="cz-admin-category-card-header">
                             <div>
-                                <span>{{ $category->is_active ? 'Active' : 'Inactive' }} &middot; Sort {{ $category->sort_order }}</span>
+                                <span>ID: CAT-{{ str_pad((string) $category->id, 3, '0', STR_PAD_LEFT) }} &middot; <strong>Urutan: {{ $category->sort_order }}</strong></span>
                                 <h2>{{ $category->name }}</h2>
                                 <p>{{ $category->description ?: 'Belum ada deskripsi.' }}</p>
                             </div>
@@ -105,7 +112,10 @@
                         <form class="cz-admin-category-delete-form" method="POST" action="{{ route('admin.categories.destroy', $category) }}">
                             @csrf
                             @method('DELETE')
-                            <button class="cz-admin-danger-button cz-admin-delete-small" type="submit" onclick="return confirm('Hapus kategori ini?')">Delete</button>
+                            <button class="cz-admin-danger-button cz-admin-delete-small" type="submit" onclick="return confirm('Hapus kategori ini?')">
+                                <span aria-hidden="true">⌫</span>
+                                Hapus Kategori
+                            </button>
                         </form>
                     </article>
                 @endforeach
